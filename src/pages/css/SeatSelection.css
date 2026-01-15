@@ -1,0 +1,27 @@
+.seat-wrapper {
+  max-width: 800px;
+  margin: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.08);
+}
+
+/* category title */
+.section-title {
+  margin: 15px 0 10px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #555;
+}
+
+/* screen */
+.screen {
+  text-align: center;
+  padding: 10px;
+  margin-bottom: 25px;
+  background: #eee;
+  border-radius: 10px;
+  font-size: 12px;
+  letter-spacing: 2px;
+}

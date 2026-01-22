@@ -21,10 +21,10 @@ export default function App() {
 
           {/* Mobile Buttons */}
           <div className="flex md:hidden gap-2">
-            <button className="px-4 py-2 rounded-full bg-[#b91c1c] text-white text-xs font-bold">
+            <button className="px-4 py-2 rounded-full bg-[#b91c1c] text-white text-xs font-bold" onClick={() => setIsModalOpen(true)}>
               LOG IN
             </button>
-            <button className="px-4 py-2 rounded-full bg-[#1f2937] text-white text-xs font-bold">
+            <button className="px-4 py-2 rounded-full bg-[#1f2937] text-white text-xs font-bold" onClick={() => setIsRegisterOpen(true)}>
               REGISTER
             </button>
           </div>

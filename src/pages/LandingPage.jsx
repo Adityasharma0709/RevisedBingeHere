@@ -1,5 +1,10 @@
 import "./css/LandingPage.css";
+import { useState } from 'react'
+
 export default function App() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+
   return (
     <div className="min-h-screen w-full bg-(--apnabackground) overflow-x-hidden">
       {/* Main Container */}
@@ -60,14 +65,50 @@ export default function App() {
             </p>
 
             <div className="mt-7 hidden md:flex gap-4">
-              <button className="px-8 py-3 rounded-full bg-[#b91c1c] text-white font-bold text-xs">
+              <button className="px-8 py-3 rounded-full bg-[#b91c1c] text-white font-bold text-xs" onClick={() => setIsModalOpen(true)}>
                 LOG IN
               </button>
-              <button className="px-8 py-3 rounded-full bg-[#1f2937] text-white font-bold text-xs">
+              <button className="px-8 py-3 rounded-full bg-[#1f2937] text-white font-bold text-xs"onClick={() => setIsRegisterOpen(true)}>
                 REGISTER
               </button>
             </div>
           </div>
+          {isModalOpen && (
+            <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
+              <div className="modal-content slide-down" onClick={(e) => e.stopPropagation()}>
+                <button
+                  className="close-icon"
+                  onClick={() => setIsModalOpen(false)}
+                  aria-label="Close"
+                >
+                  &times;
+                </button>
+                <h2>Login</h2>
+                <form className="vertical-form">
+
+                  <input type="username" placeholder="username" required />
+                  <input type="password" placeholder="password" required />
+                  <button type="submit" className="submit-btn">Sign In</button>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {isRegisterOpen && (
+        <div className="modal-overlay" onClick={() => setIsRegisterOpen(false)}>
+          <div className="modal-content slide-down" onClick={(e) => e.stopPropagation()}>
+            <button className="close-icon" onClick={() => setIsRegisterOpen(false)} aria-label="Close">&times;</button>
+            <h2>Register</h2>
+            <form className="vertical-form">
+              <input type="text" placeholder="Full Name" required />
+              <input type="tel" placeholder="Phone Number" required />
+              <input type="email" placeholder="Email" required />
+              <input type="password" placeholder="Password" required />
+              <button type="submit" className="submit-btn">Create Account</button>
+            </form>
+          </div>
+        </div>
+      )}
 
           {/* Right */}
           <div className="flex justify-center items-center">

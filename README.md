@@ -21,7 +21,7 @@ View their booking history
 
 An admin interface is included to manage movies, shows, and bookings.
 
-##Tech Stack
+## Tech Stack
 Frontend
 
 ### React.js

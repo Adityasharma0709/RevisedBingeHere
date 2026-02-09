@@ -1,12 +1,8 @@
 import { useState } from "react";
+import Button from "./ui/button";
+import Input from "./ui/Input";
 
-const LoginModal = ({
-  isModalOpen,
-  setIsModalOpen,
-  isRegisterOpen,
-  setIsRegisterOpen,
-}) => {
-
+const LoginModal = ({ isRegisterOpen, setIsRegisterOpen }) => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -34,48 +30,54 @@ const LoginModal = ({
 
             <h2>Register</h2>
 
-            <form className="vertical-form">
-              <input
-                type="text"
+            <form className="vertical-form space-y-3">
+
+              <Input
                 placeholder="Full Name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                required
+                color={name && !nameIsValid ? "danger" : "neutral"}
               />
               {name && !nameIsValid && (
-                <p style={{ color: "red" }}>
+                <p className="text-red-500 text-xs">
                   Name must contain only letters
                 </p>
               )}
 
-              <input
-                type="tel"
+              <Input
                 placeholder="Phone Number"
                 value={phone}
                 onChange={(e) =>
                   setPhone(e.target.value.replace(/\D/g, ""))
                 }
-                required
+                color={phone && !phoneIsValid ? "danger" : "primary"}
               />
               {phone && !phoneIsValid && (
-                <p style={{ color: "red" }}>
+                <p className="text-red-500 text-xs">
                   Phone must be exactly 10 digits
                 </p>
               )}
 
-              <input
+              <Input
                 type="email"
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
               />
 
-              <input type="password" placeholder="Password" required />
+              <Input
+                type="password"
+                placeholder="Password"
+              />
 
-              <button type="submit" className="submit-btn">
+              <Button
+                variant="solid"
+                color="danger"
+                className="w-full"
+              >
                 Create Account
-              </button>
+              </Button>
+
             </form>
           </div>
         </div>

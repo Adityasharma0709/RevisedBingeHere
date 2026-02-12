@@ -47,7 +47,7 @@ export default function App() {
         <Canvas camera={{ position: [0, 0, 30], fov: 25 }}>
           <ResponsiveCamera />
           <ambientLight intensity={1} />
-          <Cylinder />
+          {/* <Cylinder /> */}
           <CenterText />
         </Canvas>
       </div>

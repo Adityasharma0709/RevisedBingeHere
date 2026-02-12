@@ -31,7 +31,7 @@ export default function CenterText() {
 
   // ✅ Responsive font sizing
   const base = Math.min(viewport.width, viewport.height);
-  const fontSize = base * 0.8;
+  const fontSize = base ;
 
   return (
     <Text

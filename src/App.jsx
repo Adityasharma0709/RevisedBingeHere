@@ -1,18 +1,12 @@
-import { Routes, Route } from "react-router-dom";
-import LandingPage from "./pages/LandingPage";
-import SeatSelection from "./pages/SeatSelection";
-import Contact from "./pages/Contact";
-import About from "./pages/About"; 
-
+import { useState } from "react";
+import LandingPage2 from "./pages/LandingPage2";
+import LandingPage from './pages/LandingPage'
 function App() {
-  return (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/contact" element={<Contact />} />
-      <Route path="/about" element={<About/>} />
-    </Routes>
-  );
+  return <>
+    {/* <SeatSelection/> */}
+    {/* <h1 class="text-3xl font-bold underline">    Hello world!  </h1> */}
+    <LandingPage2/>
+  </>;
 }
 
 export default App;
-``

@@ -1,9 +1,18 @@
 import "./css/LandingPage.css";
-import { useState } from 'react'
+import { useState } from "react";
+import LoginModal from "../components/loginModal";
 
 export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+  const [name, setname] = useState("");
+  const [phone, setphone] = useState("");
+  const [email, setemail] = useState("");
+
+  // validation
+  const nameIsValid = /^[A-Za-z]*$/.test(name); // Only letters
+  const phoneDigits = phone.replace(/\D/g, "");
+  const phoneIsValid = phoneDigits.length === 10;
 
   return (
     <div className="min-h-screen w-full bg-(--apnabackground) overflow-x-hidden">
@@ -21,10 +30,16 @@ export default function App() {
 
           {/* Mobile Buttons */}
           <div className="flex md:hidden gap-2">
-            <button className="px-4 py-2 rounded-full bg-[#b91c1c] text-white text-xs font-bold" onClick={() => setIsModalOpen(true)}>
+            <button
+              className="px-4 py-2 rounded-full bg-[#b91c1c] text-white text-xs font-bold"
+              onClick={() => setIsModalOpen(true)}
+            >
               LOG IN
             </button>
-            <button className="px-4 py-2 rounded-full bg-[#1f2937] text-white text-xs font-bold" onClick={() => setIsRegisterOpen(true)}>
+            <button
+              className="px-4 py-2 rounded-full bg-[#1f2937] text-white text-xs font-bold"
+              onClick={() => setIsRegisterOpen(true)}
+            >
               REGISTER
             </button>
           </div>
@@ -65,50 +80,26 @@ export default function App() {
             </p>
 
             <div className="mt-7 hidden md:flex gap-4">
-              <button className="px-8 py-3 rounded-full bg-[#b91c1c] text-white font-bold text-xs" onClick={() => setIsModalOpen(true)}>
+              <button
+                className="px-8 py-3 rounded-full bg-[#b91c1c] text-white font-bold text-xs"
+                onClick={() => setIsModalOpen(true)}
+              >
                 LOG IN
               </button>
-              <button className="px-8 py-3 rounded-full bg-[#1f2937] text-white font-bold text-xs"onClick={() => setIsRegisterOpen(true)}>
+              <button
+                className="px-8 py-3 rounded-full bg-[#1f2937] text-white font-bold text-xs"
+                onClick={() => setIsRegisterOpen(true)}
+              >
                 REGISTER
               </button>
             </div>
           </div>
-          {isModalOpen && (
-            <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
-              <div className="modal-content slide-down" onClick={(e) => e.stopPropagation()}>
-                <button
-                  className="close-icon"
-                  onClick={() => setIsModalOpen(false)}
-                  aria-label="Close"
-                >
-                  &times;
-                </button>
-                <h2>Login</h2>
-                <form className="vertical-form">
-
-                  <input type="username" placeholder="username" required />
-                  <input type="password" placeholder="password" required />
-                  <button type="submit" className="submit-btn">Sign In</button>
-                </form>
-              </div>
-            </div>
-          )}
-
-          {isRegisterOpen && (
-        <div className="modal-overlay" onClick={() => setIsRegisterOpen(false)}>
-          <div className="modal-content slide-down" onClick={(e) => e.stopPropagation()}>
-            <button className="close-icon" onClick={() => setIsRegisterOpen(false)} aria-label="Close">&times;</button>
-            <h2>Register</h2>
-            <form className="vertical-form">
-              <input type="text" placeholder="Full Name" required />
-              <input type="tel" placeholder="Phone Number" required />
-              <input type="email" placeholder="Email" required />
-              <input type="password" placeholder="Password" required />
-              <button type="submit" className="submit-btn">Create Account</button>
-            </form>
-          </div>
-        </div>
-      )}
+          <LoginModal
+            isModalOpen={isModalOpen}
+            setIsModalOpen={setIsModalOpen}
+            isRegisterOpen={isRegisterOpen}
+            setIsRegisterOpen={setIsRegisterOpen}
+          />
 
           {/* Right */}
           <div className="flex justify-center items-center">

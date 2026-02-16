@@ -1,16 +1,51 @@
-# React + Vite
+# BingeHere
+![Home](public/fav-removebg.png)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
+BingeHere is a full-stack movie ticket booking web application developed using the MERN stack.
+The project aims to provide users with a simple and efficient platform to browse movies, view available shows, select seats, and book movie tickets online.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+The application is designed with a clear separation of frontend and backend, following modern web development practices. It supports user authentication, movie and show management, and ticket booking workflows.
 
-## React Compiler
+## Project Overview
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+BingeHere allows users to:
 
-## Expanding the ESLint configuration
+Browse available movies
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+View show timings
+
+Select seats for a particular show
+
+Book movie tickets
+
+View their booking history
+
+An admin interface is included to manage movies, shows, and bookings.
+
+## Tech Stack
+Frontend
+
+### React.js
+
+### CSS / Tailwind CSS
+
+### Axios
+
+### React Router
+
+Backend
+
+### Node.js
+
+### Express.js
+
+RESTful APIs
+
+### JSON Web Token (JWT) for authentication
+
+Database
+
+### MongoDB
+
+### Mongoose

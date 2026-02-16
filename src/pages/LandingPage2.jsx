@@ -1,11 +1,10 @@
 import { useState } from "react";
 
-import BannerCarousel from "../components/landing/BannerCarousel";
-import CategoryBar from "../components/landing/category";
+import CategoryBar from "../components/landing/LandingPage2/category";
 import {Navbar} from "../components/landing/LandignPage/Navbar";
-import WindowCarousel from "../components/landing/WindowCarousel";
-import MovieCard from "../components/landing/MovieCard";
-import PremiereCard from "../components/landing/PremierCard";
+import WindowCarousel from "../components/landing/LandingPage2/WindowCarousel";
+import MovieCard from "../components/landing/LandingPage2/MovieCard";
+import PremiereCard from "../components/landing/LandingPage2/PremierCard";
 
 function App() {
   const categories = [

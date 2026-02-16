@@ -1,5 +1,5 @@
-import SideMenu from "../sideMenu";
-import Dropdown from "../Dropdown";
+import SideMenu from "../LandingPage2/sideMenu";
+import Dropdown from "../LandingPage2/Dropdown";
 import { Search } from "lucide-react";
 import { useState } from "react";
 import LoginModal from "../../loginModal";

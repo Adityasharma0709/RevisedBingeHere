@@ -1,0 +1,648 @@
+.cinema-page {
+  background: #0a0a0a;
+  color: white;
+  font-family: "Inter", sans-serif;
+}
+
+/* HERO */
+.cinema-hero {
+  position: relative;
+  height: 120vh;
+  overflow: hidden;
+}
+
+.cinema-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+
+.cinema-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.3),
+    rgba(0,0,0,0.85)
+  );
+}
+
+.cinema-poster {
+  position: absolute;
+  left: 8%;
+  bottom: 10%;
+  width: 260px;
+}
+
+.cinema-poster img {
+  width: 100%;
+  border-radius: 18px;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.7);
+}
+
+.cinema-info {
+  position: absolute;
+  right: 8%;
+  bottom: 15%;
+  max-width: 520px;
+}
+
+.cinema-info h1 {
+  font-size: 64px;
+  font-weight: 800;
+}
+
+.tagline {
+  font-size: 18px;
+  opacity: 0.85;
+  margin: 15px 0 30px;
+}
+
+.cinema-info button {
+  padding: 14px 36px;
+  font-size: 18px;
+  background: white;
+  color: black;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+}
+
+.cinema-section {
+  padding: 120px 8vw;
+  position: relative;
+}
+
+.cinema-section h2 {
+  font-size: clamp(40px, 6vw, 64px);
+  font-weight: 700;
+  letter-spacing: -1px;
+  margin-bottom: 40px;
+}
+
+.story-card {
+  position: relative;
+  max-width: 900px;
+  padding: 50px 60px;
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(25px);
+  border-radius: 30px;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+}
+
+.story-card p {
+  font-size: 19px;
+  line-height: 1.9;
+  color: #ddd;
+  font-weight: 300;
+  letter-spacing: 0.4px;
+}
+
+/* Accent vertical line */
+
+.story-line {
+  position: absolute;
+  left: 0;
+  top: 40px;
+  height: calc(100% - 80px);
+  width: 4px;
+  background: linear-gradient(#ff3d00, transparent);
+  border-radius: 20px;
+}
+
+.story-card:hover {
+  transform: translateY(-6px);
+  transition: 0.4s ease;
+}
+
+/* CAST */
+.cinema-cast {
+  padding: 120px 10%;
+}
+
+.cast-row {
+  display: flex;
+  gap: 30px;
+  overflow-x: auto;
+}
+
+.cast-item {
+  min-width: 160px;
+  text-align: center;
+}
+
+.cast-item img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 1024px) {
+
+.cinema-info h1 {
+  font-size: 48px;
+}
+
+.cinema-poster img {
+  width: 260px;
+}
+
+.story-card {
+  max-width: 100%;
+}
+}
+@media (max-width: 768px) {
+
+/* HERO STACK */
+
+.cinema-hero {
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 100px 20px 40px;
+}
+
+.cinema-poster {
+  transform: none !important;
+}
+
+.cinema-poster img {
+  width: 200px;
+}
+
+.cinema-info {
+  text-align: center;
+  margin-top: 25px;
+}
+
+.cinema-info h1 {
+  font-size: 34px;
+}
+
+.cinema-info button {
+  width: 100%;
+  height: 52px;
+  margin-top: 20px;
+}
+
+
+/* STORY */
+
+.cinema-section {
+  padding: 80px 20px;
+}
+
+.story-card {
+  padding: 28px 22px;
+}
+
+.story-line {
+  display: none;
+}
+
+.story-card p {
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+
+/* CAST → SWIPE */
+
+.cast-row {
+  display: flex;
+  overflow-x: auto;
+  gap: 14px;
+  padding-bottom: 15px;
+}
+
+.cast-item {
+  min-width: 130px;
+}
+
+.cast-item img {
+  height: 180px;
+  object-fit: cover;
+}
+
+
+/* REMOVE HEAVY SHADOWS ON MOBILE */
+
+.story-card,
+.cast-item {
+  box-shadow: none;
+}
+
+}
+
+
+/* Layout Fixes */
+.hero-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4rem;
+  z-index: 2;
+  width: 90%;
+  max-width: 1200px;
+  padding-top: 10vh;
+}
+
+/* Glassmorphism Card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 2.5rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  max-width: 600px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+/* Typography Enhancements */
+.movie-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+  background: linear-gradient(to right, #ffffff, #aaaaaa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Meta Data Styling */
+.meta-row {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+  color: #ddd;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rating-badge {
+  background: #f5c518; /* IMDb Yellow */
+  color: #000;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.star-icon {
+  font-size: 0.8rem;
+}
+
+/* Genre Pills */
+.genre-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.genre-pill {
+  padding: 0.4rem 1rem;
+  border-radius: 50px;
+  border: 1px solid rgba(255,255,255,0.2);
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.8);
+  transition: all 0.3s ease;
+}
+
+.genre-pill:hover {
+  background: white;
+  color: black;
+}
+
+/* Buttons */
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.btn-primary {
+  background: #e50914; /* Netflix Red or your brand color */
+  color: white;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: white;
+  border: 1px solid white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background 0.3s;
+}
+
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+/* Story Section Polish */
+.overview-text {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  color: #ccc;
+  max-width: 800px;
+  margin-bottom: 2rem;
+}
+
+.production-info {
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 1rem;
+  display: flex;
+  gap: 2rem;
+  font-size: 0.9rem;
+  color: #888;
+}
+
+.production-info strong {
+  color: #fff;
+}
+/* TRAILER MODAL */
+.trailer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.9); /* Very dark background */
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+}
+
+.trailer-modal {
+  width: 80%;
+  max-width: 900px;
+  aspect-ratio: 16 / 9; /* Maintains video ratio */
+  background: black;
+  position: relative;
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.close-btn {
+  position: absolute;
+  top: -40px;
+  right: -10px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+  transition: color 0.3s;
+  z-index: 10000;
+}
+
+.close-btn:hover {
+  color: #e50914;
+}
+
+/* Make sure the iframe fills the modal */
+.trailer-modal iframe {
+  width: 100%;
+  height: 100%;
+}
+
+/* Mobile Responsiveness for Modal */
+@media (max-width: 768px) {
+  .trailer-modal {
+    width: 95%;
+  }
+  
+  .close-btn {
+    top: -35px;
+    right: 0;
+  }
+}
+/* --- FORMAT BADGES --- */
+.format-badges {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.badge {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #fff;
+    letter-spacing: 1px;
+}
+
+.badge-lang {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #ccc;
+    text-transform: uppercase;
+}
+
+/* --- CONTENT GRID (Story + Reviews) --- */
+.content-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr; /* Story takes more space */
+    gap: 4rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Reviews Styling */
+.reviews-column h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: #e50914; /* Brand color accent */
+}
+
+.reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.review-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 3px solid #e50914;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #fff;
+    font-weight: bold;
+}
+
+.review-rating {
+    color: #f5c518;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.review-text {
+    font-size: 0.85rem;
+    color: #bbb;
+    line-height: 1.4;
+    font-style: italic;
+}
+
+/* --- SIMILAR MOVIES --- */
+.cinema-similar {
+    padding: 4rem 5%;
+    background: #0a0a0a;
+}
+
+.cinema-similar h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: white;
+}
+
+.similar-row {
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+}
+
+/* Hide Scrollbar */
+.similar-row::-webkit-scrollbar {
+    height: 6px;
+}
+.similar-row::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 3px;
+}
+
+.similar-card {
+    min-width: 150px;
+    cursor: pointer;
+}
+
+.similar-card img {
+    width: 100%;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.similar-title {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #ccc;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* =========================================
+   RESPONSIVE FIXES (Mobile & Tablet)
+   ========================================= */
+
+@media (max-width: 1024px) {
+  .hero-content {
+    width: 100%;       /* Use full width */
+    padding: 0 1rem;   /* Add side padding to prevent edge trimming */
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 120px; /* Push down to avoid navbar overlap */
+  }
+
+  /* Fix the "Trimmed" Poster */
+  .cinema-poster {
+    width: 200px;      /* Fixed manageable width */
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 5;        /* Ensure it sits on top */
+  }
+  
+  .cinema-poster img {
+    width: 100%;
+    height: auto;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  }
+
+  /* Fix "Misaligned" Glass Card */
+  .glass-card {
+    width: 100%;
+    max-width: 100%;
+    backdrop-filter: blur(20px);
+    background: rgba(0, 0, 0, 0.75); /* Darker for readability */
+    padding: 2rem 1.5rem;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center everything */
+    text-align: center;
+  }
+
+  .movie-title {
+    font-size: 2.2rem;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+
+  /* Fix "Messy" Badges Row */
+  .format-badges, 
+  .meta-row, 
+  .genre-row {
+    display: flex;
+    flex-wrap: wrap;       /* CRITICAL: Allows items to wrap to next line */
+    justify-content: center;
+    gap: 0.8rem;
+    margin-bottom: 1.2rem;
+    width: 100%;
+  }
+
+  /* Fix "Trimmed" Buttons */
+  .action-buttons {
+    flex-direction: column;
+    width: 100%;
+    gap: 1rem;
+  }
+
+  .btn-primary, .btn-secondary {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1rem;
+  }
+}
+

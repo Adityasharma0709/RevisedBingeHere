@@ -15,10 +15,10 @@ export default function TwisterSection() {
             const tl = gsap.timeline({
                 scrollTrigger: {
                     trigger: containerRef.current,
-                    start: "top top",
-                    end: "+=200%", // Scroll distance
+                    start: "top bottom", // Start when top of section hits bottom of viewport
+                    end: "center center", // End when center hits center? Or just let it play?
                     scrub: 1,
-                    pin: true,
+                    // pin: true, // Removed GSAP pinning, relying on CSS or natural scroll
                     perspective: 1000, // Important for 3D effect
                 },
             });
@@ -65,8 +65,8 @@ export default function TwisterSection() {
         >
             {/* Background Text */}
             <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none select-none overflow-hidden">
-                <h1 className="text-[15vw] md:text-[20vw] font-black text-black leading-none tracking-tighter opacity-90 text-center">
-                    BINGE<br />HERE
+                <h1 className="text-[10vw] md:text-[15vw] font-black text-black leading-none tracking-tighter opacity-90 text-center">
+                    Book.<br />Watch.<br />Repeat.<br />
                 </h1>
             </div>
 

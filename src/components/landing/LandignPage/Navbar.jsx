@@ -5,6 +5,8 @@ import Dropdown from "../LandingPage2/Dropdown";
 import { Search } from "lucide-react";
 import Button from "../../ui/Button"
 
+import Magnetic from "../../Magnetic";
+
 const Navbar = () => {
   const navigate = useNavigate();
 
@@ -21,7 +23,13 @@ const Navbar = () => {
       >
         {/* LEFT: Logo */}
         <div className="flex items-center gap-2 md:gap-4">
-          <img src="fav-removebg.png" alt="BingeHere Logo" className="h-10 w-auto object-contain" />
+          <Magnetic>
+            <img
+              src="fav-removebg.png"
+              alt="BingeHere Logo"
+              className="h-10 w-auto object-contain transform transition-transform duration-300 hover:scale-110 cursor-pointer"
+            />
+          </Magnetic>
           <div className="text-xl md:text-2xl font-black tracking-wider cursor-pointer group select-none">
             <span className="text-white group-hover:text-red-500 transition-colors duration-300 drop-shadow-md">Binge</span>
             <span className="text-red-600 group-hover:text-white transition-colors duration-300 drop-shadow-md">Here</span>

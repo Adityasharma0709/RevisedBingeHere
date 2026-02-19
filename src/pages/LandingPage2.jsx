@@ -199,7 +199,7 @@ function App() {
 
       {/* FOOTER */}
       <footer className="bg-gray-800 text-white py-6 text-center">
-        <p className="text-sm">© 2026 BookMyShow Clone. All Rights Reserved.</p>
+        <p className="text-sm">© 2026 BingeHere. All Rights Reserved.</p>
       </footer>
     </div>
   );

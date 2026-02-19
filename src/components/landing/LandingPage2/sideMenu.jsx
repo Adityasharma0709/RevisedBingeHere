@@ -84,7 +84,7 @@ const SideMenu = () => {
   return (
     <>
       {/* Hamburger Button */}
-      <Button onClick={() => setOpen(true)} className="text-2xl text-white"
+      <Button onClick={() => setOpen(true)} className="text-white"
          backgroundColor="#ef4444">
         ☰
       </Button>

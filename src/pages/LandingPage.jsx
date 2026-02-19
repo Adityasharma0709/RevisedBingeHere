@@ -87,15 +87,8 @@ export default function App() {
       {/* 2. Added relative and z-10 to ensure it 
          scrolls OVER the fixed Three.js background. 
       */}
-      <div className="relative z-10">
+      <div className="relative z-10 w-full">
         <ScrollCards />
-      </div>
-
-      {/* 3. A final spacer or content section so the 
-         last card can "stick" while this moves over it. 
-      */}
-      <div className="relative z-20">
-        <TwisterSection />
       </div>
     </>
   );

@@ -6,7 +6,7 @@ import FloatingTicket from "../components/landing/LandignPage/FloatingTicket";
 // import RectangleBackground from "../components/landing/RectangleBackground";
 import ScrollCards from "../components/landing/LandignPage/ScrollCards";
 import { useEffect } from "react";
-import { Navbar2 } from "../components/landing/LandignPage/Navbar";
+import { Navbar } from "../components/landing/LandignPage/Navbar";
 function ResponsiveCamera() {
   const { camera, size } = useThree();
 
@@ -41,7 +41,7 @@ function ResponsiveCamera() {
 export default function App() {
   return (
     <>
-      <Navbar2 />
+      <Navbar />
 
       {/* Fixed hero - stays in background */}
       <div className="bg-black w-full h-dvh fixed inset-0 z-0">

@@ -1,11 +1,7 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import SideMenu from "../LandingPage2/sideMenu";
-import Dropdown from "../LandingPage2/Dropdown";
-import { Search } from "lucide-react";
-import Button from "../../ui/Button"
 
-const Navbar = () => {
+const Navbar2 = () => {
   const navigate = useNavigate();
 
   return (
@@ -15,7 +11,7 @@ const Navbar = () => {
           fixed top-0 left-0 w-full z-50
           px-6 py-4 md:px-10 md:py-5
           flex items-center justify-between
-          backdrop-blur-xl bg-black/30 border-b border-white/5
+          backdrop-blur-xl border-b border-white/5
           transition-all duration-300
         "
       >
@@ -32,15 +28,10 @@ const Navbar = () => {
         <div className="flex items-center gap-4 md:gap-6">
   
 
-          {/* Magnetic Sign In Button */}
-          <div className="hidden sm:block">
-            <Button
-              className="text-xs md:text-sm font-medium text-white"
-              backgroundColor="#ef4444"
-              onClick={() => navigate("/auth")}
-            >
-              Sign In
-            </Button>
+
+          {/* Side Menu */}
+          <div className="text-white hover:text-red-500 transition-colors cursor-pointer">
+            <SideMenu />
           </div>
         </div>
       </nav>
@@ -50,4 +41,4 @@ const Navbar = () => {
   );
 };
 
-export { Navbar };
+export { Navbar2 };

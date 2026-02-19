@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 // import LandingPage from "./pages/LandingPage";
 import MovieDetails from "./pages/MovieDetails";
 import MovieDetailsContainer from "./pages/MovieDetailsContainer";
@@ -6,14 +7,16 @@ import FoodOrdering from "./pages/FoodOrdering";
 import AuthForm from "./pages/AuthForm";
 import LandingPage2 from "./pages/LandingPage2";
 import LandingPage from './pages/LandingPage'
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
 function App() {
-  return <>
-    {/* <SeatSelection/> */}
-    {/* <h1 class="text-3xl font-bold underline">    Hello world!  </h1> */}
-    <LandingPage/>
-  </>
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/auth" element={<AuthForm />} />
+        <Route path="/landing2" element={<LandingPage2 />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App;

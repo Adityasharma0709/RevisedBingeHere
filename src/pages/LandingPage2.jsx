@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import CategoryBar from "../components/landing/LandingPage2/category";
-import {Navbar} from "../components/landing/LandignPage/Navbar";
+import {Navbar2} from "../components/landing/LandingPage2/Navbar2";
 import WindowCarousel from "../components/landing/LandingPage2/WindowCarousel";
 import MovieCard from "../components/landing/LandingPage2/MovieCard";
 import PremiereCard from "../components/landing/LandingPage2/PremierCard";
@@ -109,7 +109,7 @@ function App() {
   return (
     <div className="bg-gray-50 min-h-screen font-sans text-gray-800">
       {/* NAVBAR */}
-      <Navbar />
+      <Navbar2 />
 
       {/* HERO */}
       <CategoryBar />

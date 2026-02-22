@@ -6,7 +6,10 @@ import FloatingTicket from "../components/landing/LandignPage/FloatingTicket";
 // import RectangleBackground from "../components/landing/RectangleBackground";
 import ScrollCards from "../components/landing/LandignPage/ScrollCards";
 import { useEffect } from "react";
-import { Navbar2 } from "../components/landing/LandignPage/Navbar";
+import { Navbar } from "../components/landing/LandignPage/Navbar";
+import JoinCard from "../components/landing/LandignPage/JoinCard";
+import TwisterSection from "../components/landing/LandignPage/TwisterSection";
+
 function ResponsiveCamera() {
   const { camera, size } = useThree();
 
@@ -41,7 +44,8 @@ function ResponsiveCamera() {
 export default function App() {
   return (
     <>
-      <Navbar2 />
+      <Navbar />
+      <JoinCard />
 
       {/* Fixed hero - stays in background */}
       <div className="bg-black w-full h-dvh fixed inset-0 z-0">
@@ -83,15 +87,8 @@ export default function App() {
       {/* 2. Added relative and z-10 to ensure it 
          scrolls OVER the fixed Three.js background. 
       */}
-      <div className="relative z-10">
+      <div className="relative z-10 w-full">
         <ScrollCards />
-      </div>
-
-      {/* 3. A final spacer or content section so the 
-         last card can "stick" while this moves over it. 
-      */}
-      <div className="relative z-20 bg-white h-screen flex items-center justify-center">
-        <h2 className="text-black text-4xl">Final Section Content</h2>
       </div>
     </>
   );

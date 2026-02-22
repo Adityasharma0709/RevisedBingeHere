@@ -1,89 +1,49 @@
-const Button = ({
-  children,
-  color = "primary",
-  variant = "solid",
-  size = "md",
-  disabled = false,
-  loading = false,
-  onClick,
-  className = "",
-}) => {
-  const base =
-    "rounded-lg font-medium transition flex items-center justify-center gap-2";
+import React, { useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import Magnetic from '../Magnetic';
 
-  /* ---------- SIZE SYSTEM ---------- */
+export default function Button({ children, backgroundColor = "#455CE9", className, ...attributes }) {
 
-  const sizes = {
-    sm: "px-3 py-1.5 text-xs",
-    md: "px-4 py-2 text-sm",
-    lg: "px-6 py-3 text-base",
-  };
+  const circle = useRef(null);
+  let timeline = useRef(null);
+  let timeoutId = null;
+  useEffect(() => {
+    timeline.current = gsap.timeline({ paused: true })
+    timeline.current
+      .to(circle.current, { top: "-25%", width: "150%", duration: 0.4, ease: "power3.in" }, "enter")
+      .to(circle.current, { top: "-150%", width: "125%", duration: 0.25 }, "exit")
+  }, [])
 
-  /* ---------- COLOR SYSTEM ---------- */
+  const manageMouseEnter = () => {
+    if (timeoutId) clearTimeout(timeoutId)
+    timeline.current.tweenFromTo('enter', 'exit');
+  }
 
-  const colors = {
-    primary: {
-      solid: "bg-blue-600 text-white hover:bg-blue-700",
-      soft: "bg-blue-600/20 text-blue-400 hover:bg-blue-600/30",
-      outlined:
-        "border border-blue-500 text-blue-400 hover:bg-blue-600/10",
-      plain: "text-blue-400 hover:bg-blue-600/10",
-    },
-
-    neutral: {
-      solid: "bg-gray-700 text-white hover:bg-gray-800",
-      soft: "bg-gray-700/30 text-gray-300 hover:bg-gray-700/40",
-      outlined:
-        "border border-gray-600 text-gray-300 hover:bg-gray-700/20",
-      plain: "text-gray-300 hover:bg-gray-700/20",
-    },
-
-    danger: {
-      solid: "bg-red-600 text-white hover:bg-red-700",
-      soft: "bg-red-600/20 text-red-400 hover:bg-red-600/30",
-      outlined:
-        "border border-red-500 text-red-400 hover:bg-red-600/10",
-      plain: "text-red-400 hover:bg-red-600/10",
-    },
-
-    success: {
-      solid: "bg-green-600 text-white hover:bg-green-700",
-      soft: "bg-green-600/20 text-green-400 hover:bg-green-600/30",
-      outlined:
-        "border border-green-500 text-green-400 hover:bg-green-600/10",
-      plain: "text-green-400 hover:bg-green-600/10",
-    },
-
-    warning: {
-      solid: "bg-yellow-600 text-white hover:bg-yellow-700",
-      soft: "bg-yellow-600/20 text-yellow-400 hover:bg-yellow-600/30",
-      outlined:
-        "border border-yellow-500 text-yellow-400 hover:bg-yellow-600/10",
-      plain: "text-yellow-400 hover:bg-yellow-600/10",
-    },
-  };
-
-  const disabledStyle = "opacity-50 cursor-not-allowed";
+  const manageMouseLeave = () => {
+    timeoutId = setTimeout(() => {
+      timeline.current.play();
+    }, 300)
+  }
 
   return (
-    <button
-      onClick={onClick}
-      disabled={disabled || loading}
-      className={`
-        ${base}
-        ${sizes[size]}
-        ${colors[color][variant]}
-        ${(disabled || loading) && disabledStyle}
-        ${className}
-      `}
-    >
-      {loading && (
-        <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-      )}
-
-      {children}
-    </button>
-  );
-};
-
-export default Button;
+    <Magnetic>
+      <div
+        className={`group relative flex items-center justify-center rounded-[3em] border border-[rgb(136,136,136)] cursor-pointer px-6 py-3 overflow-hidden ${className || ""}`}
+        onMouseEnter={() => { manageMouseEnter() }}
+        onMouseLeave={() => { manageMouseLeave() }}
+        {...attributes}
+      >
+        <span className="relative z-10 transition-colors duration-400 ease-linear group-hover:text-white">
+          {
+            children
+          }
+        </span>
+        <div
+          ref={circle}
+          style={{ backgroundColor }}
+          className="w-full h-[150%] absolute rounded-[50%] top-full"
+        ></div>
+      </div>
+    </Magnetic>
+  )
+}

@@ -133,18 +133,49 @@ export default function FloatingTicket({
         bevelSegments: 3
     }), []);
 
-    useFrame(() => {
+    useFrame((state) => {
         if (groupRef.current) {
             const scrollY = window.scrollY || 0;
             // Parallax effect: move up/down based on scroll
             // Normalized scroll (roughly 0 to 1 per screen height)
             const normalized = scrollY / (window.innerHeight || 1);
 
-            // Move up as we scroll down
-            groupRef.current.position.y = normalized * scrollSpeed;
+            const { pointer } = state;
 
-            // Optional: Add slight rotation based on scroll
-            groupRef.current.rotation.z = normalized * 0.2;
+            // Scroll-based position
+            const scrollYPos = normalized * scrollSpeed;
+
+            // Pointer-based parallax (interactive floating)
+            // We'll move slightly against the pointer or with it. 
+            // Let's move WITH it to feel "light" and loosely connected.
+            const pointerX = pointer.x * 2;
+            const pointerY = pointer.y * 2;
+
+            // Apply smooth interpolation to blending scroll and pointer
+            // Note: mixing absolute scroll with lerped pointer needs care.
+            // But since scroll is usually smooth enough or we want instant response, 
+            // we will just add them. To make pointer smooth, we could use a stored vector, 
+            // but direct assignment is often fine for simple effects.
+            // Let's add slight lerp for the pointer part by using current position.
+
+            // However, groupRef.current.position.x is 0 initially.
+            // simple approach:
+
+            groupRef.current.position.x += (pointerX - groupRef.current.position.x) * 0.1;
+
+            // For Y, we combine scroll (instant/absolute) and pointer (lerped).
+            // This is tricky because lerping "current" which includes scroll will maintain scroll momentum? 
+            // No, if we set it every frame.
+            // Let's just set it directly for reliability with scroll, and maybe lerp the pointer part if needed.
+            // Or just direct assignment for responsiveness.
+
+            groupRef.current.position.y = scrollYPos + (pointer.y * 2);
+            // If we want smooth pointer on Y, we'd need to track it separately. 
+            // For now, direct assignment check.
+
+            // Add slight rotation based on scroll and pointer
+            const targetRot = normalized * 0.2 + (pointer.x * 0.1);
+            groupRef.current.rotation.z += (targetRot - groupRef.current.rotation.z) * 0.1;
         }
     });
 

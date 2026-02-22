@@ -10,13 +10,13 @@
 	height: 100vh;
 }
 
-h1 {
+.body-wrapper h1 {
 	font-weight: bold;
 	margin: 0;
 	color: #ffffff;
 }
 
-p {
+.body-wrapper p {
 	font-size: 14px;
 	font-weight: 100;
 	line-height: 20px;
@@ -25,13 +25,13 @@ p {
 	color: #e0e0e0;
 }
 
-span {
+.body-wrapper span {
 	font-size: 12px;
-    color: #a0a0a0;
-    margin-bottom: 10px;
+	color: #a0a0a0;
+	margin-bottom: 10px;
 }
 
-a {
+.body-wrapper a {
 	color: #ffffff;
 	font-size: 14px;
 	text-decoration: none;
@@ -40,10 +40,11 @@ a {
 
 /* --- The Sliding Container --- */
 .container {
-	background-color: #0a192f; /* Dark Navy for the card background */
+	background-color: #0a192f;
+	/* Dark Navy for the card background */
 	border-radius: 10px;
-  	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 
-			0 10px 10px rgba(0,0,0,0.22);
+	box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
+		0 10px 10px rgba(0, 0, 0, 0.22);
 	position: relative;
 	overflow: hidden;
 	width: 768px;
@@ -83,19 +84,24 @@ a {
 }
 
 @keyframes show {
-	0%, 49.99% {
+
+	0%,
+	49.99% {
 		opacity: 0;
 		z-index: 1;
 	}
-	50%, 100% {
+
+	50%,
+	100% {
 		opacity: 1;
 		z-index: 5;
 	}
 }
 
 /* --- Form Styles --- */
-form {
-	background-color: #0a192f; /* Matches container */
+.body-wrapper form {
+	background-color: #0a192f;
+	/* Matches container */
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -103,22 +109,25 @@ form {
 	padding: 0 50px;
 	height: 100%;
 	text-align: center;
-    color: white;
+	color: white;
 }
 
-input {
-	background-color: #172a45; /* Slightly lighter navy for inputs */
+.body-wrapper input {
+	background-color: #172a45;
+	/* Slightly lighter navy for inputs */
 	border: none;
-    color: white;
+	color: white;
 	padding: 12px 15px;
 	margin: 8px 0;
 	width: 100%;
 }
 
-button {
+.body-wrapper button {
 	border-radius: 20px;
-	border: 1px solid #800000; /* Maroon Border */
-	background-color: #800000; /* Maroon Button */
+	border: 1px solid #800000;
+	/* Maroon Border */
+	background-color: #800000;
+	/* Maroon Button */
 	color: #FFFFFF;
 	font-size: 12px;
 	font-weight: bold;
@@ -126,19 +135,19 @@ button {
 	letter-spacing: 1px;
 	text-transform: uppercase;
 	transition: transform 80ms ease-in;
-    cursor: pointer;
-    margin-top: 10px;
+	cursor: pointer;
+	margin-top: 10px;
 }
 
-button:active {
+.body-wrapper button:active {
 	transform: scale(0.95);
 }
 
-button:focus {
+.body-wrapper button:focus {
 	outline: none;
 }
 
-button.ghost {
+.body-wrapper button.ghost {
 	background-color: transparent;
 	border-color: #FFFFFF;
 }
@@ -172,12 +181,12 @@ button.ghost {
 	left: -100%;
 	height: 100%;
 	width: 200%;
-  	transform: translateX(0);
+	transform: translateX(0);
 	transition: transform 0.6s ease-in-out;
 }
 
 .container.right-panel-active .overlay {
-  	transform: translateX(50%);
+	transform: translateX(50%);
 }
 
 .overlay-panel {

@@ -1,6 +1,14 @@
-const MovieCard = ({ title, poster, promoted }) => {
+const MovieCard = ({ title, poster, promoted, onClick }) => {
   return (
-    <div className="min-w-[180px] max-w-[180px] cursor-pointer">
+    <div
+      className="min-w-[180px] max-w-[180px] cursor-pointer"
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") onClick?.();
+      }}
+    >
       <div className="relative rounded-xl overflow-hidden">
         {promoted && (
           <span className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">

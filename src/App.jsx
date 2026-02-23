@@ -4,7 +4,7 @@ import MovieDetailsContainer from "./pages/MovieDetailsContainer";
 import FoodOrdering from "./pages/FoodOrdering";
 import AuthForm from "./pages/AuthForm";
 import LandingPage2 from "./pages/LandingPage2";
-import LandingPage from './pages/LandingPage'
+import LandingPage from "./pages/LandingPage";
 
 function App() {
   return (
@@ -13,6 +13,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/auth" element={<AuthForm />} />
         <Route path="/landing2" element={<LandingPage2 />} />
+        <Route path="/movie/:movieId" element={<MovieDetailsContainer />} />
       </Routes>
     </BrowserRouter>
   );

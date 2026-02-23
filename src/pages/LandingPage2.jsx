@@ -1,3 +1,8 @@
+
+
+
+
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -14,44 +19,13 @@ function App() {
   const IMG_500 = "https://image.tmdb.org/t/p/w500";
 
   const categories = [
-    { name: "Movies", color: "bg-red-500" },
-    { name: "Events", color: "bg-blue-500" },
-    { name: "Sports", color: "bg-green-500" },
-    { name: "Plays", color: "bg-yellow-500" },
+    { name: "Comedy", color: "bg-red-500" },
+    { name: "Action", color: "bg-blue-500" },
+    { name: "Adventure", color: "bg-green-500" },
+    { name: "Thriller", color: "bg-yellow-500" },
   ];
 
-  const premiereMovies = [
-    {
-      title: "Saw X",
-      language: "English",
-      poster:
-        "https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:l-image,i-discovery-catalog@@icons@@bms_premiere_v1.png,t-false,lfo-bottom_left,l-end/et00363723-lslvgbmpbl-portrait.jpg",
-    },
-    {
-      title: "Blackmail",
-      language: "Tamil",
-      poster:
-        "https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:l-image,i-discovery-catalog@@icons@@bms_premiere_v1.png,t-false,lfo-bottom_left,l-end/et00452580-avxwmqbpfa-portrait.jpg",
-    },
-    {
-      title: "The Internship",
-      language: "English",
-      poster:
-        "https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:l-image,i-discovery-catalog@@icons@@bms_premiere_v1.png,t-false,lfo-bottom_left,l-end/et00482510-gawdctkxzh-portrait.jpg",
-    },
-    {
-      title: "Anaconda",
-      language: "English",
-      poster:
-        "https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:l-image,i-discovery-catalog@@icons@@bms_premiere_v1.png,t-false,lfo-bottom_left,l-end/et00448751-cpyhcaemzh-portrait.jpg",
-    },
-    {
-      title: "Christmas Karma",
-      language: "English",
-      poster:
-        "https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:l-image,i-discovery-catalog@@icons@@bms_premiere_v1.png,t-false,lfo-bottom_left,l-end/et00463857-qbjwmggljk-portrait.jpg",
-    },
-  ];
+  const [premiereMovies, setPremiereMovies] = useState([]);
 
   const [trendingMovies, setTrendingMovies] = useState([]);
 
@@ -59,7 +33,7 @@ function App() {
   const [premiereIndex, setPremiereIndex] = useState(0);
   const cardWidth = 200; // approx width of one PremiereCard
   const visibleCards = 5;
-  const maxIndex = premiereMovies.length - visibleCards;
+  const maxIndex = Math.max(0, premiereMovies.length - visibleCards);
 
   const nextPremiere = () => {
     setPremiereIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
@@ -100,6 +74,23 @@ function App() {
     };
 
     fetchTrending();
+  }, [API_KEY]);
+
+  useEffect(() => {
+    const fetchPremieres = async () => {
+      if (!API_KEY) return;
+      try {
+        const res = await fetch(
+          `${BASE_URL}/movie/upcoming?api_key=${API_KEY}&language=en-US&page=1`
+        );
+        const data = await res.json();
+        setPremiereMovies(data?.results || []);
+      } catch (err) {
+        console.error("Failed to fetch premiere movies:", err);
+      }
+    };
+
+    fetchPremieres();
   }, [API_KEY]);
 
   return (
@@ -196,10 +187,15 @@ function App() {
           >
             {premiereMovies.map((movie) => (
               <PremiereCard
-                key={movie.title}
+                key={movie.id}
                 title={movie.title}
-                language={movie.language}
-                poster={movie.poster}
+                language={movie.original_language?.toUpperCase() || "EN"}
+                poster={
+                  movie.poster_path
+                    ? `${IMG_500}${movie.poster_path}`
+                    : "/no-poster.png"
+                }
+                onClick={() => navigate(`/movie/${movie.id}`)}
               />
             ))}
           </div>

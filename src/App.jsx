@@ -1,10 +1,11 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import MovieDetails from "./pages/MovieDetails";
 import MovieDetailsContainer from "./pages/MovieDetailsContainer";
 import FoodOrdering from "./pages/FoodOrdering";
 import AuthForm from "./pages/AuthForm";
 import LandingPage2 from "./pages/LandingPage2";
 import LandingPage from "./pages/LandingPage";
+import Showtimes from "./pages/Showtimes";
+import SeatBooking from "./pages/SeatBooking";
 
 function App() {
   return (
@@ -14,6 +15,8 @@ function App() {
         <Route path="/auth" element={<AuthForm />} />
         <Route path="/landing2" element={<LandingPage2 />} />
         <Route path="/movie/:movieId" element={<MovieDetailsContainer />} />
+        <Route path="/showtimes" element={<Showtimes />} />
+        <Route path="/seats" element={<SeatBooking />} />
       </Routes>
     </BrowserRouter>
   );

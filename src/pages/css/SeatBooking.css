@@ -1,0 +1,389 @@
+/* ===============================
+   PAGE BASE
+================================ */
+.seat-page {
+  background: #f5f5f5;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ===============================
+   HEADER (BREADCRUMB)
+================================ */
+.seat-header-bms {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e5e5;
+  padding: 14px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.seat-header-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.back-arrow {
+  font-size: 20px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.movie-title {
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 0;
+}
+
+.movie-title:hover {
+  color: #f84464;
+}
+
+.movie-subtitle {
+  font-size: 13px;
+  color: #6f6f6f;
+  margin-top: 2px;
+}
+
+/* Ticket button */
+.ticket-btn {
+  border: 1px solid #f84464;
+  background: #ffffff;
+  color: #f84464;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* ===============================
+   SHOWTIME STRIP
+================================ */
+.showtime-strip {
+  background: #f6f7f8;
+  padding: 12px 24px;
+  display: flex;
+  gap: 12px;
+  border-bottom: 1px solid #e5e5e5;
+  overflow-x: auto;
+}
+
+.showtime-btn {
+  border: 1px solid #4caf50;
+  background: #ffffff;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 13px;
+  color: #4caf50;
+  min-width: 90px;
+}
+
+.showtime-btn span {
+  display: block;
+}
+
+.showtime-btn small {
+  display: block;
+  font-size: 10px;
+  margin-top: 2px;
+}
+
+.showtime-btn.active {
+  background: #4caf50;
+  color: #ffffff;
+}
+
+.showtime-btn.active small {
+  color: #ffffff;
+}
+
+/* ===============================
+   SEAT LAYOUT
+================================ */
+.seat-layout {
+  padding: 30px 24px;
+}
+
+.seat-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+
+.row-label {
+  width: 120px;              /* enough for SOFA SLIDER */
+  font-weight: 600;
+  font-size: 13px;
+  color: #555;
+  text-align: right;
+  padding-right: 14px;
+  white-space: nowrap;      
+}
+
+
+.seat-block {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-width: 900px;
+}
+
+
+.seat {
+  width: 34px;
+  height: 34px;
+  border-radius: 4px;
+  border: 1px solid #4caf50;
+  background: #ffffff;
+  color: #4caf50;
+  font-size: 11px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.seat:hover {
+  background: #e8f5e9;
+}
+
+.seat.selected {
+  background: #4caf50;
+  color: #ffffff;
+}
+
+.seat.sold {
+  background: #dcdcdc;
+  border: none;
+  color: #ffffff;
+  cursor: not-allowed;
+}
+
+/* ===============================
+   SCREEN
+================================ */
+.screen {
+  text-align: center;
+  margin: 40px 0 20px;
+}
+
+.screen-bar {
+  height: 14px;
+  width: 60%;
+  margin: auto;
+  background: #dbefff;
+  border-radius: 4px;
+}
+
+.screen p {
+  font-size: 12px;
+  color: #777;
+  margin-top: 6px;
+}
+
+/* ===============================
+   SUMMARY BAR
+================================ */
+.summary {
+  background: #ffffff;
+  border-top: 1px solid #e5e5e5;
+  padding: 14px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  bottom: 0;
+}
+
+.summary span {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.summary button {
+  background: #f84464;
+  border: none;
+  color: #ffffff;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.summary button:disabled {
+  background: #f3a3b2;
+  cursor: not-allowed;
+}
+/* ================= MODAL OVERLAY ================= */
+.ticket-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+}
+
+/* ================= MODAL CARD ================= */
+.ticket-modal-card {
+  background: #ffffff;
+  width: 420px;
+  border-radius: 14px;
+  padding: 24px 22px 20px;
+  text-align: center;
+  animation: scaleIn 0.25s ease;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Title */
+.modal-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+/* Illustration */
+.modal-illustration {
+  font-size: 40px;
+  margin: 8px 0 12px;
+}
+
+/* Seat numbers */
+.seat-count-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 14px 0 18px;
+}
+
+.seat-count {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+}
+
+.seat-count.active {
+  background: #f84464;
+  color: #ffffff;
+}
+
+/* Divider */
+.ticket-modal-card hr {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 14px 0;
+}
+
+/* Seat categories */
+.seat-type-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.seat-type {
+  text-align: center;
+  font-size: 12px;
+}
+
+.seat-type-name {
+  font-weight: 600;
+}
+
+.seat-type-price {
+  margin: 4px 0;
+}
+
+.seat-type-status {
+  color: #16a34a;
+  font-size: 11px;
+}
+
+/* CTA Button */
+.select-seat-btn {
+  background: #f84464;
+  color: #ffffff;
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.select-seat-btn:hover {
+  opacity: 0.95;
+}
+/* ================= BREADCRUMB ================= */
+.breadcrumb-bar {
+  background: #ffffff;
+  padding: 10px 24px;
+  font-size: 13px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.breadcrumb-link {
+  color: #f84464;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.breadcrumb-link:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb-separator {
+  margin: 0 6px;
+  color: #9ca3af;
+}
+
+.breadcrumb-current {
+  color: #111827;
+  font-weight: 500;
+}
+/* ================= SHOWTIME BREADCRUMB ================= */
+.showtime-breadcrumb {
+  display: flex;
+  gap: 10px;
+  margin: 6px 0 4px;
+  flex-wrap: wrap;
+}
+
+.showtime-pill {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 14px;
+  border: 1px solid #4caf50;
+  color: #4caf50;
+  cursor: pointer;
+  background: #ffffff;
+}
+
+.showtime-pill:hover {
+  background: #e8f5e9;
+}
+
+.showtime-pill.active {
+  background: #4caf50;
+  color: #ffffff;
+}

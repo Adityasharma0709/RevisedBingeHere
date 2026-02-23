@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
-import Magnetic from '../Magnetic';
+import Magnetic from './Magnetic';
 
 export default function Button({ children, backgroundColor = "#455CE9", className, ...attributes }) {
 

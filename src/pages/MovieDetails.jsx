@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Lenis from "@studio-freight/lenis";
 import "./css/MovieDetails.css"; // KEEP THIS IMPORT HERE
 
@@ -27,6 +28,7 @@ const SAMPLE_REVIEWS = [
 ];
 
 const MovieDetails = ({ movie, cast }) => {
+  const navigate = useNavigate();
   const [trailerKey, setTrailerKey] = useState(null);
   const [showTrailer, setShowTrailer] = useState(false);
   const [reviews, setReviews] = useState(SAMPLE_REVIEWS);
@@ -85,6 +87,18 @@ const MovieDetails = ({ movie, cast }) => {
     }
   };
 
+  const handleBookTickets = () => {
+    navigate("/showtimes", {
+      state: {
+        movieId: movie.id,
+        movie: movie.title,
+        language: movie.original_language?.toUpperCase() || "EN",
+        runtime: movie.runtime,
+        genres: movie.genres?.map((g) => g.name) || [],
+      },
+    });
+  };
+
   return (
     <div className="cinema-page">
       <TrailerModal 
@@ -95,7 +109,8 @@ const MovieDetails = ({ movie, cast }) => {
 
       <MovieHero 
         movie={movie} 
-        onWatchTrailer={handleWatchTrailer} 
+        onWatchTrailer={handleWatchTrailer}
+        onBookTickets={handleBookTickets}
       />
 
       <ReviewSection 

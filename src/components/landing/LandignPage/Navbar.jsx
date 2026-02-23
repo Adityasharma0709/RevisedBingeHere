@@ -5,7 +5,7 @@ import Dropdown from "../LandingPage2/Dropdown";
 import { Search } from "lucide-react";
 import Button from "../../ui/Button"
 
-import Magnetic from "../../Magnetic";
+import Magnetic from "../../ui/Magnetic";
 
 const Navbar = () => {
   const navigate = useNavigate();

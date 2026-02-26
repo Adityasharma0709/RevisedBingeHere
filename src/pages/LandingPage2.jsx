@@ -1,9 +1,10 @@
-
+﻿
 
 
 
 
 import { useEffect, useState } from "react";
+import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import CategoryBar from "../components/landing/LandingPage2/category";
@@ -18,6 +19,10 @@ function App() {
   const BASE_URL = "https://api.themoviedb.org/3";
   const IMG_500 = "https://image.tmdb.org/t/p/w500";
 
+  useEffect(() => {
+    document.title = "BingeHere";
+  }, []);
+
   const categories = [
     { name: "Comedy", color: "bg-red-500" },
     { name: "Action", color: "bg-blue-500" },
@@ -29,7 +34,7 @@ function App() {
 
   const [trendingMovies, setTrendingMovies] = useState([]);
 
-  // 🔹 Premiere carousel state
+  // ðŸ”¹ Premiere carousel state
   const [premiereIndex, setPremiereIndex] = useState(0);
   const cardWidth = 200; // approx width of one PremiereCard
   const visibleCards = 5;
@@ -94,7 +99,7 @@ function App() {
   }, [API_KEY]);
 
   return (
-    <div className="bg-gray-50 min-h-screen font-sans text-gray-800">
+    <div className="bg-[#0b0f1a] min-h-screen font-sans text-slate-100">
       {/* NAVBAR */}
       <Navbar2 />
 
@@ -105,17 +110,44 @@ function App() {
 
       {/* CATEGORIES */}
       <section className="py-12 px-6">
-        <h2 className="text-2xl font-bold mb-6 text-center">
+        <h2 className="text-2xl font-bold mb-6 text-center text-slate-100">
           Browse by Category
         </h2>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {categories.map((cat) => (
             <div
               key={cat.name}
-              className={`${cat.color} h-24 rounded-lg flex items-center justify-center text-white text-lg font-semibold cursor-pointer hover:scale-105 transition`}
+              className="cursor-pointer group hover:scale-105 transition-transform duration-300"
             >
-              {cat.name}
+              <div
+                className={`relative ${cat.color} text-white px-6 py-4 shadow-2xl flex items-center gap-4 overflow-hidden`}
+                style={{
+                  maskImage: `radial-gradient(circle at 0 50%, transparent 10px, black 11px),
+                              radial-gradient(circle at 100% 50%, transparent 10px, black 11px)`,
+                  maskComposite: "intersect",
+                  WebkitMaskImage: `radial-gradient(circle at 0 50%, transparent 10px, black 11px),
+                                    radial-gradient(circle at 100% 50%, transparent 10px, black 11px)`,
+                  WebkitMaskComposite: "source-in",
+                }}
+              >
+                <div className="absolute left-[70%] top-2 bottom-2 border-l-2 border-dashed border-white/30" />
+
+                <div className="flex flex-col items-start pr-4">
+                  <span className="text-[10px] uppercase tracking-widest text-white/70 font-bold">
+                    Category
+                  </span>
+                  <span className="text-2xl font-black tracking-tighter uppercase">
+                    {cat.name}
+                  </span>
+                </div>
+
+                <div className="pl-2 group-hover:translate-x-1 transition-transform">
+                  <div className="bg-white/20 p-2 rounded-full">
+                    <ArrowRight size={20} />
+                  </div>
+                </div>
+              </div>
             </div>
           ))}
         </div>
@@ -123,10 +155,10 @@ function App() {
 
 
       {/* TRENDING MOVIES (CAROUSEL) */}
-      <section className="py-8 px-6 bg-white relative overflow-hidden">
+      <section className="py-8 px-6 bg-[#0f172a] relative overflow-hidden border-y border-white/5">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Trending Movies</h2>
-          <span className="text-red-500 cursor-pointer text-sm font-semibold">
+          <span className="text-rose-400 cursor-pointer text-sm font-semibold">
             See All
           </span>
         </div>
@@ -155,14 +187,14 @@ function App() {
 
           <button
             onClick={prevTrending}
-            className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/50 text-white w-10 h-10 rounded-full flex items-center justify-center"
+            className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/60 text-white w-10 h-10 rounded-full flex items-center justify-center ring-1 ring-white/10 hover:bg-black/80 transition"
           >
             {"<"}
           </button>
 
           <button
             onClick={nextTrending}
-            className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/50 text-white w-10 h-10 rounded-full flex items-center justify-center"
+            className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/60 text-white w-10 h-10 rounded-full flex items-center justify-center ring-1 ring-white/10 hover:bg-black/80 transition"
           >
             {">"}
           </button>
@@ -170,10 +202,10 @@ function App() {
       </section>
 
       {/* PREMIERES (CAROUSEL) */}
-      <section className="bg-[#2b3149] py-10 px-6 relative overflow-hidden">
+      <section className="bg-[#131a2e] py-10 px-6 relative overflow-hidden border-t border-white/5">
         <div className="mb-6">
           <h2 className="text-white text-2xl font-bold">Premieres</h2>
-          <p className="text-gray-300 text-sm">
+          <p className="text-slate-300 text-sm">
             Brand new releases every Friday
           </p>
         </div>
@@ -202,22 +234,22 @@ function App() {
 
           <button
             onClick={prevPremiere}
-            className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/50 text-white w-10 h-10 rounded-full flex items-center justify-center"
+            className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/60 text-white w-10 h-10 rounded-full flex items-center justify-center ring-1 ring-white/10 hover:bg-black/80 transition"
           >
-            ‹
+            {"<"}
           </button>
 
           <button
             onClick={nextPremiere}
-            className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/50 text-white w-10 h-10 rounded-full flex items-center justify-center"
+            className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/60 text-white w-10 h-10 rounded-full flex items-center justify-center ring-1 ring-white/10 hover:bg-black/80 transition"
           >
-            ›
+            {">"}
           </button>
         </div>
       </section>
 
       {/* FOOTER */}
-      <footer className="bg-gray-800 text-white py-6 text-center">
+      <footer className="bg-[#0b0f1a] text-slate-400 py-6 text-center border-t border-white/5">
         <p className="text-sm">© 2026 BingeHere. All Rights Reserved.</p>
       </footer>
     </div>
@@ -225,3 +257,5 @@ function App() {
 }
 
 export default App;
+
+

@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { createPortal } from "react-dom";
 import {
   Bell,
@@ -14,6 +14,7 @@ import {
   ChevronUp,
   Ticket,
   TicketCheck,
+  ArrowRight,
 } from "lucide-react";
 import Button from "../../ui/Button";
 const menuItems = [
@@ -84,9 +85,15 @@ const SideMenu = () => {
   return (
     <>
       {/* Hamburger Button */}
-      <Button onClick={() => setOpen(true)} className="text-white"
-         backgroundColor="#ef4444">
-        ☰
+      <Button
+        onClick={() => setOpen(true)}
+        className="text-white px-2 py-2 shadow-none"
+        backgroundColor="#ef4444"
+        variant="solid"
+        size="sm"
+      >
+        
+          <ArrowRight size={16} />
       </Button>
 
       {/* Portal for Drawer */}
@@ -102,17 +109,17 @@ const SideMenu = () => {
 
           {/* Drawer */}
           <div
-            className={`fixed top-0 right-0 h-full w-[320px] bg-white z-[70] shadow-2xl transform transition-transform duration-300
+            className={`fixed top-0 right-0 h-full w-[320px] bg-[#0b0f1a] text-slate-100 z-[70] shadow-2xl shadow-black/60 transform transition-transform duration-300
             ${open ? "translate-x-0" : "translate-x-full"}`}
           >
             {/* Header */}
-            <div className="p-4 border-b">
+            <div className="p-4 border-b border-white/10">
               <h2 className="text-xl font-semibold">Hey!</h2>
 
-              <div className="mt-3 flex items-center justify-between bg-gray-50 p-3 rounded-lg shadow-sm">
+              <div className="mt-3 flex items-center justify-between bg-white/5 p-3 rounded-lg shadow-sm border border-white/10">
                 <div className="flex items-center gap-3">
-                  <Gift className="text-red-500" size={28} />
-                  <p className="text-sm text-gray-600">
+                  <Gift className="text-rose-400" size={28} />
+                  <p className="text-sm text-slate-300">
                     Unlock special offers & great benefits
                   </p>
                 </div>
@@ -130,7 +137,7 @@ const SideMenu = () => {
                     {/* Menu Row */}
                     <div
                       onClick={() => !item.locked && toggleMenu(item.title)}
-                      className={`flex items-center gap-3 p-4 cursor-pointer ${item.locked ? "text-gray-400" : "hover:bg-gray-100"
+                      className={`flex items-center gap-3 p-4 cursor-pointer ${item.locked ? "text-slate-500" : "hover:bg-white/5"
                         }`}
                     >
                       <Icon size={20} />
@@ -138,7 +145,7 @@ const SideMenu = () => {
                       <div className="flex-1">
                         <p className="text-sm font-medium">{item.title}</p>
                         {item.subtitle && (
-                          <p className="text-xs text-gray-500">{item.subtitle}</p>
+                          <p className="text-xs text-slate-400">{item.subtitle}</p>
                         )}
                       </div>
 
@@ -153,7 +160,7 @@ const SideMenu = () => {
 
                     {/* Dropdown Content */}
                     {isOpen && (
-                      <div className="bg-gray-50 px-4 py-3 text-sm">
+                      <div className="bg-white/5 px-4 py-3 text-sm border-t border-white/10">
                         {item.title === "Your Orders" ? (
                           <div className="space-y-2">
                             {/* Upcoming dropdown */}
@@ -164,7 +171,7 @@ const SideMenu = () => {
                                     orderSection === "upcoming" ? null : "upcoming",
                                   )
                                 }
-                                className="flex justify-between items-center cursor-pointer text-sm font-semibold text-gray-700"
+                                className="flex justify-between items-center cursor-pointer text-sm font-semibold text-slate-200"
                               >
                                 <span className="flex items-center gap-2"><Ticket size={16} />Upcoming</span>
                                 <span>
@@ -177,11 +184,11 @@ const SideMenu = () => {
                                   {upcomingOrders.map((order, idx) => (
                                     <div
                                       key={idx}
-                                      className="border rounded-md p-2 bg-white"
+                                      className="border border-white/10 rounded-md p-2 bg-[#0f172a]"
                                     >
                                       <p className="font-semibold">{order.movie}</p>
-                                      <p className="text-xs text-gray-600">
-                                        {order.date} • Seats: {order.seats}
+                                      <p className="text-xs text-slate-400">
+                                        {order.date} â€¢ Seats: {order.seats}
                                       </p>
                                     </div>
                                   ))}
@@ -197,7 +204,7 @@ const SideMenu = () => {
                                     orderSection === "booked" ? null : "booked",
                                   )
                                 }
-                                className="flex justify-between items-center cursor-pointer text-sm font-semibold text-gray-700"
+                                className="flex justify-between items-center cursor-pointer text-sm font-semibold text-slate-200"
                               >
                                 <span className="flex items-center gap-2"><TicketCheck size={16} />Booked</span>
                                 <span>{orderSection === "booked" ? <ChevronUp size={16} /> : <ChevronDown size={16} />}</span>
@@ -208,11 +215,11 @@ const SideMenu = () => {
                                   {bookedOrders.map((order, idx) => (
                                     <div
                                       key={idx}
-                                      className="border rounded-md p-2 bg-white"
+                                      className="border border-white/10 rounded-md p-2 bg-[#0f172a]"
                                     >
                                       <p className="font-semibold">{order.movie}</p>
-                                      <p className="text-xs text-gray-600">
-                                        {order.date} • Seats: {order.seats}
+                                      <p className="text-xs text-slate-400">
+                                        {order.date} â€¢ Seats: {order.seats}
                                       </p>
                                     </div>
                                   ))}
@@ -221,7 +228,7 @@ const SideMenu = () => {
                             </div>
                           </div>
                         ) : (
-                          <p className="text-gray-600">
+                          <p className="text-slate-400">
                             {item.title} options will appear here.
                           </p>
                         )}
@@ -241,3 +248,4 @@ const SideMenu = () => {
 };
 
 export default SideMenu;
+

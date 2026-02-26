@@ -1,6 +1,5 @@
 import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import Cylinder from "../components/landing/LandignPage/Cylinder";
 import CenterText from "../components/landing/LandignPage/CenterText";
 import FloatingTicket from "../components/landing/LandignPage/FloatingTicket";
 // import RectangleBackground from "../components/landing/RectangleBackground";
@@ -8,7 +7,6 @@ import ScrollCards from "../components/landing/LandignPage/ScrollCards";
 import { useEffect } from "react";
 import { Navbar } from "../components/landing/LandignPage/Navbar";
 import JoinCard from "../components/landing/LandignPage/JoinCard";
-import TwisterSection from "../components/landing/LandignPage/TwisterSection";
 
 function ResponsiveCamera() {
   const { camera, size } = useThree();
@@ -42,6 +40,10 @@ function ResponsiveCamera() {
 }
 
 export default function App() {
+  useEffect(() => {
+    document.title = "BingeHere";
+  }, []);
+
   return (
     <>
       <Navbar />

@@ -38,6 +38,16 @@ const MovieDetailsContainer = () => {
     fetchData();
   }, [movieId]);
 
+  useEffect(() => {
+    if (movie?.title || movie?.name) {
+      document.title = movie.title || movie.name;
+    }
+
+    return () => {
+      document.title = "BingeHere";
+    };
+  }, [movie]);
+
   if (loading || !movie) return <p>Loading...</p>;
 
   return <MovieDetails movie={movie} cast={cast} />;

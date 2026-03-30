@@ -19,10 +19,9 @@ function ResponsiveCamera() {
 
     if (aspect < 1) {
       // Portrait mode (Mobile)
-      // Increase FOV significantly to fit the wide cylinder in a narrow view
-      // And move it back slightly
-      camera.fov = 80 + (1 - aspect) * 20; // Increases as it gets narrower
-      camera.position.z = 45 + (1 - aspect) * 10;
+      // Keep the hero readable while still fitting the scene in a narrow view
+      camera.fov = 70 + (1 - aspect) * 10; // 70 -> 80 as it gets narrower
+      camera.position.z = 34 + (1 - aspect) * 6; // Pull in a bit vs. desktop
     } else if (aspect < 1.5) {
       // Tablet / squarish windows
       camera.fov = 65;

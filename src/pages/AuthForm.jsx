@@ -51,7 +51,7 @@ const AuthForm = () => {
             <div className="overlay-panel overlay-right">
               <h1>Hey, Cinephile!</h1>
               <p>Quick, hit that login button!<br></br>
-                The show’s about to start and the popcorn is waiting!
+                The showâ€™s about to start and the popcorn is waiting!
               </p>
               <button  onClick={() => navigate("/landing2")}>
                 Sign Up

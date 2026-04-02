@@ -6,6 +6,7 @@ import LandingPage2 from "./pages/LandingPage2";
 import LandingPage from "./pages/LandingPage";
 import Showtimes from "./pages/Showtimes";
 import SeatBooking from "./pages/SeatBooking";
+import PaymentSummary from "./pages/PaymentSummary";
 
 function App() {
   return (
@@ -17,6 +18,8 @@ function App() {
         <Route path="/movie/:movieId" element={<MovieDetailsContainer />} />
         <Route path="/showtimes" element={<Showtimes />} />
         <Route path="/seats" element={<SeatBooking />} />
+        <Route path="/food-ordering" element={<FoodOrdering />} />
+        <Route path="/payment-summary" element={<PaymentSummary />} />
       </Routes>
     </BrowserRouter>
   );

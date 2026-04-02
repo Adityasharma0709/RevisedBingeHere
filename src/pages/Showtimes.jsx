@@ -270,6 +270,7 @@ export default function Showtimes() {
                           movie: movieName,
                           language,
                           theatre: theatre.name,
+                          location: theatre.location,
                           date: selectedDate,
                           time,
                         },

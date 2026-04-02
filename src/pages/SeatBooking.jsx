@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./css/SeatBooking.css";
 
-/* Seat rows with prices */
 const seatRows = [
   { row: "RECLINER", price: 349, seats: 25 },
   { row: "SOFA SLIDER", price: 199, seats: 16 },
@@ -19,7 +18,6 @@ const seatTypes = [
   { type: "GOLD", price: 105 },
 ];
 
-/* Other show timings */
 const showTimes = ["09:20 AM", "12:05 PM", "04:55 PM", "07:40 PM", "10:25 PM"];
 
 export default function SeatBooking() {
@@ -30,8 +28,49 @@ export default function SeatBooking() {
   const [ticketCount, setTicketCount] = useState(2);
   const [showTicketModal, setShowTicketModal] = useState(true);
   const [selectedSeats, setSelectedSeats] = useState([]);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentTimer, setPaymentTimer] = useState(60);
+  const [selectedPaymentApp, setSelectedPaymentApp] = useState("GPay");
+  const [foodOrder, setFoodOrder] = useState(() => {
+    if (state?.foodOrder) return state.foodOrder;
+    const stored = localStorage.getItem("foodOrder");
+    if (!stored) return null;
+    try {
+      return JSON.parse(stored);
+    } catch {
+      return null;
+    }
+  });
 
-  /* Seat click */
+  useEffect(() => {
+    if (!state?.foodOrder) return;
+    setFoodOrder(state.foodOrder);
+    localStorage.setItem("foodOrder", JSON.stringify(state.foodOrder));
+  }, [state?.foodOrder]);
+
+  useEffect(() => {
+    if (!showPaymentModal) return undefined;
+
+    setPaymentTimer(60);
+    const intervalId = setInterval(() => {
+      setPaymentTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(intervalId);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [showPaymentModal]);
+
+  useEffect(() => {
+    if (paymentTimer === 0 && showPaymentModal) {
+      alert("QR payment expired. Please generate a new QR code.");
+    }
+  }, [paymentTimer, showPaymentModal]);
+
   const handleSeatClick = (seatId) => {
     if (soldSeats.has(seatId)) return;
 
@@ -48,29 +87,52 @@ export default function SeatBooking() {
     setSelectedSeats([...selectedSeats, seatId]);
   };
 
-  /* Price logic */
   const getSeatPrice = (seatId) => {
     const row = seatRows.find((r) => seatId.startsWith(r.row));
     return row ? row.price : 0;
   };
 
-  const totalPrice = selectedSeats.reduce(
-    (sum, seat) => sum + getSeatPrice(seat),
-    0,
-  );
+  const seatTotal = selectedSeats.reduce((sum, seat) => sum + getSeatPrice(seat), 0);
+  const foodTotal = foodOrder?.totalAmount || 0;
+  const grandTotal = seatTotal + foodTotal;
+  const paymentApps = ["GPay", "PhonePe", "Navi", "Paytm"];
+
+  const paymentState = {
+    movie: state?.movie,
+    language: state?.language,
+    theatre: state?.theatre,
+    theatreLocation: state?.location,
+    date: state?.date,
+    time: activeTime,
+    ticketCount,
+    selectedSeats,
+    seatTotal,
+    foodTotal,
+    foodItems: foodOrder?.items || [],
+    grandTotal,
+  };
+
+  const openPaymentModal = () => {
+    if (selectedSeats.length !== ticketCount) return;
+    setSelectedPaymentApp("GPay");
+    setShowPaymentModal(true);
+  };
+
+  const completePayment = () => {
+    setShowPaymentModal(false);
+    navigate("/payment-summary", { state: paymentState });
+  };
 
   return (
     <div className="seat-page">
-      {/* ================= BREADCRUMB ================= */}
       <div className="breadcrumb-bar">
         <span className="breadcrumb-link" onClick={() => navigate("/")}>
-          ← Movies
+          {"<-"} Movies
         </span>
         <span className="breadcrumb-separator">/</span>
         <span className="breadcrumb-current">{state?.movie}</span>
       </div>
 
-      {/* ================= HEADER ================= */}
       <div className="seat-header-bms">
         <div className="seat-header-left">
           <div>
@@ -78,16 +140,11 @@ export default function SeatBooking() {
               {state?.movie} ({state?.language})
             </h2>
 
-            {/* ===== SHOWTIME BREADCRUMB ===== */}
             <div className="showtime-breadcrumb">
               {showTimes.map((time) => (
                 <span
                   key={time}
-                  className={
-                    time === activeTime
-                      ? "showtime-pill active"
-                      : "showtime-pill"
-                  }
+                  className={time === activeTime ? "showtime-pill active" : "showtime-pill"}
                   onClick={() => {
                     setActiveTime(time);
                     setSelectedSeats([]);
@@ -109,12 +166,10 @@ export default function SeatBooking() {
         </button>
       </div>
 
-      {/* ================= TICKET COUNT MODAL ================= */}
       {showTicketModal && (
         <div className="ticket-modal-overlay">
           <div className="ticket-modal-card">
             <h2 className="modal-title">How many seats?</h2>
-
             <div className="modal-illustration">🛵</div>
 
             <div className="seat-count-row">
@@ -123,9 +178,7 @@ export default function SeatBooking() {
                 return (
                   <span
                     key={num}
-                    className={
-                      num === ticketCount ? "seat-count active" : "seat-count"
-                    }
+                    className={num === ticketCount ? "seat-count active" : "seat-count"}
                     onClick={() => setTicketCount(num)}
                   >
                     {num}
@@ -159,7 +212,6 @@ export default function SeatBooking() {
         </div>
       )}
 
-      {/* ================= SEAT SELECTION ================= */}
       {!showTicketModal && (
         <>
           <div className="seat-layout">
@@ -173,10 +225,9 @@ export default function SeatBooking() {
                     return (
                       <button
                         key={seatId}
-                        className={`seat
-                          ${soldSeats.has(seatId) ? "sold" : ""}
-                          ${selectedSeats.includes(seatId) ? "selected" : ""}
-                        `}
+                        className={`seat ${soldSeats.has(seatId) ? "sold" : ""} ${
+                          selectedSeats.includes(seatId) ? "selected" : ""
+                        }`}
                         onClick={() => handleSeatClick(seatId)}
                       >
                         {i + 1}
@@ -185,30 +236,108 @@ export default function SeatBooking() {
                   })}
                 </div>
 
-                <span className="price-label">₹{row.price}</span>
+                <span className="price-label">INR {row.price}</span>
               </div>
             ))}
           </div>
 
-          {/* SCREEN */}
           <div className="screen">
             <div className="screen-bar"></div>
             <p>All eyes this way please</p>
           </div>
 
-          {/* SUMMARY */}
           <div className="summary">
             <span>
               Seats: <b>{selectedSeats.join(", ") || "None"}</b>
             </span>
             <span>
-              Total: <b>₹{totalPrice}</b>
+              Food: <b>INR {foodTotal}</b>
+            </span>
+            <span>
+              SeatPrice : <b>INR {seatTotal}</b>
             </span>
 
-            <button disabled={selectedSeats.length !== ticketCount}>
-              Pay ₹{totalPrice}
+            <button
+              className="food-order-btn"
+              onClick={() =>
+                navigate("/food-ordering", {
+                  state: {
+                    movie: state?.movie,
+                    language: state?.language,
+                    theatre: state?.theatre,
+                    location: state?.location,
+                    date: state?.date,
+                    time: activeTime,
+                    selectedSeats,
+                    ticketCount,
+                    foodOrder,
+                  },
+                })
+              }
+            >
+              Food Ordering
+            </button>
+
+            <button
+              onClick={openPaymentModal}
+              disabled={selectedSeats.length !== ticketCount}
+            >
+              Pay INR {grandTotal}
             </button>
           </div>
+
+          {showPaymentModal && (
+            <div className="ticket-modal-overlay">
+              <div className="ticket-modal-card payment-modal-card">
+                <h2 className="modal-title">Scan & Pay</h2>
+                <p className="payment-subtext">
+                  Scan the QR code using your UPI app. QR expires in{" "}
+                  <strong>{paymentTimer}s</strong>.
+                </p>
+
+                <div className="qr-box" aria-label="QR payment placeholder">
+                  <div className="qr-inner">QR</div>
+                </div>
+
+                <div className="payment-apps-row">
+                  {paymentApps.map((app) => (
+                    <button
+                      key={app}
+                      type="button"
+                      className={
+                        app === selectedPaymentApp ? "pay-app-btn active" : "pay-app-btn"
+                      }
+                      onClick={() => setSelectedPaymentApp(app)}
+                    >
+                      {app}
+                    </button>
+                  ))}
+                </div>
+
+                <p className="payment-subtext">
+                  Selected app: <strong>{selectedPaymentApp}</strong>
+                </p>
+
+                <div className="payment-actions-row">
+                  <button
+                    type="button"
+                    className="secondary-pay-btn"
+                    onClick={() => setShowPaymentModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    className="select-seat-btn"
+                    onClick={completePayment}
+                    disabled={paymentTimer === 0}
+                  >
+                    I Have Paid
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>

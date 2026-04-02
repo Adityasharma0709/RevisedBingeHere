@@ -165,10 +165,8 @@ const AuthForm = () => {
 
             <div className="overlay-panel overlay-right">
               <h1>Hey, Cinephile!</h1>
-              <p>
-                Quick, hit that login button!
-                <br />
-                The show’s about to start and the popcorn is waiting!
+              <p>Quick, hit that login button!<br></br>
+                The showâ€™s about to start and the popcorn is waiting!
               </p>
               <button onClick={() => setIsSignUp(true)}>Sign Up</button>
             </div>

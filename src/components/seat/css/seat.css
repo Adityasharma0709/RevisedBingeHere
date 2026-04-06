@@ -1,69 +1,59 @@
-/* main container */
-.seat-page {
-  padding: 20px;
-  background: #fafafa;
+.seat-selection-page .seat-section + .seat-section {
+  margin-top: 22px;
 }
 
-/* row */
-.row {
+.seat-selection-page .section-title {
+  margin: 0 0 14px;
+  color: #fda4af;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.seat-selection-page .row {
   display: flex;
-  gap: 10px;
-  margin-bottom: 14px;
   align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
 }
 
-/* row label */
-.row-name {
-  width: 25px;
-  font-weight: bold;
-  color: #444;
+.seat-selection-page .row-name {
+  width: 28px;
+  color: #cbd5e1;
+  font-weight: 800;
 }
 
-/* seat default */
-.seat {
-  width: 34px;
-  height: 34px;
-  border: 1.5px solid #2dc492;
-  background: #fff;
-  border-radius: 6px;
+.seat-selection-page .seat {
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(74, 222, 128, 0.35);
+  background: rgba(255, 255, 255, 0.06);
+  color: #86efac;
+  border-radius: 10px;
   cursor: pointer;
-  font-size: 13px;
-  transition: 
-    background 0.3s ease,
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+  font-size: 0.82rem;
+  font-weight: 700;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
-/* hover */
-.seat:hover {
-  transform: scale(1.1);
+.seat-selection-page .seat:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.2);
+  background: rgba(34, 197, 94, 0.12);
 }
 
-/* selected animation */
-.selected {
-  background: #2dc492;
-  color: white;
-  animation: pop 0.3s ease;
-  box-shadow: 0 4px 10px rgba(45,196,146,0.4);
+.seat-selection-page .seat.selected {
+  background: linear-gradient(135deg, #dc2626, #fb7185);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 10px 22px rgba(220, 38, 38, 0.26);
 }
 
-/* booked seat */
-.booked {
-  background: #d3d3d3;
-  border-color: #aaa;
+.seat-selection-page .seat.booked {
+  background: rgba(100, 116, 139, 0.24);
+  color: #94a3b8;
+  border-color: rgba(148, 163, 184, 0.16);
   cursor: not-allowed;
-  opacity: 0.5;
-}
-
-/* pop animation */
-@keyframes pop {
-  0% {
-    transform: scale(0.6);
-  }
-  80% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-  }
+  opacity: 0.8;
 }

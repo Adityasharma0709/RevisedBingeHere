@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./css/Showtimes.css";
-
+import { Navbar2 } from "../components/landing/LandingPage2/Navbar2";
 export default function Showtimes() {
   const navigate = useNavigate();
   const { state } = useLocation();
@@ -161,21 +161,8 @@ export default function Showtimes() {
 
   return (
     <div className="showtimes-page">
-      <nav className="showtimes-nav">
-        <div
-          className="logo"
-          onClick={() => navigate("/landing2")}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              navigate("/landing2");
-            }
-          }}
-        >
-          <span>Binge</span>
-          <span>Here</span>
-        </div>
+      {/* <nav className="showtimes-nav">
+        <div className="logo">BingeHere</div>
 
         <div className="nav-search">
           <input placeholder="Search for Movies, Events, Plays..." />
@@ -191,9 +178,21 @@ export default function Showtimes() {
               <option key={loc}>{loc}</option>
             ))}
           </select>
-        </div>
-      </nav>
 
+          {menuOpen && (
+            <div className="hamburger-menu">
+              <div className="menu-item">Movies</div>
+              <div className="menu-item">Events</div>
+              <div className="menu-item">Plays</div>
+              <div className="menu-item">Sports</div>
+              <div className="menu-divider"></div>
+              <div className="menu-item">Offers</div>
+              <div className="menu-item">Gift Cards</div>
+            </div>
+          )}
+        </div>
+      </nav> */}
+      {/* <Navbar2 /> */}
       <section className="movie-info">
         <div className="movie-info-glow" aria-hidden="true" />
         <p className="movie-eyebrow">Book your next show</p>

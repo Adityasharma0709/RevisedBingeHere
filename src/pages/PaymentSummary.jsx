@@ -62,6 +62,10 @@ export default function PaymentSummary() {
   return (
     <div className="payment-page">
       <div className="payment-card">
+        <div className="payment-brand">
+          <img src="/combined.png" alt="BingeHere logo" className="payment-brand-logo" />
+          <span className="payment-brand-name">BingeHere</span>
+        </div>
         <h1>Booking Confirmed</h1>
         <p className="payment-subtitle">Your ticket details</p>
 

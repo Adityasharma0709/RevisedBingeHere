@@ -4,10 +4,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { FaPlus, FaMinus, FaShoppingBag } from "react-icons/fa";
 import "./css/FoodOrdering.css";
 
-const HAS_ACTIVE_BOOKING = true;
-const USER_SEAT = "B4";
-const MOVIE_NAME = "Chennai Express";
-
 const MENU_ITEMS = [
   {
     id: 1,
@@ -44,6 +40,10 @@ const FoodOrdering = () => {
 
   const [cart, setCart] = useState(() => state?.foodOrder?.cart || {});
   const [activeCategory, setActiveCategory] = useState("All");
+  const selectedSeats = state?.selectedSeats || [];
+  const seatLabel = selectedSeats.length > 0 ? selectedSeats.join(", ") : "your selected seat";
+  const movieName = state?.movie || "your movie";
+  const hasActiveBooking = Boolean(state?.movie);
 
   const filteredItems =
     activeCategory === "All"
@@ -105,7 +105,7 @@ const FoodOrdering = () => {
     visible: { y: 0, opacity: 1 },
   };
 
-  if (!HAS_ACTIVE_BOOKING) {
+  if (!hasActiveBooking) {
     return (
       <div className="no-booking">
         <h2>No Active Ticket</h2>
@@ -115,6 +115,13 @@ const FoodOrdering = () => {
 
   return (
     <div className="food-page">
+      <nav className="food-topbar">
+        <div className="food-topbar-brand" onClick={() => navigate("/")}>
+          <span className="food-topbar-binge">Binge</span>
+          <span className="food-topbar-here">Here</span>
+        </div>
+      </nav>
+
       <motion.div
         className="food-header"
         initial={{ y: -50, opacity: 0 }}
@@ -122,10 +129,11 @@ const FoodOrdering = () => {
       >
         <div className="header-text">
           <h1>
-            Ordering for <span>{MOVIE_NAME}</span>
+            Ordering for <span>{movieName}</span>
           </h1>
           <p>
-            Delivering to Seat <span className="seat-badge">{USER_SEAT}</span>
+            Delivering to Seat <span className="seat-badge">{seatLabel}</span> for{" "}
+            <span>{movieName}</span>
           </p>
         </div>
       </motion.div>

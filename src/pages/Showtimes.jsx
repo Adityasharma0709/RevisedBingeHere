@@ -11,8 +11,6 @@ export default function Showtimes() {
 
   const [selectedDate, setSelectedDate] = useState(dates[0]);
   const [selectedLocation, setSelectedLocation] = useState(locations[0]);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [showSignIn, setShowSignIn] = useState(false);
 
   const movieName = state?.movie || "Selected Movie";
   const language = state?.language || "English";
@@ -164,7 +162,20 @@ export default function Showtimes() {
   return (
     <div className="showtimes-page">
       <nav className="showtimes-nav">
-        <div className="logo">BingeHere</div>
+        <div
+          className="logo"
+          onClick={() => navigate("/landing2")}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              navigate("/landing2");
+            }
+          }}
+        >
+          <span>Binge</span>
+          <span>Here</span>
+        </div>
 
         <div className="nav-search">
           <input placeholder="Search for Movies, Events, Plays..." />
@@ -180,38 +191,58 @@ export default function Showtimes() {
               <option key={loc}>{loc}</option>
             ))}
           </select>
-
         </div>
       </nav>
 
-
       <section className="movie-info">
-        <h1>
+        <div className="movie-info-glow" aria-hidden="true" />
+        <p className="movie-eyebrow">Book your next show</p>
+        <h1 className="movie-title">
           {movieName} <span>({language})</span>
         </h1>
+        <p className="movie-subtitle">
+          Pick a date, choose a theatre, and lock in the best seats before they
+          are gone.
+        </p>
         <div className="movie-tags">
-          <span>{runtime}</span>
+          <span className="tag-primary">{runtime}</span>
           {genres.map((genre) => (
             <span key={genre}>{genre}</span>
+          ))}
+          <span>{selectedLocation}</span>
+        </div>
+      </section>
+
+      <section className="date-bar-section">
+        <div className="section-heading">
+          <h2>Available show dates</h2>
+          <p>
+            Tap a day to refresh theatres and show timings for{" "}
+            {selectedLocation}.
+          </p>
+        </div>
+
+        <div className="date-bar">
+          {dates.map((date) => (
+            <button
+              key={date}
+              className={date === selectedDate ? "date-btn active" : "date-btn"}
+              onClick={() => setSelectedDate(date)}
+            >
+              {date}
+            </button>
           ))}
         </div>
       </section>
 
-      <section className="date-bar">
-        {dates.map((date) => (
-          <button
-            key={date}
-            className={date === selectedDate ? "date-btn active" : "date-btn"}
-            onClick={() => setSelectedDate(date)}
-          >
-            {date}
-          </button>
-        ))}
-      </section>
-
       <section className="theatre-list">
+        <div className="theatre-list-header">
+          <h2>Theatres near you</h2>
+          <span>{theatres.length} venues</span>
+        </div>
+
         {theatres.length === 0 ? (
-          <p style={{ color: "#777", fontSize: "14px" }}>
+          <p className="empty-state">
             No shows available for this date and location.
           </p>
         ) : (
@@ -220,6 +251,10 @@ export default function Showtimes() {
               <div className="theatre-info">
                 <h3>{theatre.name}</h3>
                 <p>{theatre.location}</p>
+                <div className="theatre-badges">
+                  <span>Fast filling</span>
+                  <span>Instant booking</span>
+                </div>
               </div>
 
               <div className="showtimes">

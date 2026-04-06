@@ -1,338 +1,476 @@
-  /* NAVBAR LAYOUT */
-  .showtimes-nav {
-    background: #ffffff;
-    padding: 12px 40px;
-    border-bottom: 1px solid #e5e5e5;
-    display: flex;
-    align-items: center;
-    gap: 24px;
-  }
+.showtimes-page {
+  min-height: 100vh;
+  padding: 32px 24px 48px;
+  background:
+    radial-gradient(circle at top left, rgba(239, 68, 68, 0.2), transparent 28%),
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.16), transparent 24%),
+    radial-gradient(circle at 50% 20%, rgba(251, 113, 133, 0.12), transparent 30%),
+    linear-gradient(180deg, #08111f 0%, #101826 45%, #171f2e 100%);
+  color: #f8fafc;
+  position: relative;
+  overflow-x: hidden;
+}
 
-  /* LEFT */
-  .nav-left .logo {
-    font-size: 18px;
-    font-weight: bold;
-    color: #f84464;
-  }
-
-  /* SEARCH */
-  .nav-search {
-    flex: 1;
-    display: flex;
-  }
-
-  .nav-search input {
-    width: 100%;
-    max-width: 480px;
-    padding: 8px 14px;
-    border-radius: 6px;
-    border: 1px solid #dcdcdc;
-    font-size: 14px;
-  }
-
-  .nav-search input::placeholder {
-    color: #999;
-  }
-
-  /* RIGHT */
-  .nav-right {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-
-  /* LOCATION DROPDOWN */
-  .location-select {
-    padding: 6px 10px;
-    border-radius: 4px;
-    border: 1px solid #dcdcdc;
-    font-size: 13px;
-    cursor: pointer;
-  }
-
-  /* SIGN IN */
-  .sign-in-btn {
-    background: #f84464;
-    color: white;
-    border: none;
-    padding: 7px 14px;
-    border-radius: 4px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-
-  .sign-in-btn:hover {
-    background: #e5345a;
-  }
-  /* ================================
-    HAMBURGER DROPDOWN MENU
-  ================================ */
-  .hamburger-menu {
-    position: absolute;
-    top: 58px;
-    right: 40px;
-    width: 200px;
-    background: #ffffff;
-    border: 1px solid #e5e5e5;
-    border-radius: 6px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-    z-index: 1000;
-  }
-
-  .menu-item {
-    padding: 12px 16px;
-    font-size: 14px;
-    color: #333;
-    cursor: pointer;
-  }
-
-  .menu-item:hover {
-    background: #f5f5f5;
-  }
-
-  .menu-divider {
-    height: 1px;
-    background: #e5e5e5;
-    margin: 6px 0;
-  }
-
-  /* RESPONSIVE */
-  @media (max-width: 768px) {
-    .nav-search {
-      display: none;
-    }
-
-    .showtimes-nav {
-      padding: 12px 16px;
-    }
-  }
-
-  .movie-info {
-    background: #ffffff;
-    padding: 25px 40px;
-    border-bottom: 1px solid #e5e5e5;
-  }
-
-  .movie-info h1 {
-    font-size: 26px;
-    font-weight: 700;
-  }
-
-  .movie-info span {
-    font-size: 16px;
-    color: #666;
-    margin-left: 6px;
-  }
-
-  .movie-tags {
-    margin-top: 12px;
-    display: flex;
-    gap: 10px;
-  }
-
-  .movie-tags span {
-    padding: 4px 10px;
-    border-radius: 4px;
-    background: #f2f2f2;
-    font-size: 12px;
-    color: #555;
-  }
-
-  /* ================================
-    DATE BAR
-  ================================ */
-  .date-bar {
-    display: flex;
-    gap: 10px;
-    padding: 16px 40px;
-    background: #ffffff;
-    border-bottom: 1px solid #e5e5e5;
-  }
-
-  .date-btn {
-    padding: 8px 12px;
-    border-radius: 4px;
-    border: 1px solid #dcdcdc;
-    background: #ffffff;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    color: #333;
-  }
-
-  .date-btn.active {
-    background: #f84464;
-    color: #ffffff;
-    border: none;
-  }
-
-  /* ================================
-    FILTER BAR
-  ================================ */
-  .filter-bar {
-    padding: 14px 40px;
-    background: #ffffff;
-    border-bottom: 1px solid #e5e5e5;
-    display: flex;
-    gap: 30px;
-    font-size: 13px;
-    color: #666;
-  }
-
-  /* ================================
-    THEATRE LIST
-  ================================ */
-  .theatre-list {
-    padding: 20px 40px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  /* Theatre card */
-  .theatre-card {
-    background: #ffffff;
-    border: 1px solid #e5e5e5;
-    border-radius: 6px;
-    padding: 18px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  /* Theatre info */
-  .theatre-info h3 {
-    font-size: 15px;
-    font-weight: 600;
-  }
-
-  .theatre-info p {
-    font-size: 12px;
-    color: #777;
-    margin-top: 4px;
-  }
-
-  /* ================================
-    SHOWTIMES
-  ================================ */
-  .showtimes {
-    display: flex;
-    gap: 12px;
-  }
-
-  /* Time button */
-  .time-btn {
-    padding: 6px 14px;
-    border-radius: 4px;
-    border: 1px solid #4caf50;
-    background: #ffffff;
-    color: #4caf50;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .time-btn:hover {
-    background: #4caf50;
-    color: #ffffff;
-  }
-
-  /* ================================
-    RESPONSIVE
-  ================================ */
-  @media (max-width: 768px) {
-    .movie-info,
-    .date-bar,
-    .filter-bar,
-    .theatre-list {
-      padding: 16px;
-    }
-
-    .theatre-card {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 14px;
-    }
-  }
-  /* ================= SIGN IN MODAL ================= */
-.signin-overlay {
+.showtimes-page::before,
+.showtimes-page::after {
+  content: "";
   position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.65);
+  inset: auto;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 999px;
+  filter: blur(90px);
+  opacity: 0.45;
+}
+
+.showtimes-page::before {
+  top: 120px;
+  left: -60px;
+  width: 220px;
+  height: 220px;
+  background: rgba(239, 68, 68, 0.22);
+}
+
+.showtimes-page::after {
+  right: -80px;
+  bottom: 120px;
+  width: 260px;
+  height: 260px;
+  background: rgba(59, 130, 246, 0.18);
+}
+
+.showtimes-nav,
+.movie-info,
+.date-bar-section,
+.theatre-card,
+.empty-state {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  backdrop-filter: blur(18px);
+  background: rgba(10, 16, 28, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+}
+
+.showtimes-nav {
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 3000;
+  gap: 24px;
+  padding: 18px 28px;
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(15, 23, 42, 0.88), rgba(15, 23, 42, 0.72));
 }
 
-.signin-modal {
-  background: #ffffff;
-  width: 380px;
-  border-radius: 12px;
-  padding: 28px 24px;
-  text-align: center;
-  animation: popIn 0.25s ease;
-}
-
-@keyframes popIn {
-  from {
-    transform: scale(0.95);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-.signin-modal h2 {
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 18px;
-}
-
-.signin-form {
+.logo {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 1.75rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  user-select: none;
+  cursor: pointer;
+}
+
+.logo span:first-child {
+  color: #f8fafc;
+  transition: color 0.3s ease;
+}
+
+.logo span:last-child {
+  color: #dc2626;
+  transition: color 0.3s ease;
+}
+
+.logo:hover span:first-child,
+.logo:focus-visible span:first-child {
+  color: #ef4444;
+}
+
+.logo:hover span:last-child,
+.logo:focus-visible span:last-child {
+  color: #f8fafc;
+}
+
+.logo:focus-visible {
+  outline: 2px solid rgba(239, 68, 68, 0.7);
+  outline-offset: 6px;
+  border-radius: 8px;
+}
+
+.nav-search {
+  flex: 1;
+}
+
+.nav-search input,
+.location-select {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: #f8fafc;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.nav-search input {
+  max-width: 520px;
+  padding: 14px 18px;
+  border-radius: 999px;
+  font-size: 0.95rem;
+}
+
+.nav-search input::placeholder {
+  color: #94a3b8;
+}
+
+.nav-search input:focus,
+.location-select:focus {
+  outline: none;
+  border-color: rgba(239, 68, 68, 0.75);
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.14);
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
   gap: 14px;
 }
 
-.signin-form input {
-  padding: 10px 12px;
-  border-radius: 6px;
-  border: 1px solid #dcdcdc;
-  font-size: 14px;
+.location-select {
+  min-width: 170px;
+  padding: 13px 18px;
+  border-radius: 999px;
+  font-size: 0.92rem;
+  cursor: pointer;
 }
 
-.signin-form button {
-  margin-top: 6px;
-  background: #f84464;
-  color: #ffffff;
-  border: none;
-  padding: 12px;
-  border-radius: 6px;
-  font-size: 15px;
+.location-select option {
+  background: #0f172a;
+  color: #f8fafc;
+}
+
+.movie-info {
+  margin-top: 28px;
+  padding: 44px 40px;
+  border-radius: 32px;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(124, 45, 18, 0.18), rgba(15, 23, 42, 0.62) 38%),
+    radial-gradient(circle at top right, rgba(251, 113, 133, 0.16), transparent 28%),
+    rgba(10, 16, 28, 0.78);
+}
+
+.movie-info-glow {
+  position: absolute;
+  top: -40px;
+  right: -10px;
+  width: 240px;
+  height: 240px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(248, 113, 113, 0.28), transparent 70%);
+  pointer-events: none;
+}
+
+.movie-eyebrow {
+  margin: 0 0 12px;
+  color: #f87171;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.movie-title {
+  margin: 0;
+  max-width: 760px;
+  font-size: clamp(2.9rem, 6vw, 5.4rem);
+  line-height: 0.96;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+}
+
+.movie-title span {
+  color: #cbd5e1;
+  font-size: 0.32em;
   font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.movie-subtitle {
+  max-width: 680px;
+  margin: 20px 0 0;
+  color: #cbd5e1;
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+
+.movie-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.movie-tags span {
+  padding: 11px 17px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.07);
+  color: #e2e8f0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.movie-tags .tag-primary {
+  background: linear-gradient(135deg, #dc2626, #fb7185);
+  border-color: transparent;
+  color: #fff;
+}
+
+.date-bar-section {
+  margin-top: 22px;
+  padding: 28px 32px;
+  border-radius: 28px;
+  background:
+    linear-gradient(180deg, rgba(15, 23, 42, 0.82), rgba(15, 23, 42, 0.68));
+}
+
+.section-heading h2 {
+  margin: 0;
+  font-size: 1.45rem;
+  font-weight: 800;
+}
+
+.section-heading p {
+  margin: 8px 0 0;
+  color: #94a3b8;
+  font-size: 0.95rem;
+}
+
+.date-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.date-btn,
+.time-btn {
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-weight: 700;
   cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
 }
 
-.signin-form button:hover {
-  opacity: 0.95;
+.date-btn {
+  padding: 13px 20px;
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #e2e8f0;
 }
 
-.signin-footer {
-  margin-top: 14px;
-  font-size: 13px;
-  color: #666;
+.date-btn:hover,
+.time-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.22);
 }
 
-.signin-footer span {
-  color: #f84464;
-  cursor: pointer;
-  font-weight: 500;
+.date-btn.active {
+  background: linear-gradient(135deg, #dc2626, #fb7185);
+  color: #fff;
+  box-shadow: 0 14px 30px rgba(220, 38, 38, 0.35);
 }
-.signin-footer span:hover {
-  text-decoration: underline;
+
+.theatre-list {
+  width: min(1180px, 100%);
+  margin: 26px auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.theatre-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: -2px;
+}
+
+.theatre-list-header h2 {
+  margin: 0;
+  font-size: clamp(1.4rem, 2vw, 2rem);
+  font-weight: 800;
+}
+
+.theatre-list-header span {
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.theatre-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 22px;
+  padding: 28px 30px;
+  border-radius: 24px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(15, 23, 42, 0.72));
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.theatre-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(248, 113, 113, 0.2);
+  box-shadow: 0 26px 50px rgba(0, 0, 0, 0.3);
+}
+
+.theatre-info h3 {
+  margin: 0;
+  font-size: 1.28rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.theatre-info p {
+  margin: 8px 0 0;
+  color: #94a3b8;
+  font-size: 0.95rem;
+}
+
+.theatre-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.theatre-badges span {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(74, 222, 128, 0.22);
+  color: #bbf7d0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.showtimes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 14px;
+}
+
+.time-btn {
+  padding: 13px 18px;
+  background: rgba(15, 23, 42, 0.95);
+  border-color: rgba(74, 222, 128, 0.45);
+  color: #86efac;
+  min-width: 116px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.time-btn:hover {
+  background: linear-gradient(135deg, #14532d, #22c55e);
+  border-color: transparent;
+  color: #fff;
+}
+
+.empty-state {
+  padding: 28px 32px;
+  border-radius: 24px;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 0.98rem;
+  background:
+    linear-gradient(180deg, rgba(15, 23, 42, 0.82), rgba(15, 23, 42, 0.68));
+}
+
+@media (max-width: 900px) {
+  .showtimes-page {
+    padding: 24px 16px 40px;
+  }
+
+  .showtimes-nav,
+  .movie-info,
+  .date-bar-section,
+  .theatre-card,
+  .empty-state {
+    border-radius: 22px;
+  }
+
+  .showtimes-nav {
+    flex-wrap: wrap;
+    padding: 18px 20px;
+  }
+
+  .nav-search input,
+  .location-select {
+    max-width: none;
+  }
+
+  .movie-info,
+  .date-bar-section {
+    padding: 24px 20px;
+  }
+
+  .theatre-list-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .theatre-card {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 22px 20px;
+  }
+
+  .showtimes {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 560px) {
+  .logo {
+    font-size: 1.4rem;
+  }
+
+  .movie-title {
+    font-size: 2.4rem;
+  }
+
+  .date-btn,
+  .time-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .showtimes {
+    width: 100%;
+  }
+
+  .time-btn {
+    min-width: 0;
+  }
 }

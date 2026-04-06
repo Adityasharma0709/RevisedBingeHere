@@ -25,9 +25,9 @@ export default function SeatBooking() {
   const navigate = useNavigate();
 
   const [activeTime, setActiveTime] = useState(state?.time || showTimes[0]);
-  const [ticketCount, setTicketCount] = useState(2);
-  const [showTicketModal, setShowTicketModal] = useState(true);
-  const [selectedSeats, setSelectedSeats] = useState([]);
+  const [ticketCount, setTicketCount] = useState(state?.ticketCount || 2);
+  const [showTicketModal, setShowTicketModal] = useState(() => !state?.selectedSeats?.length);
+  const [selectedSeats, setSelectedSeats] = useState(() => state?.selectedSeats || []);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentTimer, setPaymentTimer] = useState(60);
   const [selectedPaymentApp, setSelectedPaymentApp] = useState("GPay");
@@ -47,6 +47,16 @@ export default function SeatBooking() {
     setFoodOrder(state.foodOrder);
     localStorage.setItem("foodOrder", JSON.stringify(state.foodOrder));
   }, [state?.foodOrder]);
+
+  useEffect(() => {
+    if (!state?.selectedSeats) return;
+    setSelectedSeats(state.selectedSeats);
+  }, [state?.selectedSeats]);
+
+  useEffect(() => {
+    if (!state?.ticketCount) return;
+    setTicketCount(state.ticketCount);
+  }, [state?.ticketCount]);
 
   useEffect(() => {
     if (!showPaymentModal) return undefined;

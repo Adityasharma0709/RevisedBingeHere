@@ -42,8 +42,22 @@ export default function SeatSelection() {
   };
 
   return (
-    <div className="seat-page">
+    <div className="seat-selection-page">
       <div className="seat-wrapper">
+        <div className="seat-selection-header">
+          <p className="seat-selection-eyebrow">Choose your perfect spot</p>
+          <h1>Select Your Seats</h1>
+          <p className="seat-selection-subtitle">
+            Pick from the available rows below and continue once your seats look
+            right.
+          </p>
+        </div>
+
+        <div className="seat-selection-legend">
+          <span><i className="legend-dot available" /> Available</span>
+          <span><i className="legend-dot selected" /> Selected</span>
+          <span><i className="legend-dot booked" /> Booked</span>
+        </div>
 
         {/* Screen indicator */}
         <div className="screen">

@@ -7,6 +7,8 @@ import LandingPage from "./pages/LandingPage";
 import Showtimes from "./pages/Showtimes";
 import SeatBooking from "./pages/SeatBooking";
 import PaymentSummary from "./pages/PaymentSummary";
+import AdminDashboard from "./pages/AdminDashboard";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 function App() {
   return (
@@ -14,12 +16,20 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/auth" element={<AuthForm />} />
-        <Route path="/landing2" element={<LandingPage2 />} />
+        <Route
+          path="/landing2"
+          element={
+            <ProtectedRoute>
+              <LandingPage2 />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/movie/:movieId" element={<MovieDetailsContainer />} />
         <Route path="/showtimes" element={<Showtimes />} />
         <Route path="/seats" element={<SeatBooking />} />
         <Route path="/food-ordering" element={<FoodOrdering />} />
         <Route path="/payment-summary" element={<PaymentSummary />} />
+        <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
     </BrowserRouter>
   );

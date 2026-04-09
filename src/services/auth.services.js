@@ -1,9 +1,9 @@
-const API_URL = "http://localhost:3000";
+const API_URL = "http://localhost:3000/api";
 
 export const registerUser = async (userData) => {
   // eslint-disable-next-line no-useless-catch
   try {
-    const response = await fetch(`${API_URL}/signup`, {
+    const response = await fetch(`${API_URL}/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

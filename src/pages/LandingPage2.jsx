@@ -133,7 +133,7 @@ function App() {
               >
                 <div className="absolute left-[70%] top-2 bottom-2 border-l-2 border-dashed border-white/30" />
 
-                <div className="flex flex-col items-start pr-4">
+                <div className="flex flex-col items-start pr-14">
                   <span className="text-[10px] uppercase tracking-widest text-white/70 font-bold">
                     Category
                   </span>
@@ -142,7 +142,7 @@ function App() {
                   </span>
                 </div>
 
-                <div className="pl-2 group-hover:translate-x-1 transition-transform">
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 group-hover:translate-x-1 transition-transform">
                   <div className="bg-white/20 p-2 rounded-full">
                     <ArrowRight size={20} />
                   </div>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./css/Showtimes.css";
-import { Navbar2 } from "../components/landing/LandingPage2/Navbar2";
+
 export default function Showtimes() {
   const navigate = useNavigate();
   const { state } = useLocation();
@@ -163,7 +163,7 @@ export default function Showtimes() {
 
   return (
     <div className="showtimes-page">
-      {/* <nav className="showtimes-nav">
+      <nav className="showtimes-nav">
         <div className="logo">BingeHere</div>
 
         <div className="nav-search">
@@ -181,6 +181,14 @@ export default function Showtimes() {
             ))}
           </select>
 
+          <button className="sign-in-btn" onClick={() => setShowSignIn(true)}>
+            Sign in
+          </button>
+
+          <div className="menu-icon" onClick={() => setMenuOpen(!menuOpen)}>
+            Menu
+          </div>
+
           {menuOpen && (
             <div className="hamburger-menu">
               <div className="menu-item">Movies</div>
@@ -193,8 +201,26 @@ export default function Showtimes() {
             </div>
           )}
         </div>
-      </nav> */}
-      {/* <Navbar2 /> */}
+      </nav>
+
+      {showSignIn && (
+        <div className="signin-overlay" onClick={() => setShowSignIn(false)}>
+          <div className="signin-modal" onClick={(e) => e.stopPropagation()}>
+            <h2>Sign in</h2>
+
+            <form className="signin-form">
+              <input type="email" placeholder="Email" required />
+              <input type="password" placeholder="Password" required />
+              <button type="submit">Continue</button>
+            </form>
+
+            <p className="signin-footer">
+              New to BingeHere? <span>Create account</span>
+            </p>
+          </div>
+        </div>
+      )}
+
       <section className="movie-info">
         <h1>
           {movieName} <span>({language})</span>

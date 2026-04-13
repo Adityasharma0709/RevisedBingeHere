@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import "./css/AuthForm.css";
-import { registerUser,loginUser } from "../services/auth.services";
+import { registerUser, loginUser } from "../services/auth.services";
 
 const AuthForm = () => {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ const AuthForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // 🔐 Static credentials
+  // ðŸ” Static credentials
   // const credentials = [
   //   { email: "user1@gmail.com", password: "user123", role: "user" },
   //   { email: "user2@gmail.com", password: "user123", role: "user" },
@@ -28,10 +28,10 @@ const AuthForm = () => {
     e.preventDefault();
     try {
       const response = await registerUser(formData);
-      toast.success(response.message || "Account created! 🎉");
+      toast.success(response.message || "Account created! ðŸŽ‰");
       setIsSignUp(false); // Switch to login view
     } catch (error) {
-      toast.error(error.message || "Something went wrong ❌");
+      toast.error(error.message || "Something went wrong âŒ");
     }
   };
 
@@ -47,15 +47,15 @@ const AuthForm = () => {
   //   );
 
   //   if (!user) {
-  //     toast.error("Invalid email or password 🚫");
+  //     toast.error("Invalid email or password ðŸš«");
   //     return;
   //   }
 
   //   if (user.role === "admin") {
-  //     toast.success("Welcome Admin 🎬");
+  //     toast.success("Welcome Admin ðŸŽ¬");
   //     navigate("/admin");
   //   } else {
-  //     toast.success("Welcome back! 🍿");
+  //     toast.success("Welcome back! ðŸ¿");
   //     navigate("/landing2");
   //   }
   // };
@@ -64,22 +64,32 @@ const AuthForm = () => {
     e.preventDefault();
 
     try {
-      // 1. Call the backend service
       const response = await loginUser({ email, password });
 
-      toast.success(response.message || "Welcome back! 🍿");
+      toast.success(response.message || "Welcome back! ðŸ¿");
 
-      // 2. Handle redirection based on user role (returned from your login API)
-      if (response.user.role === "admin") {
+      const userId =
+        response.user?._id ??
+        response.user?.id ??
+        response.user?.userId ??
+        response.userId;
+      const userProfile = {
+        _id: userId,
+        name: response.user?.name,
+        email: response.user?.email,
+        phone: response.user?.phone,
+        role: response.user?.role ?? response.role,
+      };
+
+      localStorage.setItem("user", JSON.stringify(userProfile));
+
+      if (userProfile.role === "admin") {
         navigate("/admin");
       } else {
         navigate("/landing2");
       }
-
-      // 3. Optional: Save user info to localStorage for session persistence
-      localStorage.setItem("user", JSON.stringify(response.user));
     } catch (error) {
-      toast.error(error.message || "Invalid email or password 🚫");
+      toast.error(error.message || "Invalid email or password ðŸš«");
     }
   };
 
@@ -165,8 +175,10 @@ const AuthForm = () => {
 
             <div className="overlay-panel overlay-right">
               <h1>Hey, Cinephile!</h1>
-              <p>Quick, hit that login button!<br></br>
-                The showâ€™s about to start and the popcorn is waiting!
+              <p>
+                Quick, hit that login button!
+                <br></br>
+                The showÃ¢â‚¬â„¢s about to start and the popcorn is waiting!
               </p>
               <button onClick={() => setIsSignUp(true)}>Sign Up</button>
             </div>

@@ -8,6 +8,7 @@ import Showtimes from "./pages/Showtimes";
 import SeatBooking from "./pages/SeatBooking";
 import PaymentSummary from "./pages/PaymentSummary";
 import AdminDashboard from "./pages/AdminDashboard";
+import Profile from "./pages/Profile";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 function App() {
@@ -29,7 +30,22 @@ function App() {
         <Route path="/seats" element={<SeatBooking />} />
         <Route path="/food-ordering" element={<FoodOrdering />} />
         <Route path="/payment-summary" element={<PaymentSummary />} />
-        <Route path="/admin" element={<AdminDashboard />} />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute requireAdmin>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

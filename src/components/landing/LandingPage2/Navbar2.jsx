@@ -17,7 +17,10 @@ const Navbar2 = () => {
       >
         {/* LEFT: Logo */}
         <div className="flex items-center gap-2 md:gap-4">
-          <div className="text-xl md:text-2xl font-black tracking-wider cursor-pointer group select-none">
+          <div
+            className="text-xl md:text-2xl font-black tracking-wider cursor-pointer group select-none"
+            onClick={() => navigate("/landing2")}
+          >
             <span className="text-white group-hover:text-red-500 transition-colors duration-300 drop-shadow-md">Binge</span>
             <span className="text-red-600 group-hover:text-white transition-colors duration-300 drop-shadow-md">Here</span>
           </div>

@@ -65,6 +65,14 @@ const SideMenu = () => {
   const [open, setOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState(null); // which dropdown is open
   const navigate = useNavigate();
+  let userProfile = null;
+
+  try {
+    const storedUser = localStorage.getItem("user");
+    userProfile = storedUser ? JSON.parse(storedUser) : null;
+  } catch {
+    userProfile = null;
+  }
 
   const toggleMenu = (title) => {
     setActiveMenu(activeMenu === title ? null : title);
@@ -74,6 +82,10 @@ const SideMenu = () => {
     localStorage.removeItem("user");
     setOpen(false);
     navigate("/auth");
+  };
+  const handleProfile = () => {
+    setOpen(false);
+    navigate("/profile");
   };
 
   return (
@@ -114,7 +126,14 @@ const SideMenu = () => {
                   <p className="text-xs uppercase tracking-wider text-slate-400">
                     Welcome back
                   </p>
-                  <p className="text-lg font-semibold">Guest User</p>
+                  <p className="text-lg font-semibold">
+                    {userProfile?.name || "Guest User"}
+                  </p>
+                  {userProfile?.email ? (
+                    <p className="text-xs text-slate-400">
+                      {userProfile.email}
+                    </p>
+                  ) : null}
                 </div>
               </div>
 
@@ -255,6 +274,16 @@ const SideMenu = () => {
                                 </div>
                               )}
                             </div>
+                          </div>
+                        ) : item.title === "Accounts & Settings" ? (
+                          <div className="space-y-2">
+                            <button
+                              type="button"
+                              onClick={handleProfile}
+                              className="w-full px-1 py-1 text-left text-sm font-semibold text-slate-300 hover:text-rose-400 transition"
+                            >
+                              View Profile
+                            </button>
                           </div>
                         ) : (
                           <p className="text-slate-400">

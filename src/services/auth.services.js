@@ -45,3 +45,26 @@ export const loginUser = async (credentials) => {
     throw error;
   }
 };
+
+export const updatePassword = async (payload) => {
+  // eslint-disable-next-line no-useless-catch
+  try {
+    const response = await fetch(`${API_URL}/update-password`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Update password failed");
+    }
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};

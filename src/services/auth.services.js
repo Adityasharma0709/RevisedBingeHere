@@ -3,7 +3,7 @@ const API_URL = "http://localhost:3000";
 export const registerUser = async (userData) => {
   // eslint-disable-next-line no-useless-catch
   try {
-    const response = await fetch(`${API_URL}/signup`, {
+    const response = await fetch(`${API_URL}/api/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -26,7 +26,7 @@ export const registerUser = async (userData) => {
 export const loginUser = async (credentials) => {
   // eslint-disable-next-line no-useless-catch
   try {
-    const response = await fetch(`${API_URL}/login`, {
+    const response = await fetch(`${API_URL}/api/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

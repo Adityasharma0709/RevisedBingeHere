@@ -9,6 +9,7 @@ import SeatBooking from "./pages/SeatBooking";
 import AdminDashboard from "./pages/AdminDashboard";
 import { Toaster } from "react-hot-toast";
 import SundaySpecial from "./pages/SundayVoting";
+import AddMovie from "./pages/admin/AddMovie";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
           <Route path="/showtimes" element={<Showtimes />} />
           <Route path="/seats" element={<SeatBooking />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path = "/admin/add-movie" element = {<AddMovie/>}/>
         </Routes>
       </BrowserRouter>
     </>

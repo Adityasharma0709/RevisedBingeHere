@@ -2,11 +2,21 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import "./css/AuthForm.css";
-import { registerUser,loginUser } from "../services/auth.services";
+import { registerUser,loginUser,
+  forgotPassword,
+  verifyOTP,
+  resetPassword,
+ } from "../services/auth.services";
 
 const AuthForm = () => {
   const navigate = useNavigate();
   const [isSignUp, setIsSignUp] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [step, setStep] = useState(1);
+  const [resetEmail, setResetEmail] = useState("");
+  const [otpValues, setOtpValues] = useState(["", "", "", "", "", ""]);
+  const [newPassword, setNewPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,6 +33,85 @@ const AuthForm = () => {
     phone: "",
     password: "",
   });
+
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    if (!email.trim()) {
+      toast.error("Please enter your email above first");
+      return;
+    }
+    setIsLoading(true);
+    setResetEmail(email);
+    try {
+      const response = await forgotPassword(email);
+      toast.success(response.message || "OTP sent to your email");
+      setStep(2);
+      setShowModal(true);
+    } catch (error) {
+      toast.error(error.message || "Failed to send OTP");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleVerifyOTP = async (e) => {
+    e.preventDefault();
+    const otpString = otpValues.join("");
+    if (otpString.length < 6) {
+      toast.error("Please enter a valid 6-digit OTP");
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const response = await verifyOTP(resetEmail, otpString);
+      toast.success(response.message || "OTP verified");
+      setStep(3);
+    } catch (error) {
+      toast.error(error.message || "Invalid OTP");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      const response = await resetPassword(resetEmail, newPassword);
+      toast.success(response.message || "Password reset successful");
+      closeModal();
+    } catch (error) {
+      toast.error(error.message || "Error resetting password");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setStep(1);
+    setResetEmail("");
+    setOtpValues(["", "", "", "", "", ""]);
+    setNewPassword("");
+  };
+
+  const handleOtpChange = (index, e) => {
+    const value = e.target.value;
+    if (value && isNaN(value)) return;
+    const newOtp = [...otpValues];
+    newOtp[index] = value.substring(value.length - 1);
+    setOtpValues(newOtp);
+
+    if (value && index < 5) {
+      document.getElementById(`otp-input-${index + 1}`)?.focus();
+    }
+  };
+
+  const handleOtpKeyDown = (index, e) => {
+    if (e.key === "Backspace" && !otpValues[index] && index > 0) {
+      document.getElementById(`otp-input-${index - 1}`)?.focus();
+    }
+  };
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -146,7 +235,9 @@ const AuthForm = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
 
-            <a href="#">Forgot your password?</a>
+            <a href="#" onClick={handleForgotPassword}>
+              {isLoading && !showModal ? "Sending OTP..." : "Forgot your password?"}
+            </a>
 
             <button type="submit">Log In</button>
           </form>
@@ -175,6 +266,61 @@ const AuthForm = () => {
           </div>
         </div>
       </div>
+
+      {/* MODAL */}
+      {showModal && (
+        <div className="modal">
+          <div className="modal-content">
+            {step === 2 && (
+              <form onSubmit={handleVerifyOTP} style={{ padding: 0, height: "auto" }}>
+                <h2>Verify OTP</h2>
+                <p>Enter the 6-digit OTP sent to {resetEmail}</p>
+                <div className="otp-container">
+                  {otpValues.map((digit, idx) => (
+                    <input
+                      key={idx}
+                      id={`otp-input-${idx}`}
+                      type="text"
+                      maxLength="1"
+                      value={digit}
+                      onChange={(e) => handleOtpChange(idx, e)}
+                      onKeyDown={(e) => handleOtpKeyDown(idx, e)}
+                      className="otp-box"
+                      required
+                    />
+                  ))}
+                </div>
+                <div className="modal-actions">
+                  <button type="submit" disabled={isLoading}>
+                    {isLoading ? "Verifying..." : "Verify"}
+                  </button>
+                  <button type="button" className="ghost" onClick={closeModal} disabled={isLoading}>Cancel</button>
+                </div>
+              </form>
+            )}
+            {step === 3 && (
+              <form onSubmit={handleResetPassword} style={{ padding: 0, height: "auto" }}>
+                <h2>Reset Password</h2>
+                <p>Enter your new password.</p>
+                <input
+                  type="password"
+                  placeholder="New Password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                  disabled={isLoading}
+                />
+                <div className="modal-actions">
+                  <button type="submit" disabled={isLoading}>
+                    {isLoading ? "Resetting..." : "Reset"}
+                  </button>
+                  <button type="button" className="ghost" onClick={closeModal} disabled={isLoading}>Cancel</button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

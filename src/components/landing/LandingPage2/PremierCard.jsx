@@ -1,6 +1,14 @@
-const PremiereCard = ({ title, language, poster }) => {
+const PremiereCard = ({ title, language, poster, onClick }) => {
   return (
-    <div className="min-w-[180px] max-w-[180px] cursor-pointer">
+    <div
+      className="min-w-[180px] max-w-[180px] cursor-pointer"
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") onClick?.();
+      }}
+    >
       <div className="relative rounded-xl overflow-hidden">
         {/* Premiere Tag */}
         <span className="absolute bottom-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">

@@ -1,5 +1,5 @@
 const CategoryBar = () => {
-  const leftItems = ["Movies", "Stream", "Events", "Plays", "Sports", "Activities"];
+  const leftItems = ["Comedy", "Action", "Adventure", "Sci-Fi", "RomCom", "Thriller"];
   const rightItems = ["ListYourShow", "Corporates", "Offers", "Gift Cards"];
 
   return (

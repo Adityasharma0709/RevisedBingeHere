@@ -4,7 +4,7 @@ import { FaPlay, FaStar, FaClock, FaCalendarAlt, FaTicketAlt } from "react-icons
 const IMG_500 = "https://image.tmdb.org/t/p/w500";
 const IMG_ORIGINAL = "https://image.tmdb.org/t/p/original";
 
-const MovieHero = ({ movie, onWatchTrailer }) => {
+const MovieHero = ({ movie, onWatchTrailer, onBookTickets }) => {
   const { scrollY } = useScroll();
   const posterY = useTransform(scrollY, [0, 400], [0, -80]);
   const bgScale = useTransform(scrollY, [0, 400], [1, 1.15]);
@@ -62,7 +62,7 @@ const MovieHero = ({ movie, onWatchTrailer }) => {
             <p className="tagline">{movie.tagline}</p>
 
             <div className="action-buttons">
-              <button className="btn-primary">
+              <button className="btn-primary" onClick={onBookTickets}>
                 <FaTicketAlt /> Book Tickets
               </button>
               <button className="btn-secondary" onClick={onWatchTrailer}>

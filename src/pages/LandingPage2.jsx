@@ -1,4 +1,10 @@
-import { useState } from "react";
+
+
+
+
+
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import CategoryBar from "../components/landing/LandingPage2/category";
 import {Navbar2} from "../components/landing/LandingPage2/Navbar2";
@@ -7,96 +13,27 @@ import MovieCard from "../components/landing/LandingPage2/MovieCard";
 import PremiereCard from "../components/landing/LandingPage2/PremierCard";
 
 function App() {
+  const navigate = useNavigate();
+  const API_KEY = import.meta.env.VITE_TMDB_KEY;
+  const BASE_URL = "https://api.themoviedb.org/3";
+  const IMG_500 = "https://image.tmdb.org/t/p/w500";
+
   const categories = [
-    { name: "Movies", color: "bg-red-500" },
-    { name: "Events", color: "bg-blue-500" },
-    { name: "Sports", color: "bg-green-500" },
-    { name: "Plays", color: "bg-yellow-500" },
+    { name: "Comedy", color: "bg-red-500" },
+    { name: "Action", color: "bg-blue-500" },
+    { name: "Adventure", color: "bg-green-500" },
+    { name: "Thriller", color: "bg-yellow-500" },
   ];
 
-  const premiereMovies = [
-    {
-      title: "Saw X",
-      language: "English",
-      poster:
-        "https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:l-image,i-discovery-catalog@@icons@@bms_premiere_v1.png,t-false,lfo-bottom_left,l-end/et00363723-lslvgbmpbl-portrait.jpg",
-    },
-    {
-      title: "Blackmail",
-      language: "Tamil",
-      poster:
-        "https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:l-image,i-discovery-catalog@@icons@@bms_premiere_v1.png,t-false,lfo-bottom_left,l-end/et00452580-avxwmqbpfa-portrait.jpg",
-    },
-    {
-      title: "The Internship",
-      language: "English",
-      poster:
-        "https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:l-image,i-discovery-catalog@@icons@@bms_premiere_v1.png,t-false,lfo-bottom_left,l-end/et00482510-gawdctkxzh-portrait.jpg",
-    },
-    {
-      title: "Anaconda",
-      language: "English",
-      poster:
-        "https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:l-image,i-discovery-catalog@@icons@@bms_premiere_v1.png,t-false,lfo-bottom_left,l-end/et00448751-cpyhcaemzh-portrait.jpg",
-    },
-    {
-      title: "Christmas Karma",
-      language: "English",
-      poster:
-        "https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:l-image,i-discovery-catalog@@icons@@bms_premiere_v1.png,t-false,lfo-bottom_left,l-end/et00463857-qbjwmggljk-portrait.jpg",
-    },
-  ];
+  const [premiereMovies, setPremiereMovies] = useState([]);
 
-  const movies = [
-    {
-      title: "Mardaani 3",
-      poster:
-        "https://m.media-amazon.com/images/M/MV5BZDE3NjQ5NDgtYzM0MC00NDBjLTk2NDYtOTY4ZTE2MjZjYWE5XkEyXkFqcGc@._V1_.jpg",
-      promoted: true,
-    },
-    {
-      title: "Pushpa: The Rule - Part 2",
-      poster:
-        "https://m.media-amazon.com/images/M/MV5BMmU0YjI0ZGMtMDY0ZC00ZmM5LWJiYmEtMzI1ZmZhZWNjZTU3XkEyXkFqcGc@._V1_.jpg",
-      promoted: false,
-    },
-    {
-      title: "The Shawshank Redemption",
-      poster:
-        "https://image.tmdb.org/t/p/w500/5KCVkau1HEl7ZzfPsKAPM0sMiKc.jpg",
-      promoted: true,
-    },
-    {
-      title: "Dream Girl 2",
-      poster:
-        "https://m.media-amazon.com/images/M/MV5BMTMzNzYzNzctNWIyNC00NDRhLWFkNGMtMzYxOTA2ZjgwYzFhXkEyXkFqcGc@._V1_QL75_UY281_CR2,0,190,281_.jpg",
-      promoted: false,
-    },
-    {
-      title: "Animal",
-      poster:
-        "https://m.media-amazon.com/images/M/MV5BODk2NWVkMDMtZWY3NC00YzJiLTlkMWEtZWZkZjZlY2ZjNmU5XkEyXkFqcGc@._V1_.jpg",
-      promoted: false,
-    },
-    {
-      title: "Border 2",
-      poster:
-        "https://m.media-amazon.com/images/M/MV5BNmRkNTQyYWMtZDRiYS00NThiLWFhYWQtOGY3YTEyMGU5MGYyXkEyXkFqcGc@._V1_.jpg",
-      promoted: false,
-    },
-    {
-      title: "Dhurandhar",
-      poster:
-        "https://m.media-amazon.com/images/M/MV5BMzFiNTVkZjYtM2I3Yi00MGNjLWEyYTAtMGViNGExZmMzMGMzXkEyXkFqcGc@._V1_QL75_UY281_CR18,0,190,281_.jpg",
-      promoted: false,
-    },
-  ];
+  const [trendingMovies, setTrendingMovies] = useState([]);
 
   // 🔹 Premiere carousel state
   const [premiereIndex, setPremiereIndex] = useState(0);
   const cardWidth = 200; // approx width of one PremiereCard
   const visibleCards = 5;
-  const maxIndex = premiereMovies.length - visibleCards;
+  const maxIndex = Math.max(0, premiereMovies.length - visibleCards);
 
   const nextPremiere = () => {
     setPremiereIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
@@ -105,6 +42,56 @@ function App() {
   const prevPremiere = () => {
     setPremiereIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
   };
+
+  // Trending carousel state
+  const [trendingIndex, setTrendingIndex] = useState(0);
+  const trendingMaxIndex = Math.max(0, trendingMovies.length - visibleCards);
+
+  const nextTrending = () => {
+    setTrendingIndex((prev) => (prev >= trendingMaxIndex ? 0 : prev + 1));
+  };
+
+  const prevTrending = () => {
+    setTrendingIndex((prev) => (prev <= 0 ? trendingMaxIndex : prev - 1));
+  };
+
+  useEffect(() => {
+    const fetchTrending = async () => {
+      if (!API_KEY) {
+        console.error("Missing VITE_TMDB_KEY in environment.");
+        return;
+      }
+
+      try {
+        const res = await fetch(
+          `${BASE_URL}/trending/movie/week?api_key=${API_KEY}&language=en-US&page=1`
+        );
+        const data = await res.json();
+        setTrendingMovies(data?.results || []);
+      } catch (err) {
+        console.error("Failed to fetch trending movies:", err);
+      }
+    };
+
+    fetchTrending();
+  }, [API_KEY]);
+
+  useEffect(() => {
+    const fetchPremieres = async () => {
+      if (!API_KEY) return;
+      try {
+        const res = await fetch(
+          `${BASE_URL}/movie/upcoming?api_key=${API_KEY}&language=en-US&page=1`
+        );
+        const data = await res.json();
+        setPremiereMovies(data?.results || []);
+      } catch (err) {
+        console.error("Failed to fetch premiere movies:", err);
+      }
+    };
+
+    fetchPremieres();
+  }, [API_KEY]);
 
   return (
     <div className="bg-gray-50 min-h-screen font-sans text-gray-800">
@@ -134,24 +121,51 @@ function App() {
         </div>
       </section>
 
-      {/* RECOMMENDED MOVIES */}
-      <section className="py-8 px-6 bg-white">
+
+      {/* TRENDING MOVIES (CAROUSEL) */}
+      <section className="py-8 px-6 bg-white relative overflow-hidden">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">Recommended Movies</h2>
+          <h2 className="text-2xl font-bold">Trending Movies</h2>
           <span className="text-red-500 cursor-pointer text-sm font-semibold">
-            See All →
+            See All
           </span>
         </div>
 
-        <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
-          {movies.map((movie) => (
-            <MovieCard
-              key={movie.title}
-              title={movie.title}
-              poster={movie.poster}
-              promoted={movie.promoted}
-            />
-          ))}
+        <div className="relative">
+          <div
+            className="flex gap-4 transition-transform duration-500 ease-in-out"
+            style={{
+              transform: `translateX(-${trendingIndex * cardWidth}px)`,
+            }}
+          >
+            {trendingMovies.map((movie) => (
+              <MovieCard
+                key={movie.id}
+                title={movie.title}
+                poster={
+                  movie.poster_path
+                    ? `${IMG_500}${movie.poster_path}`
+                    : "/no-poster.png"
+                }
+                promoted={movie.vote_average >= 7.5}
+                onClick={() => navigate(`/movie/${movie.id}`)}
+              />
+            ))}
+          </div>
+
+          <button
+            onClick={prevTrending}
+            className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/50 text-white w-10 h-10 rounded-full flex items-center justify-center"
+          >
+            {"<"}
+          </button>
+
+          <button
+            onClick={nextTrending}
+            className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/50 text-white w-10 h-10 rounded-full flex items-center justify-center"
+          >
+            {">"}
+          </button>
         </div>
       </section>
 
@@ -173,10 +187,15 @@ function App() {
           >
             {premiereMovies.map((movie) => (
               <PremiereCard
-                key={movie.title}
+                key={movie.id}
                 title={movie.title}
-                language={movie.language}
-                poster={movie.poster}
+                language={movie.original_language?.toUpperCase() || "EN"}
+                poster={
+                  movie.poster_path
+                    ? `${IMG_500}${movie.poster_path}`
+                    : "/no-poster.png"
+                }
+                onClick={() => navigate(`/movie/${movie.id}`)}
               />
             ))}
           </div>

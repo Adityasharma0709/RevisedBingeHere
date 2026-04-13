@@ -28,11 +28,46 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/movie/:movieId" element={<MovieDetailsContainer />} />
-        <Route path="/showtimes" element={<Showtimes />} />
-        <Route path="/seats" element={<SeatBooking />} />
-        <Route path="/food-ordering" element={<FoodOrdering />} />
-        <Route path="/payment-summary" element={<PaymentSummary />} />
+        <Route
+          path="/movie/:movieId"
+          element={
+            <ProtectedRoute>
+              <MovieDetailsContainer />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/showtimes"
+          element={
+            <ProtectedRoute>
+              <Showtimes />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/seats"
+          element={
+            <ProtectedRoute>
+              <SeatBooking />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/food-ordering"
+          element={
+            <ProtectedRoute>
+              <FoodOrdering />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/payment-summary"
+          element={
+            <ProtectedRoute>
+              <PaymentSummary />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/admin"
           element={
@@ -49,25 +84,27 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/special"
+          element={
+            <ProtectedRoute>
+              <SundaySpecial />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/movie/:movieId"
+          element={
+            <ProtectedRoute>
+              <MovieDetailsContainer />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/seats" element={<SeatBooking />} />
+        <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+        <Route path="/admin/add-movie" element={<AddMovie />} />
       </Routes>
     </BrowserRouter>
-        }}
-      />
-
-      <BrowserRouter>
-        <Routes>
-          <Route path="/special" element = {<SundaySpecial/>}/>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/auth" element={<AuthForm />} />
-          <Route path="/landing2" element={<LandingPage2 />} />
-          <Route path="/movie/:movieId" element={<MovieDetailsContainer />} />
-          <Route path="/showtimes" element={<Showtimes />} />
-          <Route path="/seats" element={<SeatBooking />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path = "/admin/add-movie" element = {<AddMovie/>}/>
-        </Routes>
-      </BrowserRouter>
-    </>
   );
 }
 

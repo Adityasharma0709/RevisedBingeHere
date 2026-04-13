@@ -1,6 +1,5 @@
 import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import Cylinder from "../components/landing/LandignPage/Cylinder";
 import CenterText from "../components/landing/LandignPage/CenterText";
 import FloatingTicket from "../components/landing/LandignPage/FloatingTicket";
 // import RectangleBackground from "../components/landing/RectangleBackground";
@@ -8,7 +7,6 @@ import ScrollCards from "../components/landing/LandignPage/ScrollCards";
 import { useEffect } from "react";
 import { Navbar } from "../components/landing/LandignPage/Navbar";
 import JoinCard from "../components/landing/LandignPage/JoinCard";
-import TwisterSection from "../components/landing/LandignPage/TwisterSection";
 
 function ResponsiveCamera() {
   const { camera, size } = useThree();
@@ -21,10 +19,9 @@ function ResponsiveCamera() {
 
     if (aspect < 1) {
       // Portrait mode (Mobile)
-      // Increase FOV significantly to fit the wide cylinder in a narrow view
-      // And move it back slightly
-      camera.fov = 80 + (1 - aspect) * 20; // Increases as it gets narrower
-      camera.position.z = 45 + (1 - aspect) * 10;
+      // Keep the hero readable while still fitting the scene in a narrow view
+      camera.fov = 70 + (1 - aspect) * 10; // 70 -> 80 as it gets narrower
+      camera.position.z = 34 + (1 - aspect) * 6; // Pull in a bit vs. desktop
     } else if (aspect < 1.5) {
       // Tablet / squarish windows
       camera.fov = 65;
@@ -42,6 +39,10 @@ function ResponsiveCamera() {
 }
 
 export default function App() {
+  useEffect(() => {
+    document.title = "BingeHere";
+  }, []);
+
   return (
     <>
       <Navbar />

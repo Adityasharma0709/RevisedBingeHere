@@ -78,14 +78,14 @@ const PromoCarousel = () => {
 
   if (extended.length === 0) {
     return (
-      <div className="w-full bg-[#f2f2f2] py-15">
+      <div className="w-full bg-[#0b0f1a] py-15">
         <div className="max-w-7xl mx-auto relative h-[240px]" />
       </div>
     );
   }
 
   return (
-    <div className="w-full bg-[#f2f2f2] py-15">
+    <div className="w-full bg-[#0b0f1a] py-15">
       <div className="max-w-7xl mx-auto relative">
         {/* Viewport */}
         <div className="overflow-hidden px-[10%]">
@@ -97,7 +97,7 @@ const PromoCarousel = () => {
           >
             {extended.map((item, i) => (
               <div key={i} className="shrink-0 w-[60%] px-2">
-                <div className="rounded-2xl overflow-hidden aspect-[16/8] bg-black">
+                <div className="rounded-2xl overflow-hidden aspect-[16/8] bg-black ring-1 ring-white/10 shadow-xl shadow-black/40">
                   <img
                     src={item.img}
                     alt={item.title}
@@ -113,7 +113,7 @@ const PromoCarousel = () => {
         {/* Left */}
         <button
           onClick={prev}
-          className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/40 text-white w-10 h-10 rounded-full"
+          className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/60 text-white w-10 h-10 rounded-full ring-1 ring-white/10 hover:bg-black/80 transition"
         >
           {"<"}
         </button>
@@ -121,7 +121,7 @@ const PromoCarousel = () => {
         {/* Right */}
         <button
           onClick={next}
-          className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/40 text-white w-10 h-10 rounded-full"
+          className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/60 text-white w-10 h-10 rounded-full ring-1 ring-white/10 hover:bg-black/80 transition"
         >
           {">"}
         </button>

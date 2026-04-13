@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000";
+const API_URL = "http://localhost:3000/api";
 
 export const registerUser = async (userData) => {
   // eslint-disable-next-line no-useless-catch

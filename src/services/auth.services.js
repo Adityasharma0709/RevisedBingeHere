@@ -3,7 +3,7 @@ const API_URL = "http://localhost:3000/api";
 export const registerUser = async (userData) => {
   // eslint-disable-next-line no-useless-catch
   try {
-    const response = await fetch(`${API_URL}/register`, {
+    const response = await fetch(`${API_URL}/api/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -46,25 +46,44 @@ export const loginUser = async (credentials) => {
   }
 };
 
-export const updatePassword = async (payload) => {
-  // eslint-disable-next-line no-useless-catch
-  try {
-    const response = await fetch(`${API_URL}/update-password`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+export const forgotPassword = async (email) => {
+  const response = await fetch(`${API_URL}/api/forgot-password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email }),
+  });
 
-    const data = await response.json();
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message);
+  return data;
+};
 
-    if (!response.ok) {
-      throw new Error(data.message || "Update password failed");
-    }
+export const verifyOTP = async (email, otp) => {
+  const response = await fetch(`${API_URL}/api/verify-otp`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, otp }),
+  });
 
-    return data;
-  } catch (error) {
-    throw error;
-  }
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message);
+  return data;
+};
+
+export const resetPassword = async (email, newPassword) => {
+  const response = await fetch(`${API_URL}/api/reset-password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, newPassword }),
+  });
+
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message);
+  return data;
 };

@@ -3,7 +3,7 @@ const API_URL = "http://localhost:3000/api";
 export const registerUser = async (userData) => {
   // eslint-disable-next-line no-useless-catch
   try {
-    const response = await fetch(`${API_URL}/api/register`, {
+    const response = await fetch(`${API_URL}/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -47,7 +47,7 @@ export const loginUser = async (credentials) => {
 };
 
 export const forgotPassword = async (email) => {
-  const response = await fetch(`${API_URL}/api/forgot-password`, {
+  const response = await fetch(`${API_URL}/forgot-password`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -61,7 +61,7 @@ export const forgotPassword = async (email) => {
 };
 
 export const verifyOTP = async (email, otp) => {
-  const response = await fetch(`${API_URL}/api/verify-otp`, {
+  const response = await fetch(`${API_URL}/verify-otp`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -75,7 +75,7 @@ export const verifyOTP = async (email, otp) => {
 };
 
 export const resetPassword = async (email, newPassword) => {
-  const response = await fetch(`${API_URL}/api/reset-password`, {
+  const response = await fetch(`${API_URL}/reset-password`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

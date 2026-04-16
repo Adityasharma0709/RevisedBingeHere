@@ -8,7 +8,11 @@ import Showtimes from "./pages/Showtimes";
 import SeatBooking from "./pages/SeatBooking";
 import PaymentSummary from "./pages/PaymentSummary";
 import AdminDashboard from "./pages/AdminDashboard";
+import Profile from "./pages/Profile";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import { Toaster } from "react-hot-toast";
+import SundaySpecial from "./pages/SundayVoting";
+import AddMovie from "./pages/admin/AddMovie";
 
 function App() {
   return (
@@ -24,12 +28,81 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/movie/:movieId" element={<MovieDetailsContainer />} />
-        <Route path="/showtimes" element={<Showtimes />} />
+        <Route
+          path="/movie/:movieId"
+          element={
+            <ProtectedRoute>
+              <MovieDetailsContainer />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/showtimes"
+          element={
+            <ProtectedRoute>
+              <Showtimes />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/seats"
+          element={
+            <ProtectedRoute>
+              <SeatBooking />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/food-ordering"
+          element={
+            <ProtectedRoute>
+              <FoodOrdering />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/payment-summary"
+          element={
+            <ProtectedRoute>
+              <PaymentSummary />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute requireAdmin>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/special"
+          element={
+            <ProtectedRoute>
+              <SundaySpecial />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/movie/:movieId"
+          element={
+            <ProtectedRoute>
+              <MovieDetailsContainer />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/seats" element={<SeatBooking />} />
-        <Route path="/food-ordering" element={<FoodOrdering />} />
-        <Route path="/payment-summary" element={<PaymentSummary />} />
-        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+        <Route path="/admin/add-movie" element={<AddMovie />} />
       </Routes>
     </BrowserRouter>
   );

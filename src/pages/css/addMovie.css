@@ -113,7 +113,7 @@
   cursor: pointer;
 }
 
-button {
+.movie-form > button[type="submit"] {
   width: 100%;
   padding: 12px;
   background: #e50914;
@@ -125,6 +125,6 @@ button {
   margin-top: 10px;
 }
 
-button:hover {
+.movie-form > button[type="submit"]:hover {
   background: #c40812;
 }

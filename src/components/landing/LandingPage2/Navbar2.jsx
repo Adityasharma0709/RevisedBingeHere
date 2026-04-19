@@ -9,14 +9,17 @@ const Navbar2 = ({
   searchQuery,
   setSearchQuery,
   searchResults,
-  isSearching,
-  searchError,
+  isSearching = false,
+  searchError = null,
   onSearchSubmit,
   onSearchSelect,
-}) => {
+} = {}) => {
   const navigate = useNavigate();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const searchRef = useRef(null);
+
+  const normalizedSearchQuery = typeof searchQuery === "string" ? searchQuery : "";
+  const normalizedSearchResults = Array.isArray(searchResults) ? searchResults : [];
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -32,8 +35,8 @@ const Navbar2 = ({
   const hasSearchState =
     isSearching ||
     Boolean(searchError) ||
-    searchResults.length > 0 ||
-    searchQuery.trim().length >= 2;
+    normalizedSearchResults.length > 0 ||
+    normalizedSearchQuery.trim().length >= 2;
 
   return (
     <>
@@ -75,7 +78,7 @@ const Navbar2 = ({
               />
               <input
                 type="search"
-                value={searchQuery}
+                value={normalizedSearchQuery}
                 onChange={(e) => {
                   setSearchQuery?.(e.target.value);
                   setIsSearchOpen(true);
@@ -101,14 +104,14 @@ const Navbar2 = ({
 
                 {!isSearching &&
                   !searchError &&
-                  searchResults.length === 0 &&
-                  searchQuery.trim().length >= 2 && (
+                  normalizedSearchResults.length === 0 &&
+                  normalizedSearchQuery.trim().length >= 2 && (
                     <p className="px-4 py-3 text-sm text-slate-300">No movies found.</p>
                   )}
 
                 {!isSearching &&
                   !searchError &&
-                  searchResults.map((movie) => (
+                  normalizedSearchResults.map((movie) => (
                     <button
                       key={movie.id}
                       type="button"

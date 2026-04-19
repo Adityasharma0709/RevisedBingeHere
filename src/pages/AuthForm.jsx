@@ -1,12 +1,15 @@
 import React, { useState } from "react";
+import Loader from "../components/Common/Loader.jsx";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import "./css/AuthForm.css";
-import { registerUser,loginUser,
+import {
+  registerUser,
+  loginUser,
   forgotPassword,
   verifyOTP,
   resetPassword,
- } from "../services/auth.services";
+} from "../services/auth.services";
 
 const AuthForm = () => {
   const navigate = useNavigate();
@@ -20,6 +23,7 @@ const AuthForm = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [cities, setCities] = useState([]);
 
   // ðŸ” Static credentials
   // const credentials = [
@@ -27,12 +31,32 @@ const AuthForm = () => {
   //   { email: "user2@gmail.com", password: "user123", role: "user" },
   //   { email: "admin@gmail.com", password: "admin123", role: "admin" },
   // ];
+
+  const stateCityData = {
+    Odisha: ["Bhubaneswar", "Cuttack", "Puri", "Rourkela"],
+    Maharashtra: ["Mumbai", "Pune", "Nagpur"],
+    Karnataka: ["Bangalore", "Mysore"],
+  };
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
     password: "",
+    city: "",
+    state: "",
   });
+
+  const handleStateChange = (e) => {
+    const selectedState = e.target.value;
+
+    setFormData({
+      ...formData,
+      state: selectedState,
+      city: "", // reset city
+    });
+
+    setCities(stateCityData[selectedState] || []);
+  };
 
   const handleForgotPassword = async (e) => {
     e.preventDefault();
@@ -114,15 +138,42 @@ const AuthForm = () => {
   };
 
   const handleSignUp = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await registerUser(formData);
-      toast.success(response.message || "Account created! ðŸŽ‰");
-      setIsSignUp(false); // Switch to login view
-    } catch (error) {
-      toast.error(error.message || "Something went wrong âŒ");
-    }
+  e.preventDefault();
+
+  const userData = {
+    name: formData.name,
+    email: formData.email,
+    phone: formData.phone,
+    password: formData.password,
+    location: {
+      city: formData.city,
+      state: formData.state,
+    },
   };
+
+  try {
+    const res = await registerUser(userData);
+
+    // ✅ Show success toast
+    toast.success(res.message || "Account created successfully 🎉");
+
+    // ✅ Switch to Sign In panel
+    setIsSignUp(false);
+
+    // ✅ Optional: clear form
+    setFormData({
+      name: "",
+      email: "",
+      phone: "",
+      password: "",
+      city: "",
+      state: "",
+    });
+
+  } catch (err) {
+    toast.error(err.message || "Registration failed");
+  }
+};
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -184,6 +235,7 @@ const AuthForm = () => {
 
   return (
     <div className="body-wrapper">
+      <Loader isLoading={isLoading} />
       <div
         className={`container ${isSignUp ? "right-panel-active" : ""}`}
         id="container"
@@ -221,6 +273,34 @@ const AuthForm = () => {
               onChange={handleChange}
               required
             />
+            <select
+              name="state"
+              value={formData.state}
+              onChange={handleStateChange}
+              required
+            >
+              <option value="">Select State</option>
+              {Object.keys(stateCityData).map((state) => (
+                <option key={state} value={state}>
+                  {state}
+                </option>
+              ))}
+            </select>
+
+            <select
+              name="city"
+              value={formData.city}
+              onChange={handleChange}
+              required
+              disabled={!formData.state}
+            >
+              <option value="">Select City</option>
+              {cities.map((city) => (
+                <option key={city} value={city}>
+                  {city}
+                </option>
+              ))}
+            </select>
             <button type="submit">Sign Up</button>
           </form>
         </div>
@@ -246,7 +326,7 @@ const AuthForm = () => {
             />
 
             <a href="#" onClick={handleForgotPassword}>
-              {isLoading && !showModal ? "Sending OTP..." : "Forgot your password?"}
+              Forgot your password?
             </a>
 
             <button type="submit">Log In</button>
@@ -269,7 +349,7 @@ const AuthForm = () => {
               <p>
                 Quick, hit that login button!
                 <br></br>
-                The showÃ¢â‚¬â„¢s about to start and the popcorn is waiting!
+                The show is about to start and the popcorn is waiting!
               </p>
               <button onClick={() => setIsSignUp(true)}>Sign Up</button>
             </div>
@@ -282,7 +362,10 @@ const AuthForm = () => {
         <div className="modal">
           <div className="modal-content">
             {step === 2 && (
-              <form onSubmit={handleVerifyOTP} style={{ padding: 0, height: "auto" }}>
+              <form
+                onSubmit={handleVerifyOTP}
+                style={{ padding: 0, height: "auto" }}
+              >
                 <h2>Verify OTP</h2>
                 <p>Enter the 6-digit OTP sent to {resetEmail}</p>
                 <div className="otp-container">
@@ -304,12 +387,22 @@ const AuthForm = () => {
                   <button type="submit" disabled={isLoading}>
                     {isLoading ? "Verifying..." : "Verify"}
                   </button>
-                  <button type="button" className="ghost" onClick={closeModal} disabled={isLoading}>Cancel</button>
+                  <button
+                    type="button"
+                    className="ghost"
+                    onClick={closeModal}
+                    disabled={isLoading}
+                  >
+                    Cancel
+                  </button>
                 </div>
               </form>
             )}
             {step === 3 && (
-              <form onSubmit={handleResetPassword} style={{ padding: 0, height: "auto" }}>
+              <form
+                onSubmit={handleResetPassword}
+                style={{ padding: 0, height: "auto" }}
+              >
                 <h2>Reset Password</h2>
                 <p>Enter your new password.</p>
                 <input
@@ -324,7 +417,14 @@ const AuthForm = () => {
                   <button type="submit" disabled={isLoading}>
                     {isLoading ? "Resetting..." : "Reset"}
                   </button>
-                  <button type="button" className="ghost" onClick={closeModal} disabled={isLoading}>Cancel</button>
+                  <button
+                    type="button"
+                    className="ghost"
+                    onClick={closeModal}
+                    disabled={isLoading}
+                  >
+                    Cancel
+                  </button>
                 </div>
               </form>
             )}

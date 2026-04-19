@@ -16,6 +16,7 @@ import {
   Trash2,
   UserRound,
 } from "lucide-react";
+import Loader from "../components/Common/Loader.jsx";
 import { registerUser } from "../services/auth.services";
 import {
   createScreen,
@@ -360,6 +361,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-[#07111f] text-slate-100">
+      <Loader isLoading={isLoading || isSubmitting} />
       <div className="absolute inset-x-0 top-0 h-72 bg-[radial-gradient(circle_at_top_left,_rgba(239,68,68,0.25),_transparent_42%),radial-gradient(circle_at_top_right,_rgba(250,204,21,0.18),_transparent_35%)]" />
 
       <main className="relative z-10 mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
@@ -504,11 +506,7 @@ const AdminDashboard = () => {
               </div>
 
               <div className="mt-5 space-y-4">
-                {isLoading ? (
-                  <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.03] px-4 py-12 text-center text-sm text-slate-400">
-                    Pulling the latest theatres from the backend...
-                  </div>
-                ) : theatres.length === 0 ? (
+                {isLoading ? null : theatres.length === 0 ? (
                   <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.03] px-4 py-12 text-center text-sm text-slate-400">
                     No theatres yet. Create the first one from the panel on the right.
                   </div>

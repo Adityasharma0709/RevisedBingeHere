@@ -3,9 +3,60 @@
   min-height: 100vh;
   background: linear-gradient(to bottom, #141414, #000000);
   color: #fff;
-  padding: 2rem;
+  padding: 6.5rem 2rem 2rem;
   padding-bottom: 120px; /* Space for sticky cart */
   font-family: 'Inter', sans-serif;
+}
+
+.food-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  backdrop-filter: blur(20px);
+  background: rgba(10, 10, 10, 0.45);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.food-topbar-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.1rem;
+  font-size: 1.45rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  user-select: none;
+}
+
+.food-topbar-binge,
+.food-topbar-here {
+  transition: color 0.3s ease;
+  text-transform: none;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.35));
+}
+
+.food-topbar-binge {
+  color: #ffffff;
+}
+
+.food-topbar-here {
+  color: #dc2626;
+}
+
+.food-topbar-brand:hover .food-topbar-binge,
+.food-topbar-brand:focus-visible .food-topbar-binge {
+  color: #ef4444;
+}
+
+.food-topbar-brand:hover .food-topbar-here,
+.food-topbar-brand:focus-visible .food-topbar-here {
+  color: #ffffff;
 }
 
 /* HEADER */
@@ -231,7 +282,15 @@
 /* RESPONSIVE */
 @media (max-width: 768px) {
   .food-page {
-    padding: 1.5rem;
+    padding: 5.75rem 1.5rem 1.5rem;
+  }
+
+  .food-topbar {
+    padding: 0.9rem 1.1rem;
+  }
+
+  .food-topbar-brand {
+    font-size: 1.2rem;
   }
   
   .menu-grid {

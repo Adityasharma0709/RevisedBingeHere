@@ -1,27 +1,177 @@
+.seat-selection-page {
+  min-height: 100vh;
+  padding: 28px 20px 40px;
+  background:
+    radial-gradient(circle at top left, rgba(239, 68, 68, 0.18), transparent 24%),
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.14), transparent 24%),
+    linear-gradient(180deg, #08111f 0%, #101827 52%, #182334 100%);
+  color: #f8fafc;
+}
+
 .seat-wrapper {
-  max-width: 800px;
-  margin: auto;
-  background: white;
-  padding: 20px;
-  border-radius: 14px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.08);
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 30px 28px;
+  border-radius: 30px;
+  backdrop-filter: blur(18px);
+  background:
+    linear-gradient(135deg, rgba(127, 29, 29, 0.15), rgba(15, 23, 42, 0.76) 44%),
+    rgba(10, 16, 28, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
 }
 
-/* category title */
-.section-title {
-  margin: 15px 0 10px;
-  font-size: 14px;
-  font-weight: bold;
-  color: #555;
+.seat-selection-header h1 {
+  margin: 0;
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  line-height: 0.98;
+  font-weight: 800;
+  letter-spacing: -0.04em;
 }
 
-/* screen */
+.seat-selection-eyebrow {
+  margin: 0 0 12px;
+  color: #f87171;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.seat-selection-subtitle {
+  max-width: 640px;
+  margin: 16px 0 0;
+  color: #cbd5e1;
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.seat-selection-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 24px 0 18px;
+}
+
+.seat-selection-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #e2e8f0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.legend-dot.available {
+  background: #86efac;
+}
+
+.legend-dot.selected {
+  background: #fb7185;
+}
+
+.legend-dot.booked {
+  background: #64748b;
+}
+
 .screen {
   text-align: center;
-  padding: 10px;
-  margin-bottom: 25px;
-  background: #eee;
-  border-radius: 10px;
-  font-size: 12px;
-  letter-spacing: 2px;
+  padding: 12px;
+  margin-bottom: 28px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #dbeafe, #bfdbfe, #d8b4fe);
+  color: #0f172a;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  box-shadow: 0 16px 40px rgba(191, 219, 254, 0.22);
+}
+
+.price-bar {
+  max-width: 920px;
+  margin: 20px auto 0;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  border-radius: 24px;
+  backdrop-filter: blur(18px);
+  background: rgba(10, 16, 28, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+}
+
+.price-bar-copy,
+.price-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.price-bar-copy {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.price-bar-label,
+.price-bar-seats,
+.price-bar-actions h3 {
+  margin: 0;
+}
+
+.price-bar-label {
+  color: #f8fafc;
+  font-size: 1rem;
+}
+
+.price-bar-seats {
+  color: #94a3b8;
+  font-size: 0.92rem;
+}
+
+.price-bar-actions h3 {
+  font-size: 1.7rem;
+  color: #fff;
+}
+
+.price-bar button {
+  border: none;
+  border-radius: 999px;
+  padding: 12px 20px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(135deg, #dc2626, #fb7185);
+  cursor: pointer;
+  box-shadow: 0 12px 24px rgba(220, 38, 38, 0.24);
+}
+
+@media (max-width: 640px) {
+  .seat-selection-page {
+    padding: 18px 14px 28px;
+  }
+
+  .seat-wrapper,
+  .price-bar {
+    border-radius: 22px;
+  }
+
+  .price-bar-copy,
+  .price-bar-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
 }

@@ -25,9 +25,9 @@ export default function SeatBooking() {
   const navigate = useNavigate();
 
   const [activeTime, setActiveTime] = useState(state?.time || showTimes[0]);
-  const [ticketCount, setTicketCount] = useState(2);
-  const [showTicketModal, setShowTicketModal] = useState(true);
-  const [selectedSeats, setSelectedSeats] = useState([]);
+  const [ticketCount, setTicketCount] = useState(state?.ticketCount || 2);
+  const [showTicketModal, setShowTicketModal] = useState(() => !state?.selectedSeats?.length);
+  const [selectedSeats, setSelectedSeats] = useState(() => state?.selectedSeats || []);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentTimer, setPaymentTimer] = useState(60);
   const [selectedPaymentApp, setSelectedPaymentApp] = useState("GPay");
@@ -47,6 +47,16 @@ export default function SeatBooking() {
     setFoodOrder(state.foodOrder);
     localStorage.setItem("foodOrder", JSON.stringify(state.foodOrder));
   }, [state?.foodOrder]);
+
+  useEffect(() => {
+    if (!state?.selectedSeats) return;
+    setSelectedSeats(state.selectedSeats);
+  }, [state?.selectedSeats]);
+
+  useEffect(() => {
+    if (!state?.ticketCount) return;
+    setTicketCount(state.ticketCount);
+  }, [state?.ticketCount]);
 
   useEffect(() => {
     if (!showPaymentModal) return undefined;
@@ -162,7 +172,7 @@ export default function SeatBooking() {
         </div>
 
         <button className="ticket-btn" onClick={() => setShowTicketModal(true)}>
-          ✎ {ticketCount} Tickets
+          Edit {ticketCount} Tickets
         </button>
       </div>
 
@@ -170,7 +180,7 @@ export default function SeatBooking() {
         <div className="ticket-modal-overlay">
           <div className="ticket-modal-card">
             <h2 className="modal-title">How many seats?</h2>
-            <div className="modal-illustration">🛵</div>
+            <div className="modal-illustration">Seats</div>
 
             <div className="seat-count-row">
               {[...Array(10)].map((_, i) => {
@@ -193,7 +203,7 @@ export default function SeatBooking() {
               {seatTypes.map((s) => (
                 <div key={s.type} className="seat-type">
                   <div className="seat-type-name">{s.type}</div>
-                  <div className="seat-type-price">₹{s.price}</div>
+                  <div className="seat-type-price">Rs {s.price}</div>
                   <div className="seat-type-status">AVAILABLE</div>
                 </div>
               ))}

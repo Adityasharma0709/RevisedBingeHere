@@ -29,3 +29,12 @@ export const createShow = async (showData, userId) => {
 
   return result;
 };
+
+export const getShowById = async (showId) => {
+  const res = await fetch(`${API_URL}/${showId}`);
+  const result = await res.json();
+  if (!res.ok) {
+    throw new Error(result.error || result.message || "Failed to fetch show details");
+  }
+  return result;
+};

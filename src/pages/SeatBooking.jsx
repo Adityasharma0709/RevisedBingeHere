@@ -1,30 +1,24 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { getShowById } from "../services/show.service";
+import { createBooking } from "../services/booking.service";
+import toast from "react-hot-toast";
+import Loader from "../components/Common/Loader.jsx";
 import "./css/SeatBooking.css";
-
-const seatRows = [
-  { row: "RECLINER", price: 349, seats: 25 },
-  { row: "SOFA SLIDER", price: 199, seats: 16 },
-  { row: "DIAMOND", price: 149, seats: 14 },
-  { row: "GOLD", price: 105, seats: 12 },
-];
-
-const soldSeats = new Set(["RECLINER3", "DIAMOND7"]);
-
-const seatTypes = [
-  { type: "RECLINER", price: 349 },
-  { type: "SOFA SLIDER", price: 199 },
-  { type: "DIAMOND", price: 149 },
-  { type: "GOLD", price: 105 },
-];
-
-const showTimes = ["09:20 AM", "12:05 PM", "04:55 PM", "07:40 PM", "10:25 PM"];
 
 export default function SeatBooking() {
   const { state } = useLocation();
   const navigate = useNavigate();
 
-  const [activeTime, setActiveTime] = useState(state?.time || showTimes[0]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [showData, setShowData] = useState(null);
+  const [seatRows, setSeatRows] = useState([]);
+  const [seatTypes, setSeatTypes] = useState([]);
+  const [soldSeats, setSoldSeats] = useState(new Set());
+  const [user, setUser] = useState(null);
+
+  const [activeTime, setActiveTime] = useState(state?.time || "");
   const [ticketCount, setTicketCount] = useState(state?.ticketCount || 2);
   const [showTicketModal, setShowTicketModal] = useState(() => !state?.selectedSeats?.length);
   const [selectedSeats, setSelectedSeats] = useState(() => state?.selectedSeats || []);
@@ -41,6 +35,68 @@ export default function SeatBooking() {
       return null;
     }
   });
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    } else {
+      toast.error("Please login to book tickets");
+      navigate("/auth");
+    }
+  }, [navigate]);
+
+  useEffect(() => {
+    const fetchShowData = async () => {
+      try {
+        if (!state?.showId) {
+          toast.error("Show data not found");
+          navigate(-1);
+          return;
+        }
+        
+        setIsLoading(true);
+        const data = await getShowById(state.showId);
+        setShowData(data);
+        
+        if (data.bookedSeats) {
+          setSoldSeats(new Set(data.bookedSeats));
+        }
+
+        if (data.pricing) {
+          setSeatTypes(data.pricing.map(p => ({
+            type: p.segment,
+            price: p.price
+          })));
+        } else if (data.price) { // Fallback for old shows
+           setSeatTypes([{ type: "STANDARD", price: data.price }]);
+        }
+
+        if (data.screen && data.screen.seatLayout) {
+          const layout = data.screen.seatLayout.map(rowConfig => {
+            let price = data.price || 200;
+            if (data.pricing) {
+               const pricingObj = data.pricing.find(p => p.segment === rowConfig.row);
+               if (pricingObj) price = pricingObj.price;
+            }
+            return {
+              row: rowConfig.row,
+              seats: rowConfig.seats,
+              price: price
+            };
+          });
+          setSeatRows(layout);
+        }
+
+      } catch (err) {
+        toast.error("Failed to load show details");
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchShowData();
+  }, [state?.showId, navigate]);
 
   useEffect(() => {
     if (!state?.foodOrder) return;
@@ -77,7 +133,7 @@ export default function SeatBooking() {
 
   useEffect(() => {
     if (paymentTimer === 0 && showPaymentModal) {
-      alert("QR payment expired. Please generate a new QR code.");
+      toast.error("QR payment expired. Please generate a new QR code.");
     }
   }, [paymentTimer, showPaymentModal]);
 
@@ -90,7 +146,7 @@ export default function SeatBooking() {
     }
 
     if (selectedSeats.length >= ticketCount) {
-      alert(`You can select only ${ticketCount} seats`);
+      toast.error(`You can select exactly ${ticketCount} seats`);
       return;
     }
 
@@ -123,15 +179,35 @@ export default function SeatBooking() {
   };
 
   const openPaymentModal = () => {
-    if (selectedSeats.length !== ticketCount) return;
+    if (selectedSeats.length !== ticketCount) {
+      toast.error(`Please select exactly ${ticketCount} seats`);
+      return;
+    }
     setSelectedPaymentApp("GPay");
     setShowPaymentModal(true);
   };
 
-  const completePayment = () => {
-    setShowPaymentModal(false);
-    navigate("/payment-summary", { state: paymentState });
+  const completePayment = async () => {
+    try {
+      setIsProcessing(true);
+      
+      await createBooking({
+        showId: showData._id,
+        seats: selectedSeats,
+        totalPrice: grandTotal
+      }, user._id);
+      
+      toast.success("Payment Received & Tickets Booked! 🎉");
+      setShowPaymentModal(false);
+      navigate("/payment-summary", { state: paymentState });
+    } catch (err) {
+      toast.error(err.message || "Booking failed");
+    } finally {
+      setIsProcessing(false);
+    }
   };
+
+  if (isLoading) return <Loader isLoading={true} />;
 
   return (
     <div className="seat-page">
@@ -151,18 +227,9 @@ export default function SeatBooking() {
             </h2>
 
             <div className="showtime-breadcrumb">
-              {showTimes.map((time) => (
-                <span
-                  key={time}
-                  className={time === activeTime ? "showtime-pill active" : "showtime-pill"}
-                  onClick={() => {
-                    setActiveTime(time);
-                    setSelectedSeats([]);
-                  }}
-                >
-                  {time}
-                </span>
-              ))}
+              <span className="showtime-pill active">
+                 {activeTime}
+              </span>
             </div>
 
             <p className="movie-subtitle">
@@ -281,6 +348,7 @@ export default function SeatBooking() {
                     selectedSeats,
                     ticketCount,
                     foodOrder,
+                    showId: state?.showId,
                   },
                 })
               }
@@ -333,6 +401,7 @@ export default function SeatBooking() {
                     type="button"
                     className="secondary-pay-btn"
                     onClick={() => setShowPaymentModal(false)}
+                    disabled={isProcessing}
                   >
                     Cancel
                   </button>
@@ -340,9 +409,9 @@ export default function SeatBooking() {
                     type="button"
                     className="select-seat-btn"
                     onClick={completePayment}
-                    disabled={paymentTimer === 0}
+                    disabled={paymentTimer === 0 || isProcessing}
                   >
-                    I Have Paid
+                    {isProcessing ? "Processing..." : "I Have Paid"}
                   </button>
                 </div>
               </div>

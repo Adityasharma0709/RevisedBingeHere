@@ -25,7 +25,7 @@ const ManageScreens = () => {
   const [user, setUser] = useState(null);
 
   const [screenName, setScreenName] = useState("");
-  const [rows, setRows] = useState([{ row: "A", seats: 10 }]);
+  const [rows, setRows] = useState([{ row: "CLASSIC", seats: 20 }]);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -55,8 +55,7 @@ const ManageScreens = () => {
   };
 
   const handleAddRow = () => {
-    const nextLabel = String.fromCharCode(65 + rows.length);
-    setRows([...rows, { row: nextLabel, seats: 10 }]);
+    setRows([...rows, { row: "NEW", seats: 10 }]);
   };
 
   const handleRemoveRow = (index) => {
@@ -92,7 +91,7 @@ const ManageScreens = () => {
       await createScreen({ screenData, userId: user._id });
       toast.success("Screen created successfully!");
       setScreenName("");
-      setRows([{ row: "A", seats: 10 }]);
+      setRows([{ row: "CLASSIC", seats: 20 }]);
       fetchTheatre(user._id); // Refresh data
     } catch (error) {
       toast.error(error.message || "Failed to create screen");
@@ -163,7 +162,7 @@ const ManageScreens = () => {
                               e.target.value.toUpperCase(),
                             )
                           }
-                          placeholder="Row Label"
+                          placeholder="Segment (e.g. CLASSIC)"
                           className="row-label-input"
                         />
                         <input

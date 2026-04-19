@@ -31,8 +31,9 @@ const ManageShows = () => {
     screen: "",
     date: "",
     time: "",
-    price: 200,
   });
+
+  const [pricing, setPricing] = useState({});
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -68,7 +69,31 @@ const ManageShows = () => {
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+
+    if (name === "screen") {
+      const selectedScreen = theatre?.screens?.find((s) => s._id === value);
+      if (selectedScreen && selectedScreen.seatLayout) {
+        const newPricing = {};
+        const segments = [
+          ...new Set(selectedScreen.seatLayout.map((row) => row.row)),
+        ];
+        segments.forEach((seg) => {
+          newPricing[seg] = 200; // default price
+        });
+        setPricing(newPricing);
+      } else {
+        setPricing({});
+      }
+    }
+  };
+
+  const handlePriceChange = (segment, value) => {
+    setPricing({
+      ...pricing,
+      [segment]: value,
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -87,13 +112,18 @@ const ManageShows = () => {
     const localDateTime = new Date(`${formData.date}T${formData.time}`);
     const startTimeStr = localDateTime.toISOString();
     const endDate = new Date(localDateTime.getTime() + 2.5 * 60 * 60 * 1000);
+    const pricingArray = Object.keys(pricing).map((segment) => ({
+      segment,
+      price: parseInt(pricing[segment]) || 0,
+    }));
+
     const showPayload = {
       movie: formData.movie,
       theatre: theatre._id,
       screen: formData.screen,
       startTime: startTimeStr,
       endTime: endDate.toISOString(),
-      price: parseInt(formData.price),
+      pricing: pricingArray,
     };
 
     try {
@@ -170,19 +200,55 @@ const ManageShows = () => {
                 </select>
               </div>
 
-              <div className="form-group">
-                <label>
-                  <Ticket size={14} /> Ticket Price (INR)
-                </label>
-                <input
-                  type="number"
-                  name="price"
-                  value={formData.price}
-                  onChange={handleChange}
-                  min="0"
-                  required
-                />
-              </div>
+              {Object.keys(pricing).length > 0 && (
+                <div className="form-group full-width pricing-section">
+                  <label>
+                    <Ticket size={14} /> Segment Pricing (INR)
+                  </label>
+                  <div
+                    className="pricing-grid"
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns:
+                        "repeat(auto-fit, minmax(150px, 1fr))",
+                      gap: "1rem",
+                      marginTop: "0.5rem",
+                    }}
+                  >
+                    {Object.keys(pricing).map((segment) => (
+                      <div key={segment} className="pricing-item">
+                        <span
+                          style={{
+                            fontSize: "0.85rem",
+                            color: "#94a3b8",
+                            display: "block",
+                            marginBottom: "0.4rem",
+                          }}
+                        >
+                          {segment}
+                        </span>
+                        <input
+                          type="number"
+                          value={pricing[segment]}
+                          onChange={(e) =>
+                            handlePriceChange(segment, e.target.value)
+                          }
+                          min="0"
+                          style={{
+                            width: "100%",
+                            background: "rgba(255,255,255,0.05)",
+                            border: "1px solid rgba(255,255,255,0.1)",
+                            padding: "0.8rem",
+                            borderRadius: "10px",
+                            color: "white",
+                          }}
+                          required
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div className="form-group">
                 <label>

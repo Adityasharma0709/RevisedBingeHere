@@ -49,6 +49,9 @@ const MovieDetails = ({ movie, cast }) => {
   useEffect(() => {
     const fetchExtras = async () => {
       try {
+        const isMongoId = /^[a-f\d]{24}$/i.test(movie.id);
+        if (isMongoId) return;
+
         const res = await fetch(
           `https://api.themoviedb.org/3/movie/${movie.id}/similar?api_key=${API_KEY}&language=en-US&page=1`
         );
@@ -68,6 +71,12 @@ const MovieDetails = ({ movie, cast }) => {
       return;
     }
     try {
+      const isMongoId = /^[a-f\d]{24}$/i.test(movie.id);
+      if (isMongoId) {
+        alert("Trailer viewing is not currently supported for local movies.");
+        return;
+      }
+      
       const res = await fetch(
         `https://api.themoviedb.org/3/movie/${movie.id}/videos?api_key=${API_KEY}&language=en-US`
       );
@@ -90,7 +99,7 @@ const MovieDetails = ({ movie, cast }) => {
   const handleBookTickets = () => {
     navigate("/showtimes", {
       state: {
-        movieId: movie.id,
+        movieId: movie.localId || movie.id, // Prefer local ID for booking!
         movie: movie.title,
         language: movie.original_language?.toUpperCase() || "EN",
         runtime: movie.runtime,

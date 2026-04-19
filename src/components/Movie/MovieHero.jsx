@@ -20,13 +20,13 @@ const MovieHero = ({ movie, onWatchTrailer, onBookTickets }) => {
     <section className="cinema-hero">
       <motion.div
         className="cinema-bg"
-        style={{ scale: bgScale, backgroundImage: `url(${IMG_ORIGINAL}${movie.backdrop_path})` }}
+        style={{ scale: bgScale, backgroundImage: `url(${movie.backdrop_path?.startsWith("http") ? movie.backdrop_path : IMG_ORIGINAL + movie.backdrop_path})` }}
       />
       <div className="cinema-overlay" />
 
       <div className="hero-content">
         <motion.div className="cinema-poster" style={{ y: posterY }}>
-          <img src={`${IMG_500}${movie.poster_path}`} alt={movie.title} />
+          <img src={movie.poster_path?.startsWith("http") ? movie.poster_path : IMG_500 + movie.poster_path} alt={movie.title} />
         </motion.div>
 
         <motion.div className="cinema-info" style={{ y: textY }}>

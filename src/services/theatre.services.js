@@ -40,3 +40,12 @@ export const createScreen = async ({ screenData, userId }) => {
 
   return parseResponse(response);
 };
+
+export const getTheatresByOwner = async (userId) => {
+  const response = await fetch(`${API_URL}/theatre/${userId}`, {
+    headers: {
+      userid: userId,
+    },
+  });
+  return parseResponse(response);
+};

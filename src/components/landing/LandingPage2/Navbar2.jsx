@@ -13,7 +13,8 @@ const Navbar2 = ({
   searchError = null,
   onSearchSubmit,
   onSearchSelect,
-} = {}) => {
+  location,
+}) => {
   const navigate = useNavigate();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const searchRef = useRef(null);
@@ -61,6 +62,11 @@ const Navbar2 = ({
               Here
             </span>
           </div>
+          {location && (
+            <div className="text-sm text-gray-400">
+              {location.city}, {location.state}
+            </div>
+          )}
         </div>
 
         <div className="flex items-center gap-4 md:gap-6">

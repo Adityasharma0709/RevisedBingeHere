@@ -13,6 +13,9 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { Toaster } from "react-hot-toast";
 import SundaySpecial from "./pages/SundayVoting";
 import AddMovie from "./pages/admin/AddMovie";
+import OwnerDashboard from "./pages/theatre_owner/OwnerDashboard";
+import ManageScreens from "./pages/theatre_owner/ManageScreens";
+import ManageShows from "./pages/theatre_owner/ManageShows";
 
 function App() {
   return (
@@ -103,6 +106,32 @@ function App() {
         <Route path="/seats" element={<SeatBooking />} />
         <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
         <Route path="/admin/add-movie" element={<AddMovie />} />
+
+        {/* Theatre Owner Routes */}
+        <Route
+          path="/owner/dashboard"
+          element={
+            <ProtectedRoute requireOwner>
+              <OwnerDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/owner/screens"
+          element={
+            <ProtectedRoute requireOwner>
+              <ManageScreens />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/owner/shows"
+          element={
+            <ProtectedRoute requireOwner>
+              <ManageShows />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

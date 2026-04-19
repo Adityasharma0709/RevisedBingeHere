@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Mail, Phone, IdCard, User, LogOut } from "lucide-react";
 import toast from "react-hot-toast";
 import { Navbar2 } from "../components/landing/LandingPage2/Navbar2";
-import { updatePassword } from "../services/auth.services";
+// import { updatePassword } from "../services/auth.services";
 
 const Profile = () => {
   const navigate = useNavigate();

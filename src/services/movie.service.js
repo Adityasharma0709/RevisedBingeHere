@@ -6,6 +6,14 @@ export const searchMovies = async (query) => {
   return res.json();
 };
 
+// 🎞️ Get all movies
+export const getMovies = async () => {
+  const res = await fetch(API_URL);
+  const result = await res.json();
+  if (!res.ok) throw new Error(result.error || "Failed to fetch movies");
+  return result;
+};
+
 // 🎬 Create movie (ADMIN ONLY)
 export const createMovie = async (data, userId) => {
   const res = await fetch(API_URL, {

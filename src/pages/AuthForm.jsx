@@ -138,42 +138,41 @@ const AuthForm = () => {
   };
 
   const handleSignUp = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const userData = {
-    name: formData.name,
-    email: formData.email,
-    phone: formData.phone,
-    password: formData.password,
-    location: {
-      city: formData.city,
-      state: formData.state,
-    },
+    const userData = {
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      password: formData.password,
+      location: {
+        city: formData.city,
+        state: formData.state,
+      },
+    };
+
+    try {
+      const res = await registerUser(userData);
+
+      // ✅ Show success toast
+      toast.success(res.message || "Account created successfully 🎉");
+
+      // ✅ Switch to Sign In panel
+      setIsSignUp(false);
+
+      // ✅ Optional: clear form
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        password: "",
+        city: "",
+        state: "",
+      });
+    } catch (err) {
+      toast.error(err.message || "Registration failed");
+    }
   };
-
-  try {
-    const res = await registerUser(userData);
-
-    // ✅ Show success toast
-    toast.success(res.message || "Account created successfully 🎉");
-
-    // ✅ Switch to Sign In panel
-    setIsSignUp(false);
-
-    // ✅ Optional: clear form
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      password: "",
-      city: "",
-      state: "",
-    });
-
-  } catch (err) {
-    toast.error(err.message || "Registration failed");
-  }
-};
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -225,6 +224,8 @@ const AuthForm = () => {
 
       if (userProfile.role === "admin") {
         navigate("/admin");
+      } else if (userProfile.role === "owner") {
+        navigate("/owner/dashboard");
       } else {
         navigate("/landing2");
       }

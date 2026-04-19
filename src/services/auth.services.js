@@ -87,3 +87,25 @@ export const resetPassword = async (email, newPassword) => {
   if (!response.ok) throw new Error(data.message);
   return data;
 };
+
+export const updatePassword = async (passwordData) => {
+  try {
+    const response = await fetch(`${API_URL}/update-password`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(passwordData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Password update failed");
+    }
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};

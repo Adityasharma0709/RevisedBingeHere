@@ -53,6 +53,28 @@ export const fetchMoviesByLocation = async (userId) => {
   return result;
 };
 
+// 🌍 Get movies by location + category
+export const fetchMoviesByLocationAndCategory = async (category, userId) => {
+  const res = await fetch(`${API_URL}/by-location/${encodeURIComponent(category)}`, {
+    credentials: "include",
+    headers: {
+      userid: userId || "",
+    },
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(
+      result.error ||
+        result.message ||
+        "Failed to fetch movies by location and category"
+    );
+  }
+
+  return result;
+};
+
 // 🎥 Get movie by ID
 export const getMovieById = async (movieId) => {
   const res = await fetch(`${API_URL}/${movieId}`);

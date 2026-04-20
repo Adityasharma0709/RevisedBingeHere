@@ -4,6 +4,7 @@ import FoodOrdering from "./pages/FoodOrdering";
 import AuthForm from "./pages/AuthForm";
 import LandingPage2 from "./pages/LandingPage2";
 import LandingPage from "./pages/LandingPage";
+import MoviesByLocationCategory from "./pages/MoviesByLocationCategory";
 import Showtimes from "./pages/Showtimes";
 import SeatBooking from "./pages/SeatBooking";
 import PaymentSummary from "./pages/PaymentSummary";
@@ -28,6 +29,14 @@ function App() {
           element={
             <ProtectedRoute>
               <LandingPage2 />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/movies/by-location/:category"
+          element={
+            <ProtectedRoute>
+              <MoviesByLocationCategory />
             </ProtectedRoute>
           }
         />

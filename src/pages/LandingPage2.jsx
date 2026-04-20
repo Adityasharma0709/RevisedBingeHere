@@ -33,6 +33,10 @@ function App() {
     { name: "Thriller", color: "bg-yellow-500" },
   ];
 
+  const handleBrowseByCategory = (categoryName) => {
+    navigate(`/movies/by-location/${encodeURIComponent(categoryName)}`);
+  };
+
   const [premiereMovies, setPremiereMovies] = useState([]);
 
   const [localMovies, setLocalMovies] = useState([]);
@@ -197,6 +201,14 @@ function App() {
             <div
               key={cat.name}
               className="cursor-pointer group hover:scale-105 transition-transform duration-300"
+              role="button"
+              tabIndex={0}
+              onClick={() => handleBrowseByCategory(cat.name)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  handleBrowseByCategory(cat.name);
+                }
+              }}
             >
               <div
                 className={`relative ${cat.color} text-white px-6 py-4 shadow-2xl flex items-center gap-4 overflow-hidden`}

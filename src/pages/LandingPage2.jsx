@@ -1,12 +1,6 @@
-
-
-
-
-
 import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
 import CategoryBar from "../components/landing/LandingPage2/category";
 import {Navbar2} from "../components/landing/LandingPage2/Navbar2";
 import WindowCarousel from "../components/landing/LandingPage2/WindowCarousel";
@@ -81,7 +75,7 @@ function App() {
         const userId = userObj?._id || userObj?.id || localStorage.getItem("userId") || "";
 
         const data = await fetchMoviesByLocation(userId);
-        console.log("Local Movies Response:", data);
+        // console.log("Local Movies Response:", data);
         setLocalMovies(data.movies || []);
         // Extract city and state (use first theatre's state if available)
         const city = data.city || "";

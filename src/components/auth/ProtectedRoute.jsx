@@ -12,11 +12,11 @@ const ProtectedRoute = ({ children, requireAdmin = false, requireOwner = false }
     const user = JSON.parse(storedUser);
 
     if (requireAdmin && user?.role !== "admin") {
-      return <Navigate to="/landing2" replace />;
+      return <Navigate to="/dashboard" replace />;
     }
 
     if (requireOwner && user?.role !== "owner") {
-      return <Navigate to="/landing2" replace />;
+      return <Navigate to="/dashboard" replace />;
     }
   } catch {
     return <Navigate to="/auth" replace />;

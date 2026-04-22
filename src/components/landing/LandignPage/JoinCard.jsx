@@ -7,7 +7,7 @@ export default function JoinCard() {
     return (
         <div
             onClick={() => navigate("/auth")}
-            className="fixed bottom-10 right-10 z-[100] cursor-pointer group hover:scale-105 transition-transform duration-300"
+            className="fixed bottom-10 right-10 z-100 cursor-pointer group hover:scale-105 transition-transform duration-300"
         >
             {/* Ticket Container */}
             <div

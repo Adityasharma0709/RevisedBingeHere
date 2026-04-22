@@ -26,7 +26,7 @@ import AdminSundayVoting from "./pages/admin/AdminSundayVoting";
 function App() {
   return (
     <>
-          <Toaster position="top-right" reverseOrder={false} />
+    <Toaster position="top-right" reverseOrder={false} />
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
@@ -159,33 +159,33 @@ function App() {
           }
         />
 
-          {/* Theatre Owner Routes */}
-          <Route
-            path="/owner/dashboard"
-            element={
-              <ProtectedRoute requireOwner>
-                <OwnerDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/owner/screens"
-            element={
-              <ProtectedRoute requireOwner>
-                <ManageScreens />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/owner/shows"
-            element={
-              <ProtectedRoute requireOwner>
-                <ManageShows />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
+        {/* Theatre Owner Routes */}
+        <Route
+          path="/owner/dashboard"
+          element={
+            <ProtectedRoute requireOwner>
+              <OwnerDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/owner/screens"
+          element={
+            <ProtectedRoute requireOwner>
+              <ManageScreens />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/owner/shows"
+          element={
+            <ProtectedRoute requireOwner>
+              <ManageShows />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
     </>
   );
 }

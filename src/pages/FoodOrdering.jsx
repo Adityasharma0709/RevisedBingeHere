@@ -1,54 +1,93 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FaPlus, FaMinus, FaShoppingBag } from "react-icons/fa";
+import { getFoods } from "../services/food.service";
 import "./css/FoodOrdering.css";
 
-const MENU_ITEMS = [
-  {
-    id: 1,
-    name: "Salted Popcorn",
-    price: 250,
-    category: "Popcorn",
-    img: "/saltedpopcorn.png",
-  },
-  {
-    id: 2,
-    name: "Caramel Popcorn",
-    price: 300,
-    category: "Popcorn",
-    img: "/caramelpopcorn.png",
-  },
-  {
-    id: 3,
-    name: "Cheese Popcorn",
-    price: 280,
-    category: "Popcorn",
-    img: "/caramelpopcorn.png",
-  },
-  { id: 4, name: "Coca Cola", price: 150, category: "Drinks", img: "/pepsi.png" },
-  { id: 5, name: "Iced Tea", price: 180, category: "Drinks", img: "/icetea.png" },
-  { id: 6, name: "Nachos Combo", price: 450, category: "Combos", img: "/nachos.png" },
-  { id: 7, name: "Burger Combo", price: 500, category: "Combos", img: "/burger.png" },
-];
+const getPrimaryImage = (food) => {
+  const primary =
+    food.images?.find((image) => image.isPrimary) || food.images?.[0];
+  return primary?.url || "/popcorn.png";
+};
 
-const CATEGORIES = ["All", "Popcorn", "Drinks", "Combos"];
+const normalizeFood = (food) => ({
+  id: food._id || food.id,
+  food_id: food._id || food.id,
+  name: food.name,
+  price: Number(food.price) || 0,
+  category: food.category || "Other",
+  description: food.description || "",
+  img: getPrimaryImage(food),
+});
 
 const FoodOrdering = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
+  const theatreId = state?.theatreId;
 
-  const [cart, setCart] = useState(() => state?.foodOrder?.cart || {});
+  const [cart, setCart] = useState(() =>
+    state?.foodOrder?.theatreId === theatreId ? state.foodOrder.cart : {},
+  );
+  const [menuItems, setMenuItems] = useState([]);
   const [activeCategory, setActiveCategory] = useState("All");
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const selectedSeats = state?.selectedSeats || [];
   const seatLabel = selectedSeats.length > 0 ? selectedSeats.join(", ") : "your selected seat";
   const movieName = state?.movie || "your movie";
   const hasActiveBooking = Boolean(state?.movie);
 
+  useEffect(() => {
+    const loadTheatreFoods = async () => {
+      if (!theatreId) {
+        setMenuItems([]);
+        setIsLoading(false);
+        setLoadError("Theatre details were not found for this booking.");
+        return;
+      }
+
+      try {
+        setIsLoading(true);
+        setLoadError("");
+        const foods = await getFoods({ theatreId, available: true });
+        setMenuItems(Array.isArray(foods) ? foods.map(normalizeFood) : []);
+      } catch (error) {
+        setLoadError(error.message || "Failed to load food menu.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadTheatreFoods();
+  }, [theatreId]);
+
+  const categories = useMemo(
+    () => ["All", ...new Set(menuItems.map((item) => item.category).filter(Boolean))],
+    [menuItems],
+  );
+
+  useEffect(() => {
+    if (!categories.includes(activeCategory)) {
+      setActiveCategory("All");
+    }
+  }, [activeCategory, categories]);
+
+  useEffect(() => {
+    if (isLoading || menuItems.length === 0) return;
+
+    const validIds = new Set(menuItems.map((item) => item.id));
+    setCart((current) =>
+      Object.fromEntries(
+        Object.entries(current).filter(([id]) => validIds.has(id)),
+      ),
+    );
+  }, [isLoading, menuItems]);
+
   const filteredItems =
     activeCategory === "All"
-      ? MENU_ITEMS
-      : MENU_ITEMS.filter((item) => item.category === activeCategory);
+      ? menuItems
+      : menuItems.filter((item) => item.category === activeCategory);
 
   const addToCart = (item) => {
     setCart((prev) => ({ ...prev, [item.id]: (prev[item.id] || 0) + 1 }));
@@ -63,28 +102,31 @@ const FoodOrdering = () => {
     });
   };
 
-  const totalItems = Object.values(cart).reduce((a, b) => a + b, 0);
-  const totalAmount = Object.keys(cart).reduce((sum, id) => {
-    const item = MENU_ITEMS.find((i) => i.id === parseInt(id, 10));
-    return sum + item.price * cart[id];
-  }, 0);
+  const cartEntries = Object.entries(cart)
+    .map(([id, quantity]) => ({
+      item: menuItems.find((menuItem) => menuItem.id === id),
+      quantity,
+    }))
+    .filter(({ item }) => Boolean(item));
+  const totalItems = cartEntries.reduce((sum, entry) => sum + entry.quantity, 0);
+  const totalAmount = cartEntries.reduce(
+    (sum, entry) => sum + entry.item.price * entry.quantity,
+    0,
+  );
 
   const handleAddToCart = () => {
-    const items = Object.entries(cart)
-      .map(([id, quantity]) => {
-        const menuItem = MENU_ITEMS.find((item) => item.id === parseInt(id, 10));
-        if (!menuItem) return null;
+    const items = cartEntries.map(({ item: menuItem, quantity }) => {
         return {
           id: menuItem.id,
+          food_id: menuItem.food_id,
           name: menuItem.name,
           price: menuItem.price,
           quantity,
           total: menuItem.price * quantity,
         };
-      })
-      .filter(Boolean);
+      });
 
-    const foodOrder = { cart, items, totalItems, totalAmount };
+    const foodOrder = { theatreId, cart, items, totalItems, totalAmount };
     localStorage.setItem("foodOrder", JSON.stringify(foodOrder));
 
     navigate("/seats", {
@@ -139,7 +181,7 @@ const FoodOrdering = () => {
       </motion.div>
 
       <div className="category-tabs">
-        {CATEGORIES.map((cat) => (
+        {categories.map((cat) => (
           <button
             key={cat}
             className={`tab-btn ${activeCategory === cat ? "active" : ""}`}
@@ -157,7 +199,17 @@ const FoodOrdering = () => {
         animate="visible"
         key={activeCategory}
       >
-        {filteredItems.map((item) => {
+        {isLoading && (
+          <div className="food-empty-state">Loading food menu...</div>
+        )}
+
+        {!isLoading && (loadError || filteredItems.length === 0) && (
+          <div className="food-empty-state">
+            {loadError || "No food items are available for this theatre."}
+          </div>
+        )}
+
+        {!isLoading && !loadError && filteredItems.map((item) => {
           const quantity = cart[item.id] || 0;
           return (
             <motion.div

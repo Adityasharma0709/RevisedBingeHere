@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import { getShowsByMovie } from "../services/show.service";
 import Loader from "../components/Common/Loader.jsx";
 import "./css/Showtimes.css";
@@ -106,6 +107,7 @@ export default function Showtimes() {
       const theatreId = show.theatre._id;
       if (!grouping[theatreId]) {
         grouping[theatreId] = {
+          id: theatreId,
           name: show.theatre.name,
           location: show.theatre.location.address || show.theatre.location.city,
           shows: [],
@@ -137,9 +139,14 @@ export default function Showtimes() {
     <div className="showtimes-page">
       <Loader isLoading={isLoading} />
       <nav className="showtimes-nav">
+        <button className="showtimes-back" onClick={() => navigate("/landing2")}>
+          <ArrowLeft size={18} />
+          Back
+        </button>
+
         <div
           className="logo"
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/landing2")}
           style={{ cursor: "pointer" }}
         >
           BingeHere
@@ -247,6 +254,7 @@ export default function Showtimes() {
                         state: {
                           movieId: state?.movieId,
                           showId: show.id,
+                          theatreId: theatre.id,
                           movie: movieName,
                           language,
                           theatre: theatre.name,

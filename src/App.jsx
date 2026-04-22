@@ -1,29 +1,51 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import MovieDetailsContainer from "./pages/MovieDetailsContainer";
+
 import FoodOrdering from "./pages/FoodOrdering";
+
 import AuthForm from "./pages/AuthForm";
+
 import LandingPage2 from "./pages/LandingPage2";
+
 import LandingPage from "./pages/LandingPage";
+
 import MoviesByLocationCategory from "./pages/MoviesByLocationCategory";
+
 import Showtimes from "./pages/Showtimes";
+
 import SeatBooking from "./pages/SeatBooking";
+
 import PaymentSummary from "./pages/PaymentSummary";
+
 import AdminDashboard from "./pages/AdminDashboard";
+
 import Profile from "./pages/Profile";
+
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+
 import { Toaster } from "react-hot-toast";
+
 import SundaySpecial from "./pages/SundayVoting";
+
 import AddMovie from "./pages/admin/AddMovie";
+
 import OwnerDashboard from "./pages/theatre_owner/OwnerDashboard";
+
 import ManageScreens from "./pages/theatre_owner/ManageScreens";
+
 import ManageShows from "./pages/theatre_owner/ManageShows";
+
+import OwnerFoods from "./pages/theatre_owner/OwnerFoods";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
+
         <Route path="/auth" element={<AuthForm />} />
+
         <Route
           path="/landing2"
           element={
@@ -32,6 +54,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/movies/by-location/:category"
           element={
@@ -40,6 +63,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/movie/:movieId"
           element={
@@ -48,6 +72,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/showtimes"
           element={
@@ -56,6 +81,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/seats"
           element={
@@ -64,6 +90,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/food-ordering"
           element={
@@ -72,6 +99,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/payment-summary"
           element={
@@ -80,6 +108,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/admin"
           element={
@@ -88,6 +117,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/profile"
           element={
@@ -96,6 +126,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/special"
           element={
@@ -104,6 +135,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/movie/:movieId"
           element={
@@ -112,11 +144,22 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route path="/seats" element={<SeatBooking />} />
-        <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
         <Route path="/admin/add-movie" element={<AddMovie />} />
 
         {/* Theatre Owner Routes */}
+
         <Route
           path="/owner/dashboard"
           element={
@@ -125,6 +168,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/owner/screens"
           element={
@@ -133,11 +177,21 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/owner/shows"
           element={
             <ProtectedRoute requireOwner>
               <ManageShows />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/owner/foods"
+          element={
+            <ProtectedRoute requireOwner>
+              <OwnerFoods />
             </ProtectedRoute>
           }
         />

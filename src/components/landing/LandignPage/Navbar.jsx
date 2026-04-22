@@ -10,6 +10,23 @@ import Magnetic from "../../ui/Magnetic";
 const Navbar = () => {
   const navigate = useNavigate();
 
+  const handleSignInClick = () => {
+    const storedUser = localStorage.getItem("user");
+    if (!storedUser) {
+      navigate("/auth");
+      return;
+    }
+
+    try {
+      const user = JSON.parse(storedUser);
+      if (user?.role === "admin") navigate("/admin");
+      else if (user?.role === "owner") navigate("/owner/dashboard");
+      else navigate("/dashboard");
+    } catch {
+      navigate("/auth");
+    }
+  };
+
   return (
     <>
       <nav
@@ -46,7 +63,7 @@ const Navbar = () => {
             <Button
               className="text-xs md:text-sm font-medium text-white"
               backgroundColor="#ef4444"
-              onClick={() => navigate("/auth")}
+              onClick={handleSignInClick}
             >
               Sign In
             </Button>

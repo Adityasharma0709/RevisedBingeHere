@@ -13,6 +13,7 @@ import Profile from "./pages/Profile";
 import YourOrders from "./pages/YourOrders";
 import Support from "./pages/Support";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import PublicRoute from "./components/auth/PublicRoute";
 import { Toaster } from "react-hot-toast";
 import SundaySpecial from "./pages/SundayVoting";
 import AddMovie from "./pages/admin/AddMovie";
@@ -25,131 +26,138 @@ import AdminSundayVoting from "./pages/admin/AdminSundayVoting";
 function App() {
   return (
     <>
-      <Toaster position="top-right" reverseOrder={false} />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/auth" element={<AuthForm />} />
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <LandingPage2 />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/movies/by-location/:category"
-            element={
-              <ProtectedRoute>
-                <MoviesByLocationCategory />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/movie/:movieId"
-            element={
-              <ProtectedRoute>
-                <MovieDetailsContainer />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/showtimes"
-            element={
-              <ProtectedRoute>
-                <Showtimes />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/seats"
-            element={
-              <ProtectedRoute>
-                <SeatBooking />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/food-ordering"
-            element={
-              <ProtectedRoute>
-                <FoodOrdering />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/payment-summary"
-            element={
-              <ProtectedRoute>
-                <PaymentSummary />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute requireAdmin>
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/create-theatre"
-            element={
-              <ProtectedRoute requireAdmin>
-                <CreateTheatre />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/orders"
-            element={
-              <ProtectedRoute>
-                <YourOrders />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/support"
-            element={
-              <ProtectedRoute>
-                <Support />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/special"
-            element={
-              <ProtectedRoute>
-                <SundaySpecial />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/add-movie"
-            element={
-              <ProtectedRoute requireAdmin>
-                <AddMovie />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/sunday-voting"
-            element={
-              <ProtectedRoute requireAdmin>
-                <AdminSundayVoting />
-              </ProtectedRoute>
-            }
-          />
+          <Toaster position="top-right" reverseOrder={false} />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route
+          path="/auth"
+          element={
+            <PublicRoute>
+              <AuthForm />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <LandingPage2 />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/movies/by-location/:category"
+          element={
+            <ProtectedRoute>
+              <MoviesByLocationCategory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/movie/:movieId"
+          element={
+            <ProtectedRoute>
+              <MovieDetailsContainer />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/showtimes"
+          element={
+            <ProtectedRoute>
+              <Showtimes />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/seats"
+          element={
+            <ProtectedRoute>
+              <SeatBooking />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/food-ordering"
+          element={
+            <ProtectedRoute>
+              <FoodOrdering />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/payment-summary"
+          element={
+            <ProtectedRoute>
+              <PaymentSummary />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute requireAdmin>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/create-theatre"
+          element={
+            <ProtectedRoute requireAdmin>
+              <CreateTheatre />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute>
+              <YourOrders />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/support"
+          element={
+            <ProtectedRoute>
+              <Support />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/special"
+          element={
+            <ProtectedRoute>
+              <SundaySpecial />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/add-movie"
+          element={
+            <ProtectedRoute requireAdmin>
+              <AddMovie />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/sunday-voting"
+          element={
+            <ProtectedRoute requireAdmin>
+              <AdminSundayVoting />
+            </ProtectedRoute>
+          }
+        />
 
           {/* Theatre Owner Routes */}
           <Route

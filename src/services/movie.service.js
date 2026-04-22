@@ -1,9 +1,13 @@
 const API_URL = "http://localhost:3000/api/movies";
 
 // 🔍 Search movies (no auth needed)
-export const searchMovies = async (query) => {
-  const res = await fetch(`${API_URL}/search?query=${query}`);
-  return res.json();
+export const searchMovies = async (query, signal) => {
+  const res = await fetch(`${API_URL}/search?query=${encodeURIComponent(query)}`, { signal });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || data.message || "Failed to search movies");
+  }
+  return data;
 };
 
 // 🎞️ Get all movies

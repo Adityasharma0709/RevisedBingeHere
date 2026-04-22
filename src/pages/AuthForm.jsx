@@ -205,13 +205,20 @@ const AuthForm = () => {
     try {
       const response = await loginUser({ email, password });
 
-      toast.success(response.message || "Welcome back! ðŸ¿");
+      // ❗ Check if backend signals failure
+      if (!response || response.success === false) {
+        toast.error(response?.message || "Invalid email or password 🚫");
+        return;
+      }
+
+      toast.success(response.message || "Welcome back! 🎉");
 
       const userId =
         response.user?._id ??
         response.user?.id ??
         response.user?.userId ??
         response.userId;
+
       const userProfile = {
         _id: userId,
         name: response.user?.name,
@@ -227,10 +234,16 @@ const AuthForm = () => {
       } else if (userProfile.role === "owner") {
         navigate("/owner/dashboard");
       } else {
-        navigate("/landing2");
+        navigate("/dashboard");
       }
     } catch (error) {
-      toast.error(error.message || "Invalid email or password ðŸš«");
+      // ✅ Handle actual thrown errors (like 401, network issues)
+      const message =
+        error.response?.data?.message || // axios backend message
+        error.message ||
+        "Invalid email or password 🚫";
+
+      toast.error(message);
     }
   };
 

@@ -2,25 +2,32 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoaderCircle, Search } from "lucide-react";
 import SideMenu from "../LandingPage2/sideMenu";
+import { getMovies } from "../../../services/movie.service";
 
-const IMG_92 = "https://image.tmdb.org/t/p/w92";
-
-const Navbar2 = ({
-  searchQuery,
-  setSearchQuery,
-  searchResults,
-  isSearching = false,
-  searchError = null,
-  onSearchSubmit,
-  onSearchSelect,
-  location,
-}) => {
+const Navbar2 = ({ location }) => {
   const navigate = useNavigate();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const searchRef = useRef(null);
 
-  const normalizedSearchQuery = typeof searchQuery === "string" ? searchQuery : "";
-  const normalizedSearchResults = Array.isArray(searchResults) ? searchResults : [];
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState("");
+
+  const [allLocalMovies, setAllLocalMovies] = useState([]);
+
+  // Fetch all local movies once to search against
+  useEffect(() => {
+    const fetchLocalMovies = async () => {
+      try {
+        const data = await getMovies();
+        setAllLocalMovies(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Failed to load local movies for search", err);
+      }
+    };
+    fetchLocalMovies();
+  }, []);
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -33,11 +40,52 @@ const Navbar2 = ({
     return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, []);
 
+  useEffect(() => {
+    const trimmedQuery = searchQuery.trim().toLowerCase();
+
+    if (trimmedQuery.length < 2) {
+      setSearchResults([]);
+      setSearchError("");
+      setIsSearching(false);
+      return;
+    }
+
+    setIsSearching(true);
+    setSearchError("");
+
+    // Simulate slight delay and filter local movies
+    const timer = setTimeout(() => {
+      const filtered = allLocalMovies.filter(
+        (m) =>
+          (m.name && m.name.toLowerCase().includes(trimmedQuery)) ||
+          (m.title && m.title.toLowerCase().includes(trimmedQuery))
+      );
+      setSearchResults(filtered.slice(0, 8));
+      setIsSearching(false);
+    }, 200);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery, allLocalMovies]);
+
+  const handleSearchSelect = (movieId) => {
+    setSearchQuery("");
+    setSearchResults([]);
+    setSearchError("");
+    setIsSearchOpen(false);
+    navigate(`/movie/${movieId}`);
+  };
+
+  const handleSearchSubmit = () => {
+    if (searchResults.length > 0) {
+      handleSearchSelect(searchResults[0]._id);
+    }
+  };
+
   const hasSearchState =
     isSearching ||
     Boolean(searchError) ||
-    normalizedSearchResults.length > 0 ||
-    normalizedSearchQuery.trim().length >= 2;
+    searchResults.length > 0 ||
+    searchQuery.trim().length >= 2;
 
   return (
     <>
@@ -74,7 +122,7 @@ const Navbar2 = ({
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                onSearchSubmit?.();
+                handleSearchSubmit();
               }}
               className="relative"
             >
@@ -84,9 +132,9 @@ const Navbar2 = ({
               />
               <input
                 type="search"
-                value={normalizedSearchQuery}
+                value={searchQuery}
                 onChange={(e) => {
-                  setSearchQuery?.(e.target.value);
+                  setSearchQuery(e.target.value);
                   setIsSearchOpen(true);
                 }}
                 onFocus={() => setIsSearchOpen(true)}
@@ -110,33 +158,30 @@ const Navbar2 = ({
 
                 {!isSearching &&
                   !searchError &&
-                  normalizedSearchResults.length === 0 &&
-                  normalizedSearchQuery.trim().length >= 2 && (
+                  searchResults.length === 0 &&
+                  searchQuery.trim().length >= 2 && (
                     <p className="px-4 py-3 text-sm text-slate-300">No movies found.</p>
                   )}
 
                 {!isSearching &&
                   !searchError &&
-                  normalizedSearchResults.map((movie) => (
+                  searchResults.map((movie) => (
                     <button
-                      key={movie.id}
+                      key={movie._id}
                       type="button"
-                      onClick={() => {
-                        setIsSearchOpen(false);
-                        onSearchSelect?.(movie.id);
-                      }}
+                      onClick={() => handleSearchSelect(movie._id)}
                       className="flex w-full items-center gap-3 border-t border-white/5 px-4 py-3 text-left transition hover:bg-white/5"
                     >
                       <img
-                        src={movie.poster_path ? `${IMG_92}${movie.poster_path}` : "/no-poster.png"}
-                        alt={movie.title}
+                        src={movie.poster || "/no-poster.png"}
+                        alt={movie.name || movie.title}
                         className="h-14 w-10 rounded object-cover"
                       />
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-semibold text-white">{movie.title}</p>
+                        <p className="truncate text-sm font-semibold text-white">{movie.name || movie.title}</p>
                         <p className="text-xs text-slate-400">
-                          {movie.release_date ? movie.release_date.slice(0, 4) : "Upcoming"} |{" "}
-                          {(movie.original_language || "en").toUpperCase()}
+                          {movie.release_date ? movie.release_date.slice(0, 4) : "-"} |{" "}
+                          {(movie.language || "en").toUpperCase()}
                         </p>
                       </div>
                     </button>

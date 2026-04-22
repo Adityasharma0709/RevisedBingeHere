@@ -21,33 +21,42 @@ import PaymentSummary from "./pages/PaymentSummary";
 import AdminDashboard from "./pages/AdminDashboard";
 
 import Profile from "./pages/Profile";
-
+import YourOrders from "./pages/YourOrders";
+import Support from "./pages/Support";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
-
+import PublicRoute from "./components/auth/PublicRoute";
 import { Toaster } from "react-hot-toast";
 
 import SundaySpecial from "./pages/SundayVoting";
 
 import AddMovie from "./pages/admin/AddMovie";
-
+import CreateTheatre from "./pages/admin/CreateTheatre";
 import OwnerDashboard from "./pages/theatre_owner/OwnerDashboard";
 
 import ManageScreens from "./pages/theatre_owner/ManageScreens";
 
 import ManageShows from "./pages/theatre_owner/ManageShows";
+import AdminSundayVoting from "./pages/admin/AdminSundayVoting";
 
 import OwnerFoods from "./pages/theatre_owner/OwnerFoods";
 
 function App() {
   return (
+    <>
+    <Toaster position="top-right" reverseOrder={false} />
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-
-        <Route path="/auth" element={<AuthForm />} />
-
         <Route
-          path="/landing2"
+          path="/auth"
+          element={
+            <PublicRoute>
+              <AuthForm />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
           element={
             <ProtectedRoute>
               <LandingPage2 />
@@ -119,6 +128,14 @@ function App() {
         />
 
         <Route
+          path="/admin/create-theatre"
+          element={
+            <ProtectedRoute requireAdmin>
+              <CreateTheatre />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/profile"
           element={
             <ProtectedRoute>
@@ -127,6 +144,22 @@ function App() {
           }
         />
 
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute>
+              <YourOrders />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/support"
+          element={
+            <ProtectedRoute>
+              <Support />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/special"
           element={
@@ -137,26 +170,21 @@ function App() {
         />
 
         <Route
-          path="/movie/:movieId"
+          path="/admin/add-movie"
           element={
-            <ProtectedRoute>
-              <MovieDetailsContainer />
+            <ProtectedRoute requireAdmin>
+              <AddMovie />
             </ProtectedRoute>
           }
         />
-
-        <Route path="/seats" element={<SeatBooking />} />
-
         <Route
-          path="/admin"
+          path="/admin/sunday-voting"
           element={
-            <ProtectedRoute>
-              <AdminDashboard />
+            <ProtectedRoute requireAdmin>
+              <AdminSundayVoting />
             </ProtectedRoute>
           }
         />
-
-        <Route path="/admin/add-movie" element={<AddMovie />} />
 
         {/* Theatre Owner Routes */}
 
@@ -197,6 +225,7 @@ function App() {
         />
       </Routes>
     </BrowserRouter>
+    </>
   );
 }
 

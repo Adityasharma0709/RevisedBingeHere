@@ -118,6 +118,16 @@
   gap: 2rem;
 }
 
+.food-empty-state {
+  grid-column: 1 / -1;
+  padding: 2rem;
+  color: #ccc;
+  text-align: center;
+  background: #1f1f1f;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+}
+
 /* FOOD CARD */
 .food-card {
   background: #1f1f1f;

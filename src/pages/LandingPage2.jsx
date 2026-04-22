@@ -13,6 +13,7 @@ import WindowCarousel from "../components/landing/LandingPage2/WindowCarousel";
 import MovieCard from "../components/landing/LandingPage2/MovieCard";
 import PremiereCard from "../components/landing/LandingPage2/PremierCard";
 import { fetchMoviesByLocation } from "../services/movie.service";
+import { getSundayWinner } from "../services/sundayVoting.service";
 import Loader from "../components/Common/Loader.jsx";
 
 function App() {
@@ -76,12 +77,27 @@ function App() {
         const userObj = userStr ? JSON.parse(userStr) : null;
         const userId = userObj?._id || userObj?.id || localStorage.getItem("userId") || "";
 
-        const data = await fetchMoviesByLocation(userId);
-        console.log("Local Movies Response:", data);
-        setLocalMovies(data.movies || []);
-        // Extract city and state (use first theatre's state if available)
-        const city = data.city || "";
-        const state = data.theatres && data.theatres[0] && data.theatres[0].location ? data.theatres[0].location.state : "";
+        const [locationData, winnerData] = await Promise.all([
+          fetchMoviesByLocation(userId),
+          getSundayWinner().catch(() => null)
+        ]);
+
+        console.log("Local Movies Response:", locationData);
+        let finalMovies = locationData.movies || [];
+        
+        // Prepend winner if exists
+        if (winnerData && winnerData._id) {
+          // Remove if it's already in the list to avoid duplicate keys
+          finalMovies = finalMovies.filter(m => m._id !== winnerData._id);
+          winnerData._isSundaySpecial = true;
+          finalMovies.unshift(winnerData);
+        }
+
+        setLocalMovies(finalMovies);
+        
+        // Extract city and state
+        const city = locationData.city || "";
+        const state = locationData.theatres && locationData.theatres[0] && locationData.theatres[0].location ? locationData.theatres[0].location.state : "";
         setLocation({ city, state });      } catch (err) {
         console.error("Failed to fetch local movies:", err);
       } finally {
@@ -193,9 +209,10 @@ function App() {
             {localMovies.map((movie) => (
               <MovieCard
                 key={movie._id}
-                title={movie.name}
+                title={movie.name || movie.title}
                 poster={movie.poster}
                 promoted={movie.ratings >= 7}
+                isSundaySpecial={movie._isSundaySpecial}
                 onClick={() => navigate(`/movie/${movie._id}`)}
               />
             ))}

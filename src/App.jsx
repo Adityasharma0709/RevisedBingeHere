@@ -17,6 +17,7 @@ import AddMovie from "./pages/admin/AddMovie";
 import OwnerDashboard from "./pages/theatre_owner/OwnerDashboard";
 import ManageScreens from "./pages/theatre_owner/ManageScreens";
 import ManageShows from "./pages/theatre_owner/ManageShows";
+import AdminSundayVoting from "./pages/admin/AdminSundayVoting";
 
 function App() {
   return (
@@ -105,16 +106,21 @@ function App() {
           }
         />
         <Route
-          path="/movie/:movieId"
+          path="/admin/add-movie"
           element={
-            <ProtectedRoute>
-              <MovieDetailsContainer />
+            <ProtectedRoute requireAdmin>
+              <AddMovie />
             </ProtectedRoute>
           }
         />
-        <Route path="/seats" element={<SeatBooking />} />
-        <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
-        <Route path="/admin/add-movie" element={<AddMovie />} />
+        <Route
+          path="/admin/sunday-voting"
+          element={
+            <ProtectedRoute requireAdmin>
+              <AdminSundayVoting />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Theatre Owner Routes */}
         <Route

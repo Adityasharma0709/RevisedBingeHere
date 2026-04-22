@@ -13,6 +13,7 @@ import Profile from "./pages/Profile";
 import YourOrders from "./pages/YourOrders";
 import Support from "./pages/Support";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import PublicRoute from "./components/auth/PublicRoute";
 import { Toaster } from "react-hot-toast";
 import SundaySpecial from "./pages/SundayVoting";
 import AddMovie from "./pages/admin/AddMovie";
@@ -26,7 +27,14 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/auth" element={<AuthForm />} />
+        <Route
+          path="/auth"
+          element={
+            <PublicRoute>
+              <AuthForm />
+            </PublicRoute>
+          }
+        />
         <Route
           path="/dashboard"
           element={

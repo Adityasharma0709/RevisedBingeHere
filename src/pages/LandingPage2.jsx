@@ -7,6 +7,7 @@ import WindowCarousel from "../components/landing/LandingPage2/WindowCarousel";
 import MovieCard from "../components/landing/LandingPage2/MovieCard";
 import PremiereCard from "../components/landing/LandingPage2/PremierCard";
 import { fetchMoviesByLocation } from "../services/movie.service";
+import { getSundayWinner } from "../services/sundayVoting.service";
 import Loader from "../components/Common/Loader.jsx";
 
 function App() {
@@ -36,10 +37,6 @@ function App() {
   const [localMovies, setLocalMovies] = useState([]);
   const [location, setLocation] = useState({ city: "", state: "" });
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-  const [isSearching, setIsSearching] = useState(false);
-  const [searchError, setSearchError] = useState("");
 
   // 🔹 Premiere carousel state
   const [premiereIndex, setPremiereIndex] = useState(0);
@@ -74,12 +71,27 @@ function App() {
         const userObj = userStr ? JSON.parse(userStr) : null;
         const userId = userObj?._id || userObj?.id || localStorage.getItem("userId") || "";
 
-        const data = await fetchMoviesByLocation(userId);
-        // console.log("Local Movies Response:", data);
-        setLocalMovies(data.movies || []);
-        // Extract city and state (use first theatre's state if available)
-        const city = data.city || "";
-        const state = data.theatres && data.theatres[0] && data.theatres[0].location ? data.theatres[0].location.state : "";
+        const [locationData, winnerData] = await Promise.all([
+          fetchMoviesByLocation(userId),
+          getSundayWinner().catch(() => null)
+        ]);
+
+        console.log("Local Movies Response:", locationData);
+        let finalMovies = locationData.movies || [];
+        
+        // Prepend winner if exists
+        if (winnerData && winnerData._id) {
+          // Remove if it's already in the list to avoid duplicate keys
+          finalMovies = finalMovies.filter(m => m._id !== winnerData._id);
+          winnerData._isSundaySpecial = true;
+          finalMovies.unshift(winnerData);
+        }
+
+        setLocalMovies(finalMovies);
+        
+        // Extract city and state
+        const city = locationData.city || "";
+        const state = locationData.theatres && locationData.theatres[0] && locationData.theatres[0].location ? locationData.theatres[0].location.state : "";
         setLocation({ city, state });      } catch (err) {
         console.error("Failed to fetch local movies:", err);
       } finally {
@@ -107,77 +119,11 @@ function App() {
     fetchPremieres();
   }, [API_KEY]);
 
-  useEffect(() => {
-    const trimmedQuery = searchQuery.trim();
-
-    if (trimmedQuery.length < 2) {
-      setSearchResults([]);
-      setSearchError("");
-      setIsSearching(false);
-      return undefined;
-    }
-
-    const controller = new AbortController();
-    const debounceTimer = setTimeout(async () => {
-      setIsSearching(true);
-      setSearchError("");
-
-      try {
-        const response = await fetch(
-          `${APP_API_URL}/movies/search?q=${encodeURIComponent(trimmedQuery)}`,
-          { signal: controller.signal },
-        );
-
-        if (!response.ok) {
-          throw new Error("Unable to search movies right now.");
-        }
-
-        const data = await response.json();
-        setSearchResults(Array.isArray(data) ? data : []);
-      } catch (err) {
-        if (err.name === "AbortError") return;
-        setSearchResults([]);
-        setSearchError(err.message || "Search failed.");
-      } finally {
-        if (!controller.signal.aborted) {
-          setIsSearching(false);
-        }
-      }
-    }, 350);
-
-    return () => {
-      controller.abort();
-      clearTimeout(debounceTimer);
-    };
-  }, [APP_API_URL, searchQuery]);
-
-  const handleSearchSelect = (movieId) => {
-    setSearchQuery("");
-    setSearchResults([]);
-    setSearchError("");
-    navigate(`/movie/${movieId}`);
-  };
-
-  const handleSearchSubmit = () => {
-    if (searchResults.length > 0) {
-      handleSearchSelect(searchResults[0].id);
-    }
-  };
-
   return (
     <div className="bg-[#0b0f1a] min-h-screen font-sans text-slate-100">
       <Loader isLoading={loading} />
       {/* NAVBAR */}
-      <Navbar2
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        searchResults={searchResults}
-        isSearching={isSearching}
-        searchError={searchError}
-        onSearchSubmit={handleSearchSubmit}
-        onSearchSelect={handleSearchSelect}
-        location={location}
-      />
+      <Navbar2 location={location} />
 
       {/* HERO */}
       <CategoryBar />
@@ -257,9 +203,10 @@ function App() {
             {localMovies.map((movie) => (
               <MovieCard
                 key={movie._id}
-                title={movie.name}
+                title={movie.name || movie.title}
                 poster={movie.poster}
                 promoted={movie.ratings >= 7}
+                isSundaySpecial={movie._isSundaySpecial}
                 onClick={() => navigate(`/movie/${movie._id}`)}
               />
             ))}

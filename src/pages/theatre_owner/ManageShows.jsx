@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   ArrowLeft,
   Clapperboard,
@@ -26,8 +26,11 @@ const ManageShows = () => {
   const [theatre, setTheatre] = useState(null);
   const [movies, setMovies] = useState([]);
 
+  const location = useLocation();
+  const prefillMovie = location.state?.prefillMovie || "";
+
   const [formData, setFormData] = useState({
-    movie: "",
+    movie: prefillMovie,
     screen: "",
     date: "",
     time: "",

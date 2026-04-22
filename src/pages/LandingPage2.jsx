@@ -42,10 +42,6 @@ function App() {
   const [localMovies, setLocalMovies] = useState([]);
   const [location, setLocation] = useState({ city: "", state: "" });
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-  const [isSearching, setIsSearching] = useState(false);
-  const [searchError, setSearchError] = useState("");
 
   // 🔹 Premiere carousel state
   const [premiereIndex, setPremiereIndex] = useState(0);
@@ -113,77 +109,11 @@ function App() {
     fetchPremieres();
   }, [API_KEY]);
 
-  useEffect(() => {
-    const trimmedQuery = searchQuery.trim();
-
-    if (trimmedQuery.length < 2) {
-      setSearchResults([]);
-      setSearchError("");
-      setIsSearching(false);
-      return undefined;
-    }
-
-    const controller = new AbortController();
-    const debounceTimer = setTimeout(async () => {
-      setIsSearching(true);
-      setSearchError("");
-
-      try {
-        const response = await fetch(
-          `${APP_API_URL}/movies/search?q=${encodeURIComponent(trimmedQuery)}`,
-          { signal: controller.signal },
-        );
-
-        if (!response.ok) {
-          throw new Error("Unable to search movies right now.");
-        }
-
-        const data = await response.json();
-        setSearchResults(Array.isArray(data) ? data : []);
-      } catch (err) {
-        if (err.name === "AbortError") return;
-        setSearchResults([]);
-        setSearchError(err.message || "Search failed.");
-      } finally {
-        if (!controller.signal.aborted) {
-          setIsSearching(false);
-        }
-      }
-    }, 350);
-
-    return () => {
-      controller.abort();
-      clearTimeout(debounceTimer);
-    };
-  }, [APP_API_URL, searchQuery]);
-
-  const handleSearchSelect = (movieId) => {
-    setSearchQuery("");
-    setSearchResults([]);
-    setSearchError("");
-    navigate(`/movie/${movieId}`);
-  };
-
-  const handleSearchSubmit = () => {
-    if (searchResults.length > 0) {
-      handleSearchSelect(searchResults[0].id);
-    }
-  };
-
   return (
     <div className="bg-[#0b0f1a] min-h-screen font-sans text-slate-100">
       <Loader isLoading={loading} />
       {/* NAVBAR */}
-      <Navbar2
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        searchResults={searchResults}
-        isSearching={isSearching}
-        searchError={searchError}
-        onSearchSubmit={handleSearchSubmit}
-        onSearchSelect={handleSearchSelect}
-        location={location}
-      />
+      <Navbar2 location={location} />
 
       {/* HERO */}
       <CategoryBar />

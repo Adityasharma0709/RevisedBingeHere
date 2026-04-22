@@ -227,7 +227,7 @@ const AuthForm = () => {
       } else if (userProfile.role === "owner") {
         navigate("/owner/dashboard");
       } else {
-        navigate("/landing2");
+        navigate("/dashboard");
       }
     } catch (error) {
       toast.error(error.message || "Invalid email or password ðŸš«");

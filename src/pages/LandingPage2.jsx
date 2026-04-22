@@ -1,12 +1,6 @@
-
-
-
-
-
 import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
 import CategoryBar from "../components/landing/LandingPage2/category";
 import {Navbar2} from "../components/landing/LandingPage2/Navbar2";
 import WindowCarousel from "../components/landing/LandingPage2/WindowCarousel";

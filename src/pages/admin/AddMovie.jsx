@@ -1,9 +1,24 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Clapperboard, LogOut, ShieldCheck, TicketPlus, Users } from "lucide-react";
+import Loader from "../../components/Common/Loader.jsx";
 import MovieSearch from "./MovieSearch.jsx";
 import { createMovie } from "../../services/movie.service.js";
-import "../css/addMovie.css";
+import "./AdminShell.css";
+import "./AddMovie.css";
+
+const parseStoredUser = () => {
+  try {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  } catch {
+    return null;
+  }
+};
 
 export default function AddMovie() {
+  const navigate = useNavigate();
+  const [currentUser] = useState(() => parseStoredUser());
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [form, setForm] = useState({
     name: "",
@@ -15,15 +30,49 @@ export default function AddMovie() {
   });
   const [isNowShowing, setIsNowShowing] = useState(false);
   const [isComingSoon, setIsComingSoon] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [status, setStatus] = useState({ type: "idle", message: "" });
+
+  useEffect(() => {
+    document.title = "BingeHere | Add Movie";
+  }, []);
+
+  const genreTags = useMemo(() => {
+    return form.genre
+      .split(",")
+      .map((g) => g.trim())
+      .filter(Boolean);
+  }, [form.genre]);
+
+  const selectedMeta = useMemo(() => {
+    if (!selectedMovie) return null;
+
+    const year = selectedMovie.releaseDate?.slice?.(0, 4) || "";
+    return {
+      title: selectedMovie.title || selectedMovie.name || "Selected Movie",
+      year,
+      poster: selectedMovie.poster,
+    };
+  }, [selectedMovie]);
+
+  const resetAll = () => {
+    setForm({ name: "", description: "", genre: "", duration: "", language: "", tmdbId: "" });
+    setSelectedMovie(null);
+    setIsNowShowing(false);
+    setIsComingSoon(false);
+  };
 
   const handleMovieSelect = async (movie) => {
     setSelectedMovie(movie);
+    setStatus({ type: "idle", message: "" });
 
     try {
       const tmdbKey = import.meta.env.VITE_TMDB_KEY;
       if (tmdbKey) {
         // Fetch full details to get runtime, genres, etc.
-        const res = await fetch(`https://api.themoviedb.org/3/movie/${movie.tmdbId}?api_key=${tmdbKey}&language=en-US`);
+        const res = await fetch(
+          `https://api.themoviedb.org/3/movie/${movie.tmdbId}?api_key=${tmdbKey}&language=en-US`,
+        );
         const data = await res.json();
 
         setForm({
@@ -59,117 +108,312 @@ export default function AddMovie() {
   };
 
   const handleChange = (e) => {
+    setStatus({ type: "idle", message: "" });
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const userId = currentUser?._id || currentUser?.id || localStorage.getItem("userId");
+
+    if (!userId) {
+      setStatus({
+        type: "error",
+        message: "Your admin session is missing. Please log in again.",
+      });
+      return;
+    }
+
+    if (!form.name.trim()) {
+      setStatus({
+        type: "error",
+        message: "Movie name is required.",
+      });
+      return;
+    }
+
+    const movieData = {
+      tmdbId: form.tmdbId,
+      name: form.name.trim(),
+      description: form.description?.trim?.() || "",
+      genre: genreTags,
+      duration: form.duration === "" ? undefined : Number(form.duration),
+      language: form.language?.trim?.() || "",
+      // The backend automatically overrides poster/banner using TMDB ID
+      poster: selectedMovie?.poster || "backend-will-fetch",
+      isNowShowing,
+      isComingSoon,
+    };
+
     try {
-      // Parse the user object from local storage that AuthForm saves
-      const userStr = localStorage.getItem("user");
-      const userObj = userStr ? JSON.parse(userStr) : null;
-      const userId = userObj?._id || userObj?.id || localStorage.getItem("userId");
-
-      if (!userId) {
-        alert("You must be logged in as an admin to add movies. No user ID found.");
-        return;
-      }
-
-      const genreArray = form.genre
-        .split(",")
-        .map((g) => g.trim())
-        .filter(Boolean);
-
-      const movieData = {
-        tmdbId: form.tmdbId,
-        name: form.name,
-        description: form.description,
-        genre: genreArray,
-        duration: Number(form.duration),
-        language: form.language,
-        // The backend automatically overrides poster/banner using TMDB ID
-        poster: selectedMovie?.poster || "backend-will-fetch",
-        isNowShowing,
-        isComingSoon,
-      };
-
+      setIsSubmitting(true);
+      setStatus({ type: "idle", message: "" });
       await createMovie(movieData, userId);
-      alert("Movie added successfully!");
-
-      // Reset
-      setForm({ name: "", description: "", genre: "", duration: "", language: "", tmdbId: "" });
-      setSelectedMovie(null);
-      setIsNowShowing(false);
-      setIsComingSoon(false);
+      setStatus({ type: "success", message: "Movie added successfully." });
+      resetAll();
     } catch (err) {
-      alert(err.message);
+      setStatus({ type: "error", message: err.message || "Failed to add movie." });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/auth");
+  };
+
   return (
-    <div className="add-movie-container">
-      <h2>Add Movie</h2>
+    <div className="admin-shell admin-add-movie">
+      <Loader isLoading={isSubmitting} />
 
-      <div className="search-section">
-        <p>Search TMDB to auto-fill details:</p>
-        <MovieSearch onSelect={handleMovieSelect} />
-      </div>
-
-      {selectedMovie && (
-        <div className="selected-movie-preview">
-          <img src={selectedMovie.poster} alt={selectedMovie.title} className="poster-preview" />
-          <p>Images will be automatically handled upon submission!</p>
-        </div>
-      )}
-
-      <form className="movie-form" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Movie Name <span className="required">*</span></label>
-          <input type="text" name="name" value={form.name} onChange={handleChange} required />
-        </div>
-
-        <div className="form-group">
-          <label>Description</label>
-          <textarea name="description" value={form.description} onChange={handleChange} rows="4" />
-        </div>
-
-        <div className="form-row">
-          <div className="form-group">
-            <label>Genre (comma separated)</label>
-            <input type="text" name="genre" value={form.genre} onChange={handleChange} placeholder="Action, Drama..." />
-          </div>
-
-          <div className="form-group">
-            <label>Duration (minutes)</label>
-            <input type="number" name="duration" value={form.duration} onChange={handleChange} />
+      <nav className="admin-nav">
+        <div className="nav-left">
+          <div className="logo">
+            BingeHere <span>Admin</span>
           </div>
         </div>
+        <div className="admin-nav-right">
+          <div className="admin-user-info">
+            <Users size={18} /> {currentUser?.name || "Admin"}
+          </div>
+          <button
+            type="button"
+            className="admin-logout-icon-btn"
+            onClick={handleLogout}
+            aria-label="Logout"
+          >
+            <LogOut size={18} />
+          </button>
+        </div>
+      </nav>
 
-        <div className="form-row">
-          <div className="form-group">
-            <label>Language</label>
-            <input type="text" name="language" value={form.language} onChange={handleChange} />
+      <main className="admin-main">
+        <header className="admin-header">
+          <div className="admin-brand">
+            <Clapperboard className="admin-brand-icon admin-movie-icon" size={40} />
+            <div>
+              <h1>Add Movie</h1>
+              <div className="admin-meta">
+                <TicketPlus size={14} /> Search TMDB and publish a movie entry
+              </div>
+            </div>
           </div>
 
-          <div className="form-group">
-            <label>TMDB ID</label>
-            <input type="number" name="tmdbId" value={form.tmdbId} onChange={handleChange} placeholder="Optional if not from TMDB" />
+          <div className="admin-actions">
+            <Link to="/admin" className="action-btn secondary">
+              <ShieldCheck size={18} /> Dashboard
+            </Link>
+            <Link to="/admin/create-theatre" className="action-btn secondary">
+              Create Theatre
+            </Link>
+            <Link to="/admin/sunday-voting" className="action-btn secondary">
+              Sunday Voting
+            </Link>
           </div>
-        </div>
+        </header>
 
-        <div className="checkboxes">
-          <label>
-            <input type="checkbox" checked={isNowShowing} onChange={(e) => setIsNowShowing(e.target.checked)} />
-            Now Showing
-          </label>
-          <label>
-            <input type="checkbox" checked={isComingSoon} onChange={(e) => setIsComingSoon(e.target.checked)} />
-            Coming Soon
-          </label>
-        </div>
+        {status.message ? (
+          <div className={`admin-banner ${status.type === "success" ? "success" : "error"}`}>
+            {status.message}
+          </div>
+        ) : null}
 
-        <button type="submit">Add Movie</button>
-      </form>
+        <section className="admin-movie-grid">
+          <div className="content-card">
+            <div className="card-header">
+              <h2>Movie Details</h2>
+              <span className="text-btn" aria-hidden="true">
+                TMDB
+              </span>
+            </div>
+
+            <div className="admin-add-movie-search">
+              <p className="admin-hint">
+                Start with a TMDB search to auto-fill title, description, runtime, and genres.
+              </p>
+              <MovieSearch onSelect={handleMovieSelect} />
+            </div>
+
+            <form onSubmit={handleSubmit} className="admin-form">
+              <div className="form-grid">
+                <div className="form-group full-width">
+                  <label>Movie Name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={form.name}
+                    onChange={handleChange}
+                    placeholder="Movie title"
+                    required
+                  />
+                </div>
+
+                <div className="form-group full-width">
+                  <label>Description</label>
+                  <textarea
+                    name="description"
+                    value={form.description}
+                    onChange={handleChange}
+                    rows={5}
+                    placeholder="Short plot overview (optional)"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Genre</label>
+                  <input
+                    type="text"
+                    name="genre"
+                    value={form.genre}
+                    onChange={handleChange}
+                    placeholder="Action, Drama, Thriller"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Duration (minutes)</label>
+                  <input
+                    type="number"
+                    name="duration"
+                    value={form.duration}
+                    onChange={handleChange}
+                    placeholder="120"
+                    min={0}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Language</label>
+                  <input
+                    type="text"
+                    name="language"
+                    value={form.language}
+                    onChange={handleChange}
+                    placeholder="en"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>TMDB ID</label>
+                  <input
+                    type="number"
+                    name="tmdbId"
+                    value={form.tmdbId}
+                    onChange={handleChange}
+                    placeholder="Optional if not from TMDB"
+                    min={0}
+                  />
+                </div>
+
+                <div className="form-section">
+                  <p className="title">Visibility</p>
+                  <p className="subtitle">
+                    Use these toggles to control whether the movie is highlighted in listings.
+                  </p>
+                </div>
+
+                <div className="form-group full-width">
+                  <div className="toggle-row" role="group" aria-label="Movie visibility toggles">
+                    <label className={`pill-toggle ${isNowShowing ? "active" : ""}`}>
+                      <input
+                        type="checkbox"
+                        checked={isNowShowing}
+                        onChange={(e) => setIsNowShowing(e.target.checked)}
+                      />
+                      Now Showing
+                    </label>
+                    <label className={`pill-toggle ${isComingSoon ? "active" : ""}`}>
+                      <input
+                        type="checkbox"
+                        checked={isComingSoon}
+                        onChange={(e) => setIsComingSoon(e.target.checked)}
+                      />
+                      Coming Soon
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-footer admin-movie-footer">
+                <button
+                  type="button"
+                  className="action-btn secondary"
+                  onClick={resetAll}
+                  disabled={isSubmitting}
+                >
+                  Clear
+                </button>
+                <button type="submit" disabled={isSubmitting} className="submit-btn">
+                  <TicketPlus size={18} />
+                  {isSubmitting ? "Adding movie..." : "Add Movie"}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div className="content-card movie-preview-card">
+            <div className="card-header">
+              <h2>Preview</h2>
+              <span className="text-btn" aria-hidden="true">
+                Poster
+              </span>
+            </div>
+
+            {selectedMeta ? (
+              <div className="movie-preview">
+                <img
+                  src={selectedMeta.poster}
+                  alt={selectedMeta.title}
+                  className="movie-poster"
+                  loading="lazy"
+                />
+
+                <div className="movie-preview-info">
+                  <h3 title={selectedMeta.title}>{selectedMeta.title}</h3>
+                  <p className="movie-sub">
+                    {[selectedMeta.year, form.language].filter(Boolean).join(" • ") || "TMDB selection"}
+                  </p>
+
+                  {genreTags.length > 0 ? (
+                    <div className="chip-row" aria-label="Genres">
+                      {genreTags.slice(0, 6).map((tag) => (
+                        <span key={tag} className="chip">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  ) : null}
+
+                  <div className="movie-preview-meta">
+                    <div>
+                      <span className="key">Runtime</span>
+                      <span className="val">
+                        {form.duration ? `${form.duration} min` : "—"}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="key">TMDB</span>
+                      <span className="val">{form.tmdbId || "—"}</span>
+                    </div>
+                  </div>
+
+                  <p className="movie-note">
+                    Poster/banner are fetched automatically from TMDB on submit.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="movie-preview-empty">
+                <p className="empty-title">No movie selected yet</p>
+                <p className="empty-subtitle">
+                  Search TMDB and pick a result to see the poster + auto-filled details here.
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
+      </main>
     </div>
   );
 }

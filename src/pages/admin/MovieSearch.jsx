@@ -1,23 +1,40 @@
 /* eslint-disable react-hooks/immutability */
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { searchMovies } from "../../services/movie.service.js";
 
 export default function MovieSearch({ onSelect }) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
+  const timeoutRef = useRef(null);
+  const abortRef = useRef(null);
 
-  let timeout;
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      abortRef.current?.abort?.();
+    };
+  }, []);
 
   const handleSearch = (value) => {
     setQuery(value);
 
-    clearTimeout(timeout);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    abortRef.current?.abort?.();
 
-    timeout = setTimeout(async () => {
-      if (value.length < 2) return;
+    timeoutRef.current = setTimeout(async () => {
+      if (value.trim().length < 2) {
+        setResults([]);
+        return;
+      }
 
-      const data = await searchMovies(value);
-      setResults(data);
+      try {
+        abortRef.current = new AbortController();
+        const data = await searchMovies(value, abortRef.current.signal);
+        setResults(Array.isArray(data) ? data : []);
+      } catch (error) {
+        if (error?.name === "AbortError") return;
+        setResults([]);
+      }
     }, 300);
   };
 
@@ -25,29 +42,32 @@ export default function MovieSearch({ onSelect }) {
     <div className="search-box">
       <input
         type="text"
-        placeholder="Search movie..."
+        placeholder="Search TMDB movie..."
         value={query}
         onChange={(e) => handleSearch(e.target.value)}
       />
 
-      <div className="dropdown">
-        {results.map((movie) => (
-          <div
-            key={movie.tmdbId}
-            className="dropdown-item"
-            onClick={() => {
-              onSelect(movie);
-              setQuery(movie.title);
-              setResults([]);
-            }}
-          >
-            <img src={movie.poster} alt="" />
-            <span>
-              {movie.title} ({movie.releaseDate?.slice(0, 4)})
-            </span>
-          </div>
-        ))}
-      </div>
+      {results.length > 0 ? (
+        <div className="dropdown" role="listbox" aria-label="Movie search results">
+          {results.map((movie) => (
+            <button
+              key={movie.tmdbId}
+              type="button"
+              className="dropdown-item"
+              onClick={() => {
+                onSelect(movie);
+                setQuery(movie.title);
+                setResults([]);
+              }}
+            >
+              <img src={movie.poster} alt="" />
+              <span>
+                {movie.title} ({movie.releaseDate?.slice(0, 4)})
+              </span>
+            </button>
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 }

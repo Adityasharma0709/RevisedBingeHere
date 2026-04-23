@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import CategoryBar from "../components/landing/LandingPage2/category";
@@ -39,17 +39,71 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   // 🔹 Premiere carousel state
-  const [premiereIndex, setPremiereIndex] = useState(0);
-  const cardWidth = 200; // approx width of one PremiereCard
+  const cardWidth = 200; // approx width of one MovieCard (includes gap)
   const visibleCards = 5;
-  const maxIndex = Math.max(0, premiereMovies.length - visibleCards);
+
+  // Premiere carousel state (infinite loop with clones)
+  const premiereVisibleCards = 5;
+  const premiereStep = 196; // 180px card + 16px gap-4
+  const [premiereIndex, setPremiereIndex] = useState(premiereVisibleCards);
+  const [premiereTransitionEnabled, setPremiereTransitionEnabled] = useState(true);
+
+  const premiereCloneCount = useMemo(() => {
+    return Math.min(premiereVisibleCards, premiereMovies.length);
+  }, [premiereMovies.length]);
+
+  const premiereSlides = useMemo(() => {
+    if (!premiereMovies.length) return [];
+    const cloneCount = Math.min(premiereVisibleCards, premiereMovies.length);
+    return [
+      ...premiereMovies.slice(-cloneCount),
+      ...premiereMovies,
+      ...premiereMovies.slice(0, cloneCount),
+    ];
+  }, [premiereMovies]);
+
+  useEffect(() => {
+    if (!premiereMovies.length) {
+      setPremiereIndex(0);
+      return;
+    }
+
+    const cloneCount = Math.min(premiereVisibleCards, premiereMovies.length);
+    setPremiereTransitionEnabled(false);
+    setPremiereIndex(cloneCount);
+  }, [premiereMovies.length]);
+
+  useEffect(() => {
+    if (premiereTransitionEnabled) return;
+    const timeout = setTimeout(() => setPremiereTransitionEnabled(true), 0);
+    return () => clearTimeout(timeout);
+  }, [premiereTransitionEnabled]);
 
   const nextPremiere = () => {
-    setPremiereIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
+    if (!premiereMovies.length) return;
+    setPremiereTransitionEnabled(true);
+    setPremiereIndex((prev) => prev + 1);
   };
 
   const prevPremiere = () => {
-    setPremiereIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
+    if (!premiereMovies.length) return;
+    setPremiereTransitionEnabled(true);
+    setPremiereIndex((prev) => prev - 1);
+  };
+
+  const handlePremiereTransitionEnd = () => {
+    if (!premiereMovies.length || !premiereCloneCount) return;
+
+    if (premiereIndex >= premiereMovies.length + premiereCloneCount) {
+      setPremiereTransitionEnabled(false);
+      setPremiereIndex((prev) => prev - premiereMovies.length);
+      return;
+    }
+
+    if (premiereIndex < premiereCloneCount) {
+      setPremiereTransitionEnabled(false);
+      setPremiereIndex((prev) => prev + premiereMovies.length);
+    }
   };
 
   // Trending carousel state
@@ -237,16 +291,17 @@ function App() {
           </p>
         </div>
 
-        <div className="relative">
+        <div className="relative overflow-hidden">
           <div
-            className="flex justify-center gap-4 transition-transform duration-500 ease-in-out"
+            onTransitionEnd={handlePremiereTransitionEnd}
+            className={`flex gap-4 ${premiereTransitionEnabled ? "transition-transform duration-500 ease-in-out" : ""}`}
             style={{
-              transform: `translateX(-${premiereIndex * cardWidth}px)`,
+              transform: `translateX(-${premiereIndex * premiereStep}px)`,
             }}
           >
-            {premiereMovies.map((movie) => (
+            {premiereSlides.map((movie, index) => (
               <PremiereCard
-                key={movie.id}
+                key={`${movie.id}-${index}`}
                 title={movie.title}
                 language={movie.original_language?.toUpperCase() || "EN"}
                 poster={

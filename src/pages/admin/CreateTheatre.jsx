@@ -1,18 +1,22 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
-  ArrowLeft,
+  Building2,
+  Clapperboard,
   KeyRound,
   LogOut,
   Mail,
+  MapPin,
   Phone,
   Plus,
   ShieldCheck,
+  Users,
   UserRound,
 } from "lucide-react";
 import Loader from "../../components/Common/Loader.jsx";
 import { registerUser } from "../../services/auth.services";
 import { createTheatre } from "../../services/theatre.services";
+import "./AdminShell.css";
 
 const parseStoredUser = () => {
   try {
@@ -153,231 +157,205 @@ const CreateTheatre = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#07111f] text-slate-100">
+    <div className="admin-shell">
       <Loader isLoading={isSubmitting} />
-      <div className="absolute inset-x-0 top-0 h-72 bg-[radial-gradient(circle_at_top_left,_rgba(239,68,68,0.25),_transparent_42%),radial-gradient(circle_at_top_right,_rgba(250,204,21,0.18),_transparent_35%)]" />
 
-      <main className="relative z-10 mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
-        <header className="rounded-[28px] border border-white/10 bg-white/5 px-5 py-5 backdrop-blur-xl sm:px-7">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-            <div className="space-y-2">
-              <div className="inline-flex items-center gap-2 rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-amber-100">
-                <ShieldCheck size={14} />
-                Admin
-              </div>
-              <div>
-                <p className="text-sm uppercase tracking-[0.35em] text-slate-400">
-                  Create Theatre
-                </p>
-                <h1 className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">
-                  Add a new venue
-                </h1>
+      <nav className="admin-nav">
+        <div className="nav-left">
+          <div className="logo">
+            BingeHere <span>Admin</span>
+          </div>
+        </div>
+        <div className="admin-nav-right">
+          <div className="admin-user-info">
+            <Users size={18} /> {currentUser?.name || "Admin"}
+          </div>
+          <button
+            type="button"
+            className="admin-logout-icon-btn"
+            onClick={handleLogout}
+            aria-label="Logout"
+          >
+            <LogOut size={18} />
+          </button>
+        </div>
+      </nav>
+
+      <main className="admin-main">
+        <header className="admin-header">
+          <div className="admin-brand">
+            <Building2 className="admin-brand-icon" size={40} />
+            <div>
+              <h1>Create Theatre</h1>
+              <div className="admin-meta">
+                <Plus size={14} /> Add a new venue and create its owner
               </div>
             </div>
+          </div>
 
-            <div className="flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={() => navigate("/admin")}
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
-              >
-                <ArrowLeft size={16} />
-                Back to Dashboard
-              </button>
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-rose-400/30 bg-rose-500/10 px-4 py-2 text-sm font-semibold text-rose-100 transition hover:bg-rose-500/20"
-              >
-                <LogOut size={16} />
-                Logout
-              </button>
-            </div>
+          <div className="admin-actions">
+            <Link to="/admin" className="action-btn secondary">
+              <ShieldCheck size={18} /> Dashboard
+            </Link>
+            <Link to="/admin/add-movie" className="action-btn secondary">
+              <Clapperboard size={18} /> Add Movie
+            </Link>
           </div>
         </header>
 
-        <section className="mt-6">
-          <aside className="rounded-[30px] border border-white/10 bg-[#101c31] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.32)]">
-            <div className="mt-1 flex items-center gap-3">
-              <div className="rounded-2xl bg-amber-300/10 p-3 text-amber-200">
-                <Plus size={22} />
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-[0.28em] text-slate-400">
-                  Create Theatre
+        {status.message ? (
+          <div
+            className={`admin-banner ${
+              status.type === "success" ? "success" : "error"
+            }`}
+          >
+            {status.message}
+          </div>
+        ) : null}
+
+        <section className="content-card">
+          <div className="card-header">
+            <h2>Theatre Setup</h2>
+            <span className="text-btn" aria-hidden="true">
+              Admin
+            </span>
+          </div>
+
+          <form onSubmit={handleSubmit} className="admin-form">
+            <div className="form-grid">
+              <div className="form-section">
+                <p className="title">Theatre Details</p>
+                <p className="subtitle">
+                  This information creates the theatre location and venue
+                  profile.
                 </p>
-                <h2 className="mt-1 text-2xl font-bold text-white">
-                  Add a new venue
-                </h2>
               </div>
-            </div>
 
-            <div className="mt-5 rounded-2xl border border-emerald-400/20 bg-emerald-400/10 p-4 text-sm text-emerald-100">
-              Signed in as{" "}
-              <span className="font-semibold text-white">
-                {currentUser?.name || "Admin"}
-              </span>{" "}
-              with user id{" "}
-              <span className="break-all font-mono text-xs text-emerald-50">
-                {currentUser?._id || "Unavailable"}
-              </span>
-              .
-            </div>
-
-            {status.message ? (
-              <div
-                className={`mt-4 rounded-2xl border px-4 py-3 text-sm ${
-                  status.type === "success"
-                    ? "border-emerald-400/25 bg-emerald-400/10 text-emerald-50"
-                    : "border-rose-400/25 bg-rose-500/10 text-rose-100"
-                }`}
-              >
-                {status.message}
-              </div>
-            ) : null}
-
-            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-              <label className="block">
-                <span className="mb-2 block text-sm font-medium text-slate-200">
-                  Theatre Name
-                </span>
+              <div className="form-group full-width">
+                <label>
+                  <Building2 size={14} /> Theatre Name
+                </label>
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="BingeHere Grand Arena"
-                  className="w-full rounded-2xl border border-white/10 bg-[#09111f] px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-amber-300/40 focus:outline-none focus:ring-2 focus:ring-amber-300/20"
                 />
-              </label>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label className="block">
-                  <span className="mb-2 block text-sm font-medium text-slate-200">
-                    City
-                  </span>
-                  <input
-                    type="text"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleChange}
-                    placeholder="Pune"
-                    className="w-full rounded-2xl border border-white/10 bg-[#09111f] px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-amber-300/40 focus:outline-none focus:ring-2 focus:ring-amber-300/20"
-                  />
-                </label>
-
-                <label className="block">
-                  <span className="mb-2 block text-sm font-medium text-slate-200">
-                    State
-                  </span>
-                  <input
-                    type="text"
-                    name="state"
-                    value={formData.state}
-                    onChange={handleChange}
-                    placeholder="Maharashtra"
-                    className="w-full rounded-2xl border border-white/10 bg-[#09111f] px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-amber-300/40 focus:outline-none focus:ring-2 focus:ring-amber-300/20"
-                  />
-                </label>
               </div>
 
-              <label className="block">
-                <span className="mb-2 block text-sm font-medium text-slate-200">
-                  Full Address
-                </span>
+              <div className="form-group">
+                <label>
+                  <MapPin size={14} /> City
+                </label>
+                <input
+                  type="text"
+                  name="city"
+                  value={formData.city}
+                  onChange={handleChange}
+                  placeholder="Pune"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>
+                  <MapPin size={14} /> State
+                </label>
+                <input
+                  type="text"
+                  name="state"
+                  value={formData.state}
+                  onChange={handleChange}
+                  placeholder="Maharashtra"
+                />
+              </div>
+
+              <div className="form-group full-width">
+                <label>
+                  <MapPin size={14} /> Full Address
+                </label>
                 <textarea
                   name="address"
                   value={formData.address}
                   onChange={handleChange}
-                  rows="4"
                   placeholder="Plot 9, MG Road, Near Riverside Plaza"
-                  className="w-full rounded-2xl border border-white/10 bg-[#09111f] px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-amber-300/40 focus:outline-none focus:ring-2 focus:ring-amber-300/20"
+                  rows={5}
                 />
-              </label>
-
-              <div className="rounded-2xl border border-white/10 bg-[#0b1424] p-4">
-                <p className="text-sm font-semibold text-white">
-                  Theatre Owner Account
-                </p>
-                <p className="mt-1 text-xs text-slate-400">
-                  These details will create a new user with role `owner`.
-                </p>
-
-                <div className="mt-4 grid gap-4">
-                  <div className="relative">
-                    <UserRound
-                      size={16}
-                      className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
-                    />
-                    <input
-                      type="text"
-                      name="ownerName"
-                      value={formData.ownerName}
-                      onChange={handleChange}
-                      placeholder="Owner full name"
-                      className="w-full rounded-2xl border border-white/10 bg-[#09111f] py-3 pl-11 pr-4 text-sm text-white placeholder:text-slate-500 focus:border-amber-300/40 focus:outline-none focus:ring-2 focus:ring-amber-300/20"
-                    />
-                  </div>
-
-                  <div className="relative">
-                    <Mail
-                      size={16}
-                      className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
-                    />
-                    <input
-                      type="email"
-                      name="ownerEmail"
-                      value={formData.ownerEmail}
-                      onChange={handleChange}
-                      placeholder="owner@theatre.com"
-                      className="w-full rounded-2xl border border-white/10 bg-[#09111f] py-3 pl-11 pr-4 text-sm text-white placeholder:text-slate-500 focus:border-amber-300/40 focus:outline-none focus:ring-2 focus:ring-amber-300/20"
-                    />
-                  </div>
-
-                  <div className="relative">
-                    <Phone
-                      size={16}
-                      className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
-                    />
-                    <input
-                      type="text"
-                      name="ownerPhone"
-                      value={formData.ownerPhone}
-                      onChange={handleChange}
-                      placeholder="Owner phone number"
-                      className="w-full rounded-2xl border border-white/10 bg-[#09111f] py-3 pl-11 pr-4 text-sm text-white placeholder:text-slate-500 focus:border-amber-300/40 focus:outline-none focus:ring-2 focus:ring-amber-300/20"
-                    />
-                  </div>
-
-                  <div className="relative">
-                    <KeyRound
-                      size={16}
-                      className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
-                    />
-                    <input
-                      type="password"
-                      name="ownerPassword"
-                      value={formData.ownerPassword}
-                      onChange={handleChange}
-                      placeholder="Temporary owner password"
-                      className="w-full rounded-2xl border border-white/10 bg-[#09111f] py-3 pl-11 pr-4 text-sm text-white placeholder:text-slate-500 focus:border-amber-300/40 focus:outline-none focus:ring-2 focus:ring-amber-300/20"
-                    />
-                  </div>
-                </div>
               </div>
 
+              <div className="form-section">
+                <p className="title">Owner Account</p>
+                <p className="subtitle">
+                  These details will create a new user with role `owner`.
+                </p>
+              </div>
+
+              <div className="form-group full-width">
+                <label>
+                  <UserRound size={14} /> Owner Name
+                </label>
+                <input
+                  type="text"
+                  name="ownerName"
+                  value={formData.ownerName}
+                  onChange={handleChange}
+                  placeholder="Owner full name"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>
+                  <Mail size={14} /> Owner Email
+                </label>
+                <input
+                  type="email"
+                  name="ownerEmail"
+                  value={formData.ownerEmail}
+                  onChange={handleChange}
+                  placeholder="owner@theatre.com"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>
+                  <Phone size={14} /> Owner Phone
+                </label>
+                <input
+                  type="text"
+                  name="ownerPhone"
+                  value={formData.ownerPhone}
+                  onChange={handleChange}
+                  placeholder="Owner phone number"
+                />
+              </div>
+
+              <div className="form-group full-width">
+                <label>
+                  <KeyRound size={14} /> Temporary Password
+                </label>
+                <input
+                  type="password"
+                  name="ownerPassword"
+                  value={formData.ownerPassword}
+                  onChange={handleChange}
+                  placeholder="Temporary owner password"
+                />
+              </div>
+            </div>
+
+            <div className="form-footer">
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(135deg,_#f59e0b,_#ef4444)] px-4 py-3 text-sm font-bold text-white transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
+                className="submit-btn"
               >
-                <Plus size={16} />
+                <Plus size={18} />
                 {isSubmitting
                   ? "Creating owner and theatre..."
                   : "Create Owner + Theatre"}
               </button>
-            </form>
-          </aside>
+            </div>
+          </form>
         </section>
       </main>
     </div>

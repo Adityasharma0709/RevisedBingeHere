@@ -169,9 +169,9 @@ export default function AddMovie() {
 
       <nav className="admin-nav">
         <div className="nav-left">
-          <div className="logo">
+          <Link to="/" className="logo" aria-label="Go to landing page">
             BingeHere <span>Admin</span>
-          </div>
+          </Link>
         </div>
         <div className="admin-nav-right">
           <div className="admin-user-info">

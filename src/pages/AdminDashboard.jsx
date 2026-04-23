@@ -66,7 +66,7 @@ const AdminDashboard = () => {
       {
         label: "Active Theatres",
         value: theatres.length,
-        helper: "Live from GET /api/theatres",
+        helper: "",
         icon: Building2,
         tone: "amber",
       },
@@ -111,9 +111,9 @@ const AdminDashboard = () => {
 
       <nav className="admin-nav">
         <div className="nav-left">
-          <div className="logo">
+          <Link to="/" className="logo" aria-label="Go to landing page">
             BingeHere <span>Admin</span>
-          </div>
+          </Link>
         </div>
 
         <div className="admin-nav-right">

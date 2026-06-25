@@ -1,8 +1,6 @@
 import { Canvas, useThree } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
 import CenterText from "../components/landing/LandignPage/CenterText";
 import FloatingTicket from "../components/landing/LandignPage/FloatingTicket";
-// import RectangleBackground from "../components/landing/RectangleBackground";
 import ScrollCards from "../components/landing/LandignPage/ScrollCards";
 import { useEffect } from "react";
 import { Navbar } from "../components/landing/LandignPage/Navbar";

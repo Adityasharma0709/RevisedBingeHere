@@ -1,21 +1,19 @@
-﻿
-
-
-
-
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
 import CategoryBar from "../components/landing/LandingPage2/category";
 import {Navbar2} from "../components/landing/LandingPage2/Navbar2";
 import WindowCarousel from "../components/landing/LandingPage2/WindowCarousel";
 import MovieCard from "../components/landing/LandingPage2/MovieCard";
 import PremiereCard from "../components/landing/LandingPage2/PremierCard";
+import { fetchMoviesByLocation } from "../services/movie.service";
+import { getSundayWinner } from "../services/sundayVoting.service";
+import Loader from "../components/Common/Loader.jsx";
 
 function App() {
   const navigate = useNavigate();
   const API_KEY = import.meta.env.VITE_TMDB_KEY;
+  const APP_API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
   const BASE_URL = "https://api.themoviedb.org/3";
   const IMG_500 = "https://image.tmdb.org/t/p/w500";
 
@@ -30,27 +28,87 @@ function App() {
     { name: "Thriller", color: "bg-yellow-500" },
   ];
 
+  const handleBrowseByCategory = (categoryName) => {
+    navigate(`/movies/by-location/${encodeURIComponent(categoryName)}`);
+  };
+
   const [premiereMovies, setPremiereMovies] = useState([]);
 
-  const [trendingMovies, setTrendingMovies] = useState([]);
+  const [localMovies, setLocalMovies] = useState([]);
+  const [location, setLocation] = useState({ city: "", state: "" });
+  const [loading, setLoading] = useState(true);
 
-  // ðŸ”¹ Premiere carousel state
-  const [premiereIndex, setPremiereIndex] = useState(0);
-  const cardWidth = 200; // approx width of one PremiereCard
+  // 🔹 Premiere carousel state
+  const cardWidth = 200; // approx width of one MovieCard (includes gap)
   const visibleCards = 5;
-  const maxIndex = Math.max(0, premiereMovies.length - visibleCards);
+
+  // Premiere carousel state (infinite loop with clones)
+  const premiereVisibleCards = 5;
+  const premiereStep = 196; // 180px card + 16px gap-4
+  const [premiereIndex, setPremiereIndex] = useState(premiereVisibleCards);
+  const [premiereTransitionEnabled, setPremiereTransitionEnabled] = useState(true);
+
+  const premiereCloneCount = useMemo(() => {
+    return Math.min(premiereVisibleCards, premiereMovies.length);
+  }, [premiereMovies.length]);
+
+  const premiereSlides = useMemo(() => {
+    if (!premiereMovies.length) return [];
+    const cloneCount = Math.min(premiereVisibleCards, premiereMovies.length);
+    return [
+      ...premiereMovies.slice(-cloneCount),
+      ...premiereMovies,
+      ...premiereMovies.slice(0, cloneCount),
+    ];
+  }, [premiereMovies]);
+
+  useEffect(() => {
+    if (!premiereMovies.length) {
+      setPremiereIndex(0);
+      return;
+    }
+
+    const cloneCount = Math.min(premiereVisibleCards, premiereMovies.length);
+    setPremiereTransitionEnabled(false);
+    setPremiereIndex(cloneCount);
+  }, [premiereMovies.length]);
+
+  useEffect(() => {
+    if (premiereTransitionEnabled) return;
+    const timeout = setTimeout(() => setPremiereTransitionEnabled(true), 0);
+    return () => clearTimeout(timeout);
+  }, [premiereTransitionEnabled]);
 
   const nextPremiere = () => {
-    setPremiereIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
+    if (!premiereMovies.length) return;
+    setPremiereTransitionEnabled(true);
+    setPremiereIndex((prev) => prev + 1);
   };
 
   const prevPremiere = () => {
-    setPremiereIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
+    if (!premiereMovies.length) return;
+    setPremiereTransitionEnabled(true);
+    setPremiereIndex((prev) => prev - 1);
+  };
+
+  const handlePremiereTransitionEnd = () => {
+    if (!premiereMovies.length || !premiereCloneCount) return;
+
+    if (premiereIndex >= premiereMovies.length + premiereCloneCount) {
+      setPremiereTransitionEnabled(false);
+      setPremiereIndex((prev) => prev - premiereMovies.length);
+      return;
+    }
+
+    if (premiereIndex < premiereCloneCount) {
+      setPremiereTransitionEnabled(false);
+      setPremiereIndex((prev) => prev + premiereMovies.length);
+    }
   };
 
   // Trending carousel state
   const [trendingIndex, setTrendingIndex] = useState(0);
-  const trendingMaxIndex = Math.max(0, trendingMovies.length - visibleCards);
+  const trendingMaxIndex = Math.max(0, localMovies.length - visibleCards);
 
   const nextTrending = () => {
     setTrendingIndex((prev) => (prev >= trendingMaxIndex ? 0 : prev + 1));
@@ -61,25 +119,42 @@ function App() {
   };
 
   useEffect(() => {
-    const fetchTrending = async () => {
-      if (!API_KEY) {
-        console.error("Missing VITE_TMDB_KEY in environment.");
-        return;
-      }
-
+    const fetchLocalMovies = async () => {
       try {
-        const res = await fetch(
-          `${BASE_URL}/trending/movie/week?api_key=${API_KEY}&language=en-US&page=1`
-        );
-        const data = await res.json();
-        setTrendingMovies(data?.results || []);
-      } catch (err) {
-        console.error("Failed to fetch trending movies:", err);
+        const userStr = localStorage.getItem("user");
+        const userObj = userStr ? JSON.parse(userStr) : null;
+        const userId = userObj?._id || userObj?.id || localStorage.getItem("userId") || "";
+
+        const [locationData, winnerData] = await Promise.all([
+          fetchMoviesByLocation(userId),
+          getSundayWinner().catch(() => null)
+        ]);
+
+        console.log("Local Movies Response:", locationData);
+        let finalMovies = locationData.movies || [];
+        
+        // Prepend winner if exists
+        if (winnerData && winnerData._id) {
+          // Remove if it's already in the list to avoid duplicate keys
+          finalMovies = finalMovies.filter(m => m._id !== winnerData._id);
+          winnerData._isSundaySpecial = true;
+          finalMovies.unshift(winnerData);
+        }
+
+        setLocalMovies(finalMovies);
+        
+        // Extract city and state
+        const city = locationData.city || "";
+        const state = locationData.theatres && locationData.theatres[0] && locationData.theatres[0].location ? locationData.theatres[0].location.state : "";
+        setLocation({ city, state });      } catch (err) {
+        console.error("Failed to fetch local movies:", err);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchTrending();
-  }, [API_KEY]);
+    fetchLocalMovies();
+  }, []);
 
   useEffect(() => {
     const fetchPremieres = async () => {
@@ -100,8 +175,9 @@ function App() {
 
   return (
     <div className="bg-[#0b0f1a] min-h-screen font-sans text-slate-100">
+      <Loader isLoading={loading} />
       {/* NAVBAR */}
-      <Navbar2 />
+      <Navbar2 location={location} />
 
       {/* HERO */}
       <CategoryBar />
@@ -119,6 +195,14 @@ function App() {
             <div
               key={cat.name}
               className="cursor-pointer group hover:scale-105 transition-transform duration-300"
+              role="button"
+              tabIndex={0}
+              onClick={() => handleBrowseByCategory(cat.name)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  handleBrowseByCategory(cat.name);
+                }
+              }}
             >
               <div
                 className={`relative ${cat.color} text-white px-6 py-4 shadow-2xl flex items-center gap-4 overflow-hidden`}
@@ -157,7 +241,7 @@ function App() {
       {/* TRENDING MOVIES (CAROUSEL) */}
       <section className="py-8 px-6 bg-[#0f172a] relative overflow-hidden border-y border-white/5">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">Trending Movies</h2>
+          <h2 className="text-2xl font-bold">Movies Near You</h2>
           <span className="text-rose-400 cursor-pointer text-sm font-semibold">
             See All
           </span>
@@ -170,17 +254,14 @@ function App() {
               transform: `translateX(-${trendingIndex * cardWidth}px)`,
             }}
           >
-            {trendingMovies.map((movie) => (
+            {localMovies.map((movie) => (
               <MovieCard
-                key={movie.id}
-                title={movie.title}
-                poster={
-                  movie.poster_path
-                    ? `${IMG_500}${movie.poster_path}`
-                    : "/no-poster.png"
-                }
-                promoted={movie.vote_average >= 7.5}
-                onClick={() => navigate(`/movie/${movie.id}`)}
+                key={movie._id}
+                title={movie.name || movie.title}
+                poster={movie.poster}
+                promoted={movie.ratings >= 7}
+                isSundaySpecial={movie._isSundaySpecial}
+                onClick={() => navigate(`/movie/${movie._id}`)}
               />
             ))}
           </div>
@@ -210,16 +291,17 @@ function App() {
           </p>
         </div>
 
-        <div className="relative">
+        <div className="relative overflow-hidden">
           <div
-            className="flex justify-center gap-4 transition-transform duration-500 ease-in-out"
+            onTransitionEnd={handlePremiereTransitionEnd}
+            className={`flex gap-4 ${premiereTransitionEnabled ? "transition-transform duration-500 ease-in-out" : ""}`}
             style={{
-              transform: `translateX(-${premiereIndex * cardWidth}px)`,
+              transform: `translateX(-${premiereIndex * premiereStep}px)`,
             }}
           >
-            {premiereMovies.map((movie) => (
+            {premiereSlides.map((movie, index) => (
               <PremiereCard
-                key={movie.id}
+                key={`${movie.id}-${index}`}
                 title={movie.title}
                 language={movie.original_language?.toUpperCase() || "EN"}
                 poster={

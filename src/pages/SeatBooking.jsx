@@ -1,60 +1,176 @@
 import { useEffect, useState } from "react";
+
 import { useNavigate, useLocation } from "react-router-dom";
+
+import { FaCarSide, FaMotorcycle } from "react-icons/fa";
+
+import { getShowById } from "../services/show.service";
+
+import { createBooking } from "../services/booking.service";
+
+import toast from "react-hot-toast";
+
+import Loader from "../components/Common/Loader.jsx";
+
 import "./css/SeatBooking.css";
-
-const seatRows = [
-  { row: "RECLINER", price: 349, seats: 25 },
-  { row: "SOFA SLIDER", price: 199, seats: 16 },
-  { row: "DIAMOND", price: 149, seats: 14 },
-  { row: "GOLD", price: 105, seats: 12 },
-];
-
-const soldSeats = new Set(["RECLINER3", "DIAMOND7"]);
-
-const seatTypes = [
-  { type: "RECLINER", price: 349 },
-  { type: "SOFA SLIDER", price: 199 },
-  { type: "DIAMOND", price: 149 },
-  { type: "GOLD", price: 105 },
-];
-
-const showTimes = ["09:20 AM", "12:05 PM", "04:55 PM", "07:40 PM", "10:25 PM"];
 
 export default function SeatBooking() {
   const { state } = useLocation();
+
   const navigate = useNavigate();
 
-  const [activeTime, setActiveTime] = useState(state?.time || showTimes[0]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const [showData, setShowData] = useState(null);
+
+  const [seatRows, setSeatRows] = useState([]);
+
+  const [seatTypes, setSeatTypes] = useState([]);
+
+  const [soldSeats, setSoldSeats] = useState(new Set());
+
+  const [user, setUser] = useState(null);
+
+  const [activeTime, setActiveTime] = useState(state?.time || "");
+
   const [ticketCount, setTicketCount] = useState(state?.ticketCount || 2);
-  const [showTicketModal, setShowTicketModal] = useState(() => !state?.selectedSeats?.length);
-  const [selectedSeats, setSelectedSeats] = useState(() => state?.selectedSeats || []);
+
+  const [showTicketModal, setShowTicketModal] = useState(true);
+
+  const [selectedSeats, setSelectedSeats] = useState(
+    () => state?.selectedSeats || [],
+  );
+
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+
   const [paymentTimer, setPaymentTimer] = useState(60);
+
   const [selectedPaymentApp, setSelectedPaymentApp] = useState("GPay");
+
   const [foodOrder, setFoodOrder] = useState(() => {
-    if (state?.foodOrder) return state.foodOrder;
+    if (state?.foodOrder) {
+      return state.foodOrder.theatreId === state?.theatreId
+        ? state.foodOrder
+        : null;
+    }
     const stored = localStorage.getItem("foodOrder");
+
     if (!stored) return null;
+
     try {
-      return JSON.parse(stored);
+      const parsed = JSON.parse(stored);
+      return parsed.theatreId === state?.theatreId ? parsed : null;
     } catch {
       return null;
     }
   });
 
   useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    } else {
+      toast.error("Please login to book tickets");
+
+      navigate("/auth");
+    }
+  }, [navigate]);
+
+  useEffect(() => {
+    const fetchShowData = async () => {
+      try {
+        if (!state?.showId) {
+          toast.error("Show data not found");
+
+          navigate(-1);
+
+          return;
+        }
+
+        setIsLoading(true);
+
+        const data = await getShowById(state.showId);
+
+        setShowData(data);
+
+        if (data.bookedSeats) {
+          setSoldSeats(new Set(data.bookedSeats));
+        }
+
+        if (data.pricing) {
+          setSeatTypes(
+            data.pricing.map((p) => ({
+              type: p.segment,
+
+              price: p.price,
+            })),
+          );
+        } else if (data.price) {
+          // Fallback for old shows
+
+          setSeatTypes([{ type: "STANDARD", price: data.price }]);
+        }
+
+        if (data.screen && data.screen.seatLayout) {
+          const layout = data.screen.seatLayout.map((rowConfig) => {
+            let price = data.price || 200;
+
+            if (data.pricing) {
+              const pricingObj = data.pricing.find(
+                (p) => p.segment === rowConfig.row,
+              );
+
+              if (pricingObj) price = pricingObj.price;
+            }
+
+            return {
+              row: rowConfig.row,
+
+              seats: rowConfig.seats,
+
+              price: price,
+            };
+          });
+
+          setSeatRows(layout);
+        }
+      } catch (err) {
+        toast.error("Failed to load show details");
+
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchShowData();
+  }, [state?.showId, navigate]);
+
+  useEffect(() => {
     if (!state?.foodOrder) return;
+
+    if (state.foodOrder.theatreId !== state?.theatreId) {
+      setFoodOrder(null);
+      localStorage.removeItem("foodOrder");
+      return;
+    }
+
     setFoodOrder(state.foodOrder);
     localStorage.setItem("foodOrder", JSON.stringify(state.foodOrder));
   }, [state?.foodOrder]);
 
   useEffect(() => {
     if (!state?.selectedSeats) return;
+
     setSelectedSeats(state.selectedSeats);
   }, [state?.selectedSeats]);
 
   useEffect(() => {
     if (!state?.ticketCount) return;
+
     setTicketCount(state.ticketCount);
   }, [state?.ticketCount]);
 
@@ -62,12 +178,15 @@ export default function SeatBooking() {
     if (!showPaymentModal) return undefined;
 
     setPaymentTimer(60);
+
     const intervalId = setInterval(() => {
       setPaymentTimer((prev) => {
         if (prev <= 1) {
           clearInterval(intervalId);
+
           return 0;
         }
+
         return prev - 1;
       });
     }, 1000);
@@ -77,7 +196,7 @@ export default function SeatBooking() {
 
   useEffect(() => {
     if (paymentTimer === 0 && showPaymentModal) {
-      alert("QR payment expired. Please generate a new QR code.");
+      toast.error("QR payment expired. Please generate a new QR code.");
     }
   }, [paymentTimer, showPaymentModal]);
 
@@ -86,11 +205,13 @@ export default function SeatBooking() {
 
     if (selectedSeats.includes(seatId)) {
       setSelectedSeats(selectedSeats.filter((s) => s !== seatId));
+
       return;
     }
 
     if (selectedSeats.length >= ticketCount) {
-      alert(`You can select only ${ticketCount} seats`);
+      toast.error(`You can select exactly ${ticketCount} seats`);
+
       return;
     }
 
@@ -99,47 +220,154 @@ export default function SeatBooking() {
 
   const getSeatPrice = (seatId) => {
     const row = seatRows.find((r) => seatId.startsWith(r.row));
+
     return row ? row.price : 0;
   };
 
-  const seatTotal = selectedSeats.reduce((sum, seat) => sum + getSeatPrice(seat), 0);
+  const seatTotal = selectedSeats.reduce(
+    (sum, seat) => sum + getSeatPrice(seat),
+    0,
+  );
+
   const foodTotal = foodOrder?.totalAmount || 0;
+
   const grandTotal = seatTotal + foodTotal;
+
   const paymentApps = ["GPay", "PhonePe", "Navi", "Paytm"];
+
+  const bookingFoodItems = (foodOrder?.items || []).map((item) => ({
+    food_id: item.food_id || item.id,
+
+    quantity: item.quantity,
+  }));
+
+  const theatreId =
+    state?.theatreId ||
+    (typeof showData?.theatre === "string"
+      ? showData.theatre
+      : showData?.theatre?._id) ||
+    showData?.screen?.theatre?._id ||
+    showData?.screen?.theatre;
+
+  useEffect(() => {
+    if (!foodOrder?.theatreId || !theatreId) return;
+    if (foodOrder.theatreId === theatreId) return;
+
+    setFoodOrder(null);
+    localStorage.removeItem("foodOrder");
+  }, [foodOrder?.theatreId, theatreId]);
 
   const paymentState = {
     movie: state?.movie,
+
     language: state?.language,
+
     theatre: state?.theatre,
+
     theatreLocation: state?.location,
+
     date: state?.date,
+
     time: activeTime,
+
     ticketCount,
+
     selectedSeats,
+
     seatTotal,
+
     foodTotal,
+
     foodItems: foodOrder?.items || [],
+
     grandTotal,
+
+    theatreId,
   };
 
+  const renderTicketIllustration = () => {
+  if (ticketCount <= 2) {
+    return <FaMotorcycle />;
+  }
+  return <FaCarSide />;
+};
   const openPaymentModal = () => {
-    if (selectedSeats.length !== ticketCount) return;
+    if (selectedSeats.length !== ticketCount) {
+      toast.error(`Please select exactly ${ticketCount} seats`);
+
+      return;
+    }
+
     setSelectedPaymentApp("GPay");
+
     setShowPaymentModal(true);
   };
 
-  const completePayment = () => {
-    setShowPaymentModal(false);
-    navigate("/payment-summary", { state: paymentState });
+  const completePayment = async () => {
+    try {
+      setIsProcessing(true);
+
+      const booking = await createBooking(
+        {
+          showId: showData._id,
+
+          seats: selectedSeats,
+
+          foodItems: bookingFoodItems,
+
+          totalPrice: grandTotal,
+        },
+        user._id,
+      );
+
+      localStorage.removeItem("foodOrder");
+
+      toast.success("Payment Received & Tickets Booked!");
+
+      setShowPaymentModal(false);
+
+      navigate("/payment-summary", {
+        state: {
+          ...paymentState,
+
+          bookingId: booking._id,
+
+          booking,
+
+          orders: booking.orders || [],
+        },
+      });
+    } catch (err) {
+      toast.error(err.message || "Booking failed");
+    } finally {
+      setIsProcessing(false);
+    }
   };
+
+  if (isLoading) return <Loader isLoading={true} />;
 
   return (
     <div className="seat-page">
       <div className="breadcrumb-bar">
-        <span className="breadcrumb-link" onClick={() => navigate("/")}>
+        <span
+          className="breadcrumb-link"
+          onClick={() =>
+            navigate("/showtimes", {
+              state: {
+                movieId: state?.movieId,
+                movie: state?.movie,
+                language: state?.language,
+                runtime: state?.runtime,
+                genres: state?.genres,
+              },
+            })
+          }
+        >
           {"<-"} Movies
         </span>
+
         <span className="breadcrumb-separator">/</span>
+
         <span className="breadcrumb-current">{state?.movie}</span>
       </div>
 
@@ -151,18 +379,7 @@ export default function SeatBooking() {
             </h2>
 
             <div className="showtime-breadcrumb">
-              {showTimes.map((time) => (
-                <span
-                  key={time}
-                  className={time === activeTime ? "showtime-pill active" : "showtime-pill"}
-                  onClick={() => {
-                    setActiveTime(time);
-                    setSelectedSeats([]);
-                  }}
-                >
-                  {time}
-                </span>
-              ))}
+              <span className="showtime-pill active">{activeTime}</span>
             </div>
 
             <p className="movie-subtitle">
@@ -172,7 +389,7 @@ export default function SeatBooking() {
         </div>
 
         <button className="ticket-btn" onClick={() => setShowTicketModal(true)}>
-          ✎ {ticketCount} Tickets
+          Edit {ticketCount} Tickets
         </button>
       </div>
 
@@ -180,15 +397,21 @@ export default function SeatBooking() {
         <div className="ticket-modal-overlay">
           <div className="ticket-modal-card">
             <h2 className="modal-title">How many seats?</h2>
-            <div className="modal-illustration">🛵</div>
+
+            <div className="modal-illustration">
+              {renderTicketIllustration()}
+            </div>
 
             <div className="seat-count-row">
               {[...Array(10)].map((_, i) => {
                 const num = i + 1;
+
                 return (
                   <span
                     key={num}
-                    className={num === ticketCount ? "seat-count active" : "seat-count"}
+                    className={
+                      num === ticketCount ? "seat-count active" : "seat-count"
+                    }
                     onClick={() => setTicketCount(num)}
                   >
                     {num}
@@ -203,7 +426,9 @@ export default function SeatBooking() {
               {seatTypes.map((s) => (
                 <div key={s.type} className="seat-type">
                   <div className="seat-type-name">{s.type}</div>
-                  <div className="seat-type-price">₹{s.price}</div>
+
+                  <div className="seat-type-price">Rs {s.price}</div>
+
                   <div className="seat-type-status">AVAILABLE</div>
                 </div>
               ))}
@@ -213,6 +438,7 @@ export default function SeatBooking() {
               className="select-seat-btn"
               onClick={() => {
                 setSelectedSeats([]);
+
                 setShowTicketModal(false);
               }}
             >
@@ -232,6 +458,7 @@ export default function SeatBooking() {
                 <div className="seat-block">
                   {[...Array(row.seats)].map((_, i) => {
                     const seatId = `${row.row}${i + 1}`;
+
                     return (
                       <button
                         key={seatId}
@@ -253,6 +480,7 @@ export default function SeatBooking() {
 
           <div className="screen">
             <div className="screen-bar"></div>
+
             <p>All eyes this way please</p>
           </div>
 
@@ -260,9 +488,11 @@ export default function SeatBooking() {
             <span>
               Seats: <b>{selectedSeats.join(", ") || "None"}</b>
             </span>
+
             <span>
               Food: <b>INR {foodTotal}</b>
             </span>
+
             <span>
               SeatPrice : <b>INR {seatTotal}</b>
             </span>
@@ -273,14 +503,31 @@ export default function SeatBooking() {
                 navigate("/food-ordering", {
                   state: {
                     movie: state?.movie,
+
+                    movieId: state?.movieId,
+
+                    runtime: state?.runtime,
+
+                    genres: state?.genres,
                     language: state?.language,
+
                     theatre: state?.theatre,
+
                     location: state?.location,
+
                     date: state?.date,
+
                     time: activeTime,
+
                     selectedSeats,
+
                     ticketCount,
+
                     foodOrder,
+
+                    showId: state?.showId,
+
+                    theatreId,
                   },
                 })
               }
@@ -300,6 +547,7 @@ export default function SeatBooking() {
             <div className="ticket-modal-overlay">
               <div className="ticket-modal-card payment-modal-card">
                 <h2 className="modal-title">Scan & Pay</h2>
+
                 <p className="payment-subtext">
                   Scan the QR code using your UPI app. QR expires in{" "}
                   <strong>{paymentTimer}s</strong>.
@@ -315,7 +563,9 @@ export default function SeatBooking() {
                       key={app}
                       type="button"
                       className={
-                        app === selectedPaymentApp ? "pay-app-btn active" : "pay-app-btn"
+                        app === selectedPaymentApp
+                          ? "pay-app-btn active"
+                          : "pay-app-btn"
                       }
                       onClick={() => setSelectedPaymentApp(app)}
                     >
@@ -333,16 +583,18 @@ export default function SeatBooking() {
                     type="button"
                     className="secondary-pay-btn"
                     onClick={() => setShowPaymentModal(false)}
+                    disabled={isProcessing}
                   >
                     Cancel
                   </button>
+
                   <button
                     type="button"
                     className="select-seat-btn"
                     onClick={completePayment}
-                    disabled={paymentTimer === 0}
+                    disabled={paymentTimer === 0 || isProcessing}
                   >
-                    I Have Paid
+                    {isProcessing ? "Processing..." : "I Have Paid"}
                   </button>
                 </div>
               </div>

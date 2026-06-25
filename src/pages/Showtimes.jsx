@@ -1,16 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
+import { getShowsByMovie } from "../services/show.service";
+import Loader from "../components/Common/Loader.jsx";
 import "./css/Showtimes.css";
 
 export default function Showtimes() {
   const navigate = useNavigate();
   const { state } = useLocation();
 
-  const dates = ["MON 02", "TUE 03", "WED 04", "THU 05", "FRI 06"];
-  const locations = ["Bhubaneswar", "Cuttack", "Kolkata"];
-
-  const [selectedDate, setSelectedDate] = useState(dates[0]);
-  const [selectedLocation, setSelectedLocation] = useState(locations[0]);
+  const [shows, setShows] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState("");
 
   const movieName = state?.movie || "Selected Movie";
   const language = state?.language || "English";
@@ -19,150 +21,136 @@ export default function Showtimes() {
     : "N/A";
   const genres = state?.genres?.length ? state.genres.slice(0, 3) : ["Drama"];
 
-  const theatreData = {
-    Bhubaneswar: {
-      "MON 02": [
-        {
-          name: "Cinepolis: Nexus Esplanade",
-          location: "Bhubaneswar",
-          shows: ["12:55 PM", "04:10 PM", "07:30 PM"],
-        },
-      ],
-      "TUE 03": [
-        {
-          name: "Cinepolis: Nexus Esplanade",
-          location: "Bhubaneswar",
-          shows: ["12:55 PM", "04:10 PM", "07:30 PM"],
-        },
-      ],
-      "WED 04": [
-        {
-          name: "Cinepolis: Nexus Esplanade",
-          location: "Bhubaneswar",
-          shows: ["12:55 PM", "04:10 PM", "07:30 PM"],
-        },
-      ],
-      "THU 05": [
-        {
-          name: "Cinepolis: Nexus Esplanade",
-          location: "Bhubaneswar",
-          shows: ["12:55 PM", "04:10 PM", "07:30 PM"],
-        },
-      ],
-      "FRI 06": [
-        {
-          name: "PVR: Esplanade",
-          location: "Bhubaneswar",
-          shows: ["12:55 PM", "04:10 PM", "07:30 PM"],
-        },
-        {
-          name: "Cinepolis: Nexus Esplanade",
-          location: "Bhubaneswar",
-          shows: ["12:55 PM", "04:10 PM", "07:30 PM"],
-        },
-      ],
-    },
-    Cuttack: {
-      "MON 02": [
-        {
-          name: "INOX: Cuttack Mall",
-          location: "Cuttack",
-          shows: ["01:00 PM", "04:30 PM", "08:00 PM"],
-        },
-      ],
-      "TUE 03": [
-        {
-          name: "PVR: Cuttack Central",
-          location: "Cuttack",
-          shows: ["12:15 PM", "06:00 PM"],
-        },
-      ],
-      "WED 04": [
-        {
-          name: "PVR: Cuttack Central",
-          location: "Cuttack",
-          shows: ["12:15 PM", "06:00 PM"],
-        },
-      ],
-      "THU 05": [
-        {
-          name: "INOX: Cuttack Mall",
-          location: "Cuttack",
-          shows: ["11:00 AM", "03:45 PM"],
-        },
-      ],
-      "FRI 06": [
-        {
-          name: "INOX: Cuttack Mall",
-          location: "Cuttack",
-          shows: ["11:00 AM", "03:45 PM"],
-        },
-        {
-          name: "PVR: Cuttack Central",
-          location: "Cuttack",
-          shows: ["02:00 PM", "09:00 PM"],
-        },
-      ],
-    },
-    Kolkata: {
-      "MON 02": [
-        {
-          name: "INOX: South City Mall",
-          location: "Kolkata",
-          shows: ["12:30 PM", "05:00 PM", "09:45 PM"],
-        },
-      ],
-      "TUE 03": [
-        {
-          name: "PVR: Quest Mall",
-          location: "Kolkata",
-          shows: ["11:45 AM", "04:15 PM", "08:30 PM"],
-        },
-      ],
-      "WED 04": [
-        {
-          name: "INOX: South City Mall",
-          location: "Kolkata",
-          shows: ["01:15 PM", "06:45 PM"],
-        },
-        {
-          name: "PVR: Quest Mall",
-          location: "Kolkata",
-          shows: ["11:45 AM", "04:15 PM", "08:30 PM"],
-        },
-        {
-          name: "INOX: South City Mall",
-          location: "Kolkata",
-          shows: ["12:30 PM", "05:00 PM", "09:45 PM"],
-        },
-      ],
-      "THU 05": [
-        {
-          name: "INOX: South City Mall",
-          location: "Kolkata",
-          shows: ["12:30 PM", "05:00 PM", "09:45 PM"],
-        },
-        {
-          name: "INOX: South City Mall",
-          location: "Kolkata",
-          shows: ["01:15 PM", "06:45 PM"],
-        },
-        {
-          name: "PVR: Quest Mall",
-          location: "Kolkata",
-          shows: ["11:45 AM", "04:15 PM", "08:30 PM"],
-        },
-      ],
-      "FRI 06": [],
-    },
+  // Safely extract YYYY-MM-DD in local time
+  const getLocalDateString = (isoString) => {
+    const d = new Date(isoString);
+    if (isNaN(d)) return "";
+    const yr = d.getFullYear();
+    const mo = String(d.getMonth() + 1).padStart(2, "0");
+    const da = String(d.getDate()).padStart(2, "0");
+    return `${yr}-${mo}-${da}`;
   };
 
-  const theatres = theatreData[selectedLocation][selectedDate] || [];
+  // Fetch shows on mount
+  useEffect(() => {
+    const fetchShows = async () => {
+      if (!state?.movieId) {
+        setIsLoading(false);
+        return;
+      }
+      try {
+        setIsLoading(true);
+        const data = await getShowsByMovie(state.movieId);
+        setShows(data);
+
+        // Extract unique locations and dates from data
+        const uniqueLocations = [
+          ...new Set(data.map((s) => s.theatre?.location?.city)),
+        ].filter(Boolean);
+
+        if (uniqueLocations.length > 0) {
+          setSelectedLocation(uniqueLocations[0]);
+        }
+        // uniqueDate calculation and selection is now handled by useMemo and useEffect below
+      } catch (err) {
+        console.error("Failed to fetch shows:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchShows();
+  }, [state?.movieId]);
+
+  // Derive dynamic dates and locations for the UI
+  const locations = useMemo(() => {
+    return [...new Set(shows.map((s) => s.theatre?.location?.city))].filter(
+      Boolean,
+    );
+  }, [shows]);
+
+  const dates = useMemo(() => {
+    if (!selectedLocation) return [];
+    return [
+      ...new Set(
+        shows
+          .filter((s) => s.theatre?.location?.city === selectedLocation)
+          .map((s) => getLocalDateString(s.startTime)),
+      ),
+    ].filter(Boolean).sort();
+  }, [shows, selectedLocation]);
+
+  // Adjust selectedDate when dates change (e.g., location changes)
+  useEffect(() => {
+    if (dates.length > 0 && !dates.includes(selectedDate)) {
+      setSelectedDate(dates[0]);
+    } else if (dates.length === 0) {
+      setSelectedDate("");
+    }
+  }, [dates, selectedDate]);
+
+  // Group shows by theatre for the current selection
+  const theatresList = useMemo(() => {
+    if (!selectedDate || !selectedLocation) return [];
+
+    const filteredShows = shows.filter((s) => {
+      const showDate = getLocalDateString(s.startTime);
+
+      return (
+        s.theatre?.location?.city === selectedLocation &&
+        showDate === selectedDate
+      );
+    });
+
+    const grouping = {};
+    filteredShows.forEach((show) => {
+      const theatreId = show.theatre._id;
+      if (!grouping[theatreId]) {
+        grouping[theatreId] = {
+          id: theatreId,
+          name: show.theatre.name,
+          location: show.theatre.location.address || show.theatre.location.city,
+          shows: [],
+        };
+      }
+      grouping[theatreId].shows.push({
+        id: show._id,
+        time: new Date(show.startTime).toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        }),
+      });
+    });
+
+    return Object.values(grouping);
+  }, [shows, selectedDate, selectedLocation]);
+
+  const formatDateLabel = (dateStr) => {
+    const d = new Date(dateStr);
+    const day = d
+      .toLocaleDateString("en-US", { weekday: "short" })
+      .toUpperCase();
+    const date = d.getDate().toString().padStart(2, "0");
+    return `${day} ${date}`;
+  };
 
   return (
     <div className="showtimes-page">
+      <Loader isLoading={isLoading} />
       <nav className="showtimes-nav">
-        <div className="logo">BingeHere</div>
+        <button className="showtimes-back" onClick={() => navigate("/landing2")}>
+          <ArrowLeft size={18} />
+          Back
+        </button>
+
+        <div
+          className="logo"
+          onClick={() => navigate("/landing2")}
+          style={{ cursor: "pointer" }}
+        >
+          BingeHere
+        </div>
 
         <div className="nav-search">
           <input placeholder="Search for Movies, Events, Plays..." />
@@ -174,50 +162,18 @@ export default function Showtimes() {
             value={selectedLocation}
             onChange={(e) => setSelectedLocation(e.target.value)}
           >
-            {locations.map((loc) => (
-              <option key={loc}>{loc}</option>
-            ))}
+            {locations.length > 0 ? (
+              locations.map((loc) => (
+                <option key={loc} value={loc}>
+                  {loc}
+                </option>
+              ))
+            ) : (
+              <option disabled>No locations available</option>
+            )}
           </select>
-
-          <button className="sign-in-btn" onClick={() => setShowSignIn(true)}>
-            Sign in
-          </button>
-
-          <div className="menu-icon" onClick={() => setMenuOpen(!menuOpen)}>
-            Menu
-          </div>
-
-          {menuOpen && (
-            <div className="hamburger-menu">
-              <div className="menu-item">Movies</div>
-              <div className="menu-item">Events</div>
-              <div className="menu-item">Plays</div>
-              <div className="menu-item">Sports</div>
-              <div className="menu-divider"></div>
-              <div className="menu-item">Offers</div>
-              <div className="menu-item">Gift Cards</div>
-            </div>
-          )}
         </div>
       </nav>
-
-      {showSignIn && (
-        <div className="signin-overlay" onClick={() => setShowSignIn(false)}>
-          <div className="signin-modal" onClick={(e) => e.stopPropagation()}>
-            <h2>Sign in</h2>
-
-            <form className="signin-form">
-              <input type="email" placeholder="Email" required />
-              <input type="password" placeholder="Password" required />
-              <button type="submit">Continue</button>
-            </form>
-
-            <p className="signin-footer">
-              New to BingeHere? <span>Create account</span>
-            </p>
-          </div>
-        </div>
-      )}
 
       <section className="movie-info">
         <div className="movie-info-glow" aria-hidden="true" />
@@ -234,7 +190,7 @@ export default function Showtimes() {
           {genres.map((genre) => (
             <span key={genre}>{genre}</span>
           ))}
-          <span>{selectedLocation}</span>
+          <span>{selectedLocation || "Not selected"}</span>
         </div>
       </section>
 
@@ -248,30 +204,36 @@ export default function Showtimes() {
         </div>
 
         <div className="date-bar">
-          {dates.map((date) => (
-            <button
-              key={date}
-              className={date === selectedDate ? "date-btn active" : "date-btn"}
-              onClick={() => setSelectedDate(date)}
-            >
-              {date}
-            </button>
-          ))}
+          {dates.length > 0 ? (
+            dates.map((date) => (
+              <button
+                key={date}
+                className={
+                  date === selectedDate ? "date-btn active" : "date-btn"
+                }
+                onClick={() => setSelectedDate(date)}
+              >
+                {formatDateLabel(date)}
+              </button>
+            ))
+          ) : (
+            <p className="empty-state">No show dates available.</p>
+          )}
         </div>
       </section>
 
       <section className="theatre-list">
         <div className="theatre-list-header">
           <h2>Theatres near you</h2>
-          <span>{theatres.length} venues</span>
+          <span>{theatresList.length} venues</span>
         </div>
 
-        {theatres.length === 0 ? (
+        {!isLoading && theatresList.length === 0 ? (
           <p className="empty-state">
             No shows available for this date and location.
           </p>
         ) : (
-          theatres.map((theatre, idx) => (
+          theatresList.map((theatre, idx) => (
             <div className="theatre-card" key={idx}>
               <div className="theatre-info">
                 <h3>{theatre.name}</h3>
@@ -283,25 +245,27 @@ export default function Showtimes() {
               </div>
 
               <div className="showtimes">
-                {theatre.shows.map((time) => (
+                {theatre.shows.map((show) => (
                   <button
-                    key={time}
+                    key={show.id}
                     className="time-btn"
                     onClick={() =>
                       navigate("/seats", {
                         state: {
                           movieId: state?.movieId,
+                          showId: show.id,
+                          theatreId: theatre.id,
                           movie: movieName,
                           language,
                           theatre: theatre.name,
                           location: theatre.location,
-                          date: selectedDate,
-                          time,
+                          date: formatDateLabel(selectedDate),
+                          time: show.time,
                         },
                       })
                     }
                   >
-                    {time}
+                    {show.time}
                   </button>
                 ))}
               </div>

@@ -1,0 +1,92 @@
+const API_URL = "http://localhost:3000/api/movies";
+
+// 🔍 Search movies (no auth needed)
+export const searchMovies = async (query, signal) => {
+  const res = await fetch(`${API_URL}/search?query=${encodeURIComponent(query)}`, { signal });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || data.message || "Failed to search movies");
+  }
+  return data;
+};
+
+// 🎞️ Get all movies
+export const getMovies = async () => {
+  const res = await fetch(API_URL);
+  const result = await res.json();
+  if (!res.ok) throw new Error(result.error || "Failed to fetch movies");
+  return result;
+};
+
+// 🎬 Create movie (ADMIN ONLY)
+export const createMovie = async (data, userId) => {
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      userid: userId, 
+    },
+    body: JSON.stringify(data),
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    // The backend sends { error: "message" }, so we check result.error first
+    throw new Error(result.error || result.message || "Failed to create movie");
+  }
+
+  return result;
+};
+
+// 🌍 Get movies by location
+export const fetchMoviesByLocation = async (userId) => {
+  const res = await fetch(`${API_URL}/by-location`, {
+    credentials: "include",
+    headers: {
+      "userid": userId || "",
+    },
+  });
+
+  const result = await res.json();
+  
+  if (!res.ok) {
+    throw new Error(result.error || result.message || "Failed to fetch movies by location");
+  }
+
+  return result;
+};
+
+// 🌍 Get movies by location + category
+export const fetchMoviesByLocationAndCategory = async (category, userId) => {
+  const res = await fetch(`${API_URL}/by-location/${encodeURIComponent(category)}`, {
+    credentials: "include",
+    headers: {
+      userid: userId || "",
+    },
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(
+      result.error ||
+        result.message ||
+        "Failed to fetch movies by location and category"
+    );
+  }
+
+  return result;
+};
+
+// 🎥 Get movie by ID
+export const getMovieById = async (movieId) => {
+  const res = await fetch(`${API_URL}/${movieId}`);
+  const result = await res.json();
+  
+  if (!res.ok) {
+    throw new Error(result.error || result.message || "Failed to fetch movie details");
+  }
+
+  return result;
+};

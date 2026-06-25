@@ -76,7 +76,7 @@ export default function TwisterSection() {
                 {/* Card 1 (Left) */}
                 <div
                     ref={card1Ref}
-                    className="absolute left-[15%] md:left-[25%] top-[50%] w-[200px] md:w-[300px] aspect-[2/3] bg-white p-2 shadow-2xl origin-bottom-left"
+                    className="absolute left-[15%] md:left-[25%] top-[50%] w-50 md:w-75 aspect-2/3 bg-white p-2 shadow-2xl origin-bottom-left"
                     style={{ transform: "translateY(50%)" }}
                 >
                     <div className="w-full h-full bg-black overflow-hidden relative">
@@ -91,7 +91,7 @@ export default function TwisterSection() {
                 {/* Card 2 (Right) */}
                 <div
                     ref={card2Ref}
-                    className="absolute right-[15%] md:right-[25%] top-[60%] w-[200px] md:w-[300px] aspect-[2/3] bg-white p-2 shadow-2xl origin-bottom-right"
+                    className="absolute right-[15%] md:right-[25%] top-[60%] w-50 md:w-75 aspect-2/3 bg-white p-2 shadow-2xl origin-bottom-right"
                 >
                     <div className="w-full h-full bg-black overflow-hidden relative">
                         <img
